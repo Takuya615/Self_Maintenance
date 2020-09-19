@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">Self_Maintenance</string>
+    <string name="action_settings">Settings</string>
+    <string name="preferences_key_sample">Camera2Activity_sample</string>
+    <string name="preferences_key">Camera2Activity_1</string>
+    <string name="preferences_key2">Camera2Activity_2</string>
+    <string name="preferences_key3">Camera2Activity_3</string>
+    <string name="preferences_key_MAX">Camera2Activity_MAX</string>
+    <string name="preferences_key_rev">Camera2Activity_rev</string>//復活数
+    <string name="preferences_key_smalltime">GoalSettingActivity</string>
+    <string name="preferences_key_test">Camera2Activity_1</string>
+
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="gallery_fragment_label">Gallery Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+
+    //ココからギャラリーように用意したボタン系
+    <string name="capture_button_alt">Capture</string>
+    <string name="switch_camera_button_alt">Switch camera</string>
+    <string name="gallery_button_alt">Gallery</string>
+    <string name="back_button_alt">Back</string>
+    <string name="share_button_alt">Share</string>
+    <string name="share_hint">Share using</string>
+    <string name="capture_mode_camera">Camera</string>
+    <string name="capture_mode_hdr">HDR</string>
+    <string name="capture_mode_night">Night</string>
+    <string name="delete_button_alt">Delete</string>
+    <string name="delete_dialog">Delete current photo?</string>
+    <string name="delete_title">Confirm</string>
+</resources>

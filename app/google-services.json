@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "860516210382",
+    "firebase_url": "https://selfmaintenance-8298e.firebaseio.com",
+    "project_id": "selfmaintenance-8298e",
+    "storage_bucket": "selfmaintenance-8298e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:860516210382:android:88d352d1fe5d9ceb65e29f",
+        "android_client_info": {
+          "package_name": "jp.tsumura.takuya.self_maintenance"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "860516210382-v6eohcr6u4p16c0t8a3t7eur0uaofdbb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC9E_XNi-O2njJHA38GkSGatdLgqz40RFM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "860516210382-v6eohcr6u4p16c0t8a3t7eur0uaofdbb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

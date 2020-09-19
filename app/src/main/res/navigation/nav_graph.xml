@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/FirstFragment">
+
+    <fragment
+        android:id="@+id/FirstFragment"
+        android:name="jp.tsumura.takuya.self_maintenance.FirstFragment"
+        android:label="@string/first_fragment_label"
+        tools:layout="@layout/fragment_first">
+
+        <action
+            android:id="@+id/action_FirstFragment_to_SecondFragment"
+            app:enterAnim="@anim/slide_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:destination="@id/SecondFragment"/>
+        <action
+            android:id="@+id/action_FirstFragment_to_URIlistFragment"
+            app:destination="@id/URIlistFragment" />
+
+    </fragment>
+
+
+<fragment
+    android:id="@+id/SecondFragment"
+    android:name="jp.tsumura.takuya.self_maintenance.SecondFragment"
+    android:label="@string/second_fragment_label"
+    tools:layout="@layout/fragment_second">
+
+    <action
+        android:id="@+id/action_SecondFragment_to_FirstFragment"
+        app:enterAnim="@anim/slide_from_left"
+        app:exitAnim="@anim/slide_to_right"
+        app:destination="@id/FirstFragment" />
+</fragment>
+
+<fragment
+android:id="@+id/URIlistFragment"
+android:name="jp.tsumura.takuya.self_maintenance.SecondFragment"
+android:label="@string/second_fragment_label"
+tools:layout="@layout/fragment_urilist">
+
+</fragment>
+
+    </navigation>
