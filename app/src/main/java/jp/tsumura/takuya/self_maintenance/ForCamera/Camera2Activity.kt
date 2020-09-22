@@ -1,5 +1,5 @@
 package jp.tsumura.takuya.self_maintenance.ForCamera
-
+/*
 import android.Manifest
 
 import android.content.Context
@@ -704,3 +704,5 @@ class Camera2Activity : AppCompatActivity(), ActivityCompat.OnRequestPermissions
         }, 1000, 1000)
     }
 }
+
+ */

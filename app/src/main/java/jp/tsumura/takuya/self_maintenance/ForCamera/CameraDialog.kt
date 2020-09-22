@@ -2,83 +2,131 @@ package jp.tsumura.takuya.self_maintenance.ForCamera
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
+import android.provider.Settings.Global.getString
 import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.startActivity
 import com.google.android.material.internal.ContextUtils.getActivity
 import com.google.firebase.firestore.FirebaseFirestore
+import jp.tsumura.takuya.self_maintenance.MainActivity
+import jp.tsumura.takuya.self_maintenance.R
+import java.text.SimpleDateFormat
 import java.util.*
 
-class CameraDialog(context: Context){
-    /**
+class CameraDialog(context: Context,mTimerSec:Int){
+
+    private var mTimerSec:Int = mTimerSec
     private var mContext: Context = context
+    private var prefs = mContext.getSharedPreferences("preferences_key_sample", Context.MODE_PRIVATE)
 
-    lateinit var executeTime: Calendar
+    //ダイアログ
+    fun showDialog(){
 
-    val db = FirebaseFirestore.getInstance()
-    val totalday = 1
-    val ncd = 0
-    val totaltime = 0
-    val addtotalday = 1
-    val addncd = 0
-    val addtt= 0
+        val preference = mContext.getSharedPreferences("TEST", Context.MODE_PRIVATE)
+        val memoday : Int = preference.getInt("TEST",19930615)
+        val today =Calendar.getInstance()
+        val date=today.getTime()
 
-    val resultdata = hashMapOf(
-        "Totaldays" to addtotalday,
-        "NCD" to addncd,
-        "Totaltime" to addtt
-    )
-    // AlertDialog.Builderクラスを使ってAlertDialogの準備をする
-    public fun showDialog(mTimerSec:Int){
+        //連続活動日数
+        val memodayOnlyDay = memoday%100
+        val dateFormatOnlyDay = SimpleDateFormat("dd")
+        val IntDateOnlyDay =dateFormatOnlyDay.format(date).toInt()
+        var ncd = 0
+        val memo3 : Int = prefs.getInt("preferences_key3",0)
+        Log.e("TAG","今日は、$IntDateOnlyDay　日")
+        Log.e("TAG","設定日は、$memodayOnlyDay 日")
 
-        //Firebaseから値を取り出す
-        db.collection("users")
-            .get()
-            .addOnSuccessListener { result ->
-                for (document in result) {
-                    Log.d("TAG", "${document.id} => ${document.data}")
-                }
-            }
-            .addOnFailureListener { exception ->
-                Log.w("TAG", "Error getting documents.", exception)
-            }
-
-        val totaltime= addtt+ mTimerSec
-        val seconds =totaltime%60;
-        val minite =(totaltime/60)%60;
-        val total="$minite"+"分"+"$seconds"+"秒"
-
-
-        //総日数を求める
-        var daycounter = 1
-        val today= Calendar.getInstance()//今日の日付
-        Log.e("TAG","今日の日付は$today")
-
-        var fla = true
-        if(fla){
-            val execute = Calendar.getInstance()
-            executeTime = execute//前回写真を上げた時の日数
-            Log.e("TAG","初めての利用")
-            Log.e("TAG","前回の日付$executeTime")
-            fla = false
-        }
-        val day = Calendar.getInstance().get(Calendar.DATE)
-        val executeday = executeTime!!.get(Calendar.DATE)
-
-        if(day==executeday){
-            Log.e("TAG","デイリー終了")
+        if(IntDateOnlyDay - memodayOnlyDay == 1){
+            Log.e("TAG","連続日数更新！")
+            ncd = memo3 +1
+        }else if(IntDateOnlyDay == 1 && 28<=memodayOnlyDay){
+            Log.e("TAG","連続日数更新！")
+            ncd = memo3 +1
+        }else if( IntDateOnlyDay == memodayOnlyDay){
+            Log.e("TAG","連続日数カウントなし")
+            ncd = memo3
         }else{
-            Log.e("TAG","本日のデイリーはまだ")
-            daycounter ++
-            val execute = Calendar.getInstance()
-            executeTime = execute//前回写真を上げた時の日数
+            Log.e("TAG","連続日数リセット")
+            ncd = 0
+        }
 
+        val g : SharedPreferences.Editor = prefs.edit()
+        g.putInt("preferences_key3", ncd)
+        g.commit()
+
+        //復活数
+        val numb : Int = prefs.getInt("preferences_key_rev",0)
+        var revival = 0
+        if(ncd==1){
+            if( IntDateOnlyDay != memodayOnlyDay){
+                revival = numb + 1
+                val j : SharedPreferences.Editor = prefs.edit()
+                j.putInt("preferences_key_rev", revival)
+                j.commit()
+            }
+        }
+
+        //継続日数の最長値を保存する
+        val MAX : Int = prefs.getInt("preferences_key_MAX",0)
+        if(MAX < ncd){
+            val updatedMAX = ncd
+            val i : SharedPreferences.Editor = prefs.edit()
+            i.putInt("preferences_key_MAX", updatedMAX)
+            i.commit()
+            Log.e("TAG","最長記録更新$updatedMAX")
         }
 
 
+        //総活動日数
+        val dateFormat = SimpleDateFormat("yyyyMMdd")
+        val IntDate =dateFormat.format(date).toInt()//今日の日付
+        var Dailytask = false
+        var daycounter = 0
+        Log.e("TAG","今日は、$IntDate")
+        Log.e("TAG","設定日は、$memoday")
+        if(memoday >= IntDate){
+            Dailytask = false
+        }else{
+            val e : SharedPreferences.Editor = preference.edit()
+            e.putInt("TEST" , IntDate)//　　　　　　　　　　　　　　　　　　　　　ここで日付の更新をしている
+            e.commit()
+            Dailytask = true
+        }
+        if(Dailytask){
+            Log.e("TAG","総日数更新")
+            val memo2 : Int = prefs.getInt("preferences_key2",0)
+            daycounter = memo2 +1
+            val g : SharedPreferences.Editor = prefs.edit()
+            g.putInt("preferences_key2" , daycounter)
+            g.commit()
+        }else{
+            Log.e("TAG","DailyTaskは遂行済み、総日数カウントなし")
+            val memo2 : Int = prefs.getInt("preferences_key2",0)
+            daycounter = memo2
+        }
 
-        val list = arrayOf("連続活動日数　　","総活動日数  ","総活動時間　　$total")
+        //総活動時間
+        val memo : Int = prefs.getInt("preferences_key",0)
+        val newnum=memo + mTimerSec
+        val seconds =newnum%60;
+        val minite =(newnum/60)%60;
+        val totaltime="$minite"+"分"+"$seconds"+"秒"
+        val e : SharedPreferences.Editor = prefs.edit()
+        e.putInt("preferences_key" , newnum)
+        e.commit()
+
+        Log.e("TAG","参照に保存してる秒数$newnum")
+
+
+        //復活数の調整
+        var editrevaival = revival - 1
+        if(editrevaival == -1){
+            editrevaival = 0
+        }
+        //ダイアログに記録を表示
+        val list = arrayOf("連続活動日数　　$ncd","復活回数　　$editrevaival","総活動日数　　$daycounter","総活動時間　　$totaltime")
         val alertDialogBuilder = AlertDialog.Builder(mContext)
         alertDialogBuilder.setTitle("活動の記録")
         alertDialogBuilder.setItems(list){ dialog, which ->
@@ -89,30 +137,12 @@ class CameraDialog(context: Context){
         // 肯定ボタンに表示される文字列、押したときのリスナーを設定する
         alertDialogBuilder.setPositiveButton("メイン画面へ"){dialog, which ->
             Log.d("UI_PARTS", "肯定ボタン")
-            val intent =Intent(mContext,MainActivity::class.java)
-            startActivity(intent)
+            val intent = Intent(mContext,MainActivity::class.java)
+            mContext.startActivity(intent)
         }
-
         // AlertDialogを作成して表示する
         val alertDialog = alertDialogBuilder.create()
         alertDialog.show()
 
-
-        val resultdata = hashMapOf(
-            "Totaldays" to totalday,
-            "NCD" to ncd,
-            "Totaltime" to totaltime
-        )
-
-        //Firebaseに保存
-        db.collection("ResultDatas")
-            .add(resultdata)
-            .addOnSuccessListener { documentReference ->
-                Log.d("TAG", "総日数、連続日数、総時間のセーブ")
-            }
-            .addOnFailureListener { e ->
-                Log.w("TAG", "Error adding document", e)
-            }
     }
-    */
 }

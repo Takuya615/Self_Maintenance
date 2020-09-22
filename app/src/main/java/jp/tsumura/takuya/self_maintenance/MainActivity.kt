@@ -1,6 +1,6 @@
 package jp.tsumura.takuya.self_maintenance
 
-import jp.tsumura.takuya.self_maintenance.ForCamera.Camera2Activity
+
 import jp.tsumura.takuya.self_maintenance.ForSetting.GoalSettingActivity
 import android.content.Intent
 import android.os.Bundle
@@ -13,6 +13,7 @@ import android.view.MenuItem
 import androidx.fragment.app.*
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import jp.tsumura.takuya.self_maintenance.ForCamera.CameraXActivity
 import jp.tsumura.takuya.self_maintenance.forGallery.URIlistFragment
 
 class MainActivity : AppCompatActivity() {
@@ -46,7 +47,7 @@ class MainActivity : AppCompatActivity() {
         findViewById<FloatingActionButton>(R.id.fab).setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()
-            val intent= Intent(this, Camera2Activity::class.java)
+            val intent= Intent(this, CameraXActivity::class.java)
             startActivity(intent)
         }
     }

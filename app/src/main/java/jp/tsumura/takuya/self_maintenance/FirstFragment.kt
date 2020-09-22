@@ -33,8 +33,8 @@ class FirstFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val prefs = requireActivity().getSharedPreferences(getString(R.string.preferences_key_sample), Context.MODE_PRIVATE)
-        val totalday =prefs.getInt(getString(R.string.preferences_key2),0)//総日数
+        val prefs = requireActivity().getSharedPreferences("preferences_key_sample", Context.MODE_PRIVATE)
+        val totalday =prefs.getInt("preferences_key2",0)//総日数
         val growthimage =view.findViewById<ImageView>(R.id.growth_image)
 
         Log.e("TAG","総日数は$totalday 日")

@@ -25,7 +25,7 @@ class GoalSettingActivity : AppCompatActivity(){
         setContentView(R.layout.activity_goal_setting)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        prefs = getSharedPreferences(getString(R.string.preferences_key_sample), Context.MODE_PRIVATE)
+        prefs = getSharedPreferences("preferences_key_sample", Context.MODE_PRIVATE)
         val et3:EditText = findViewById(R.id.Edittext3)
         val et4:EditText = findViewById(R.id.Edittext4)
         et3.setInputType( InputType.TYPE_CLASS_NUMBER)
@@ -87,12 +87,12 @@ class GoalSettingActivity : AppCompatActivity(){
             textView7.text = "%)"+ "$minite"+"分"+"$seconds"+"秒"
         }
         val e : SharedPreferences.Editor = prefs.edit()
-        e.putInt(getString(R.string.preferences_key_smalltime) , Cal)
+        e.putInt("preferences_key_smalltime" , Cal)
         e.commit()
     }
     //戻るボタンを押すと今いるviewを削除する
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when(item?.itemId){
+        when(item!!.itemId){
             android.R.id.home->{
                 finish()
             }
