@@ -37,8 +37,8 @@ class GoalSettingActivity : AppCompatActivity(){
             val goal = documentSnapshot.toObject(Goal::class.java)
             Edittext1.setText(goal?.goal)
             Edittext2.setText(goal?.task)
-            Edittext3.setText(goal!!.goaltime)
-            Edittext4.setText(goal.smalltime)
+            Edittext3.setText(goal?.goaltime)
+            Edittext4.setText(goal?.smalltime)
             TimeCal()
 
         }.addOnFailureListener { e -> Log.e("TAG", "データ取得に失敗", e) }
@@ -86,8 +86,9 @@ class GoalSettingActivity : AppCompatActivity(){
         }else{
             textView7.text = "%)"+ "$minite"+"分"+"$seconds"+"秒"
         }
+        Log.e("TAG","1日に行う秒数は $Cal")
         val e : SharedPreferences.Editor = prefs.edit()
-        e.putInt("preferences_key_smalltime" , Cal)
+        e.putInt(getString(R.string.preferences_key_smalltime), Cal)
         e.commit()
     }
     //戻るボタンを押すと今いるviewを削除する

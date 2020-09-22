@@ -159,10 +159,10 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
         val taskSec: Int = prefs.getInt(getString(R.string.preferences_key_smalltime),0)
         Log.e("TAG","タスク所要時間の初期値は$taskSec")
 
-        val memo2 : Int = prefs.getInt(getString(R.string.preferences_key2),0)//総日数の値を取得
-        val times =memo2/3 //総日数が、3日更新されるごとに、強度を上げる場合
+        val totalday : Int = prefs.getInt("preferences_key2",0)//総日数の値を取得
+        val times =totalday/2 //総日数が、2日更新されるごとに、強度を上げる場合。（totalday=1なら、1/2で、times=0となる）
 
-        if(times!=0) {
+        if(times!=0) {//　　　割り算の演算子は整数までしか計算しないので、少数点以下は無視して出力される。
             val A = taskSec * times
             taskSec + A
             Log.e("TAG","現在のタスク所要時間は$taskSec")
