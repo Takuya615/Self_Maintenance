@@ -7,6 +7,7 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 
 import android.graphics.Color
+import android.graphics.SurfaceTexture
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -14,6 +15,7 @@ import android.os.Handler
 import android.util.Log
 import android.view.MotionEvent
 import android.view.TextureView
+import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.camera.core.*
@@ -23,6 +25,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.UploadTask
 import com.google.firebase.storage.ktx.storage
 import jp.tsumura.takuya.self_maintenance.R
 import kotlinx.android.synthetic.main.activity_camera_x.*
@@ -40,6 +43,7 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
     private lateinit var videoCapture: VideoCapture
     private lateinit var prefs:SharedPreferences
 
+    private var downloadUri: UploadTask.TaskSnapshot?=null
     private var mTimer: Timer? = null
     private var mTimerSec:Int = 0
     private var mHandler = Handler()
@@ -74,16 +78,36 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
             if (event.action == MotionEvent.ACTION_DOWN) {
                 if(flag){
                     flag = false
-                    captureButton.setBackgroundColor(Color.RED)
-                    backView.setBackgroundColor(Color.GRAY)
+                    captureButton.setImageResource(R.drawable.ic_stop)
+                    captureButton.setBackgroundColor(Color.WHITE)
+                    backView.setBackgroundColor(Color.WHITE)
                     TimeRecorder()
 
                     val file = File(externalMediaDirs.first(),
                         "${System.currentTimeMillis()}.mp4")
-                    Firebase().WriteToRealtime(this,file)//Uriと日付を保存する
+
                     videoCapture.startRecording(file,object:VideoCapture.OnVideoSavedListener{
                         override fun onVideoSaved(file: File?) {
-                            Firebase().SaveVideoToStorage(file)
+                            val storage = Firebase.storage
+                            val storageRef = storage.reference
+                            val photoRef = storageRef.child("images/${System.currentTimeMillis()}.mp4")
+                            val movieUri = Uri.fromFile(file)
+                            val uploadTask = photoRef.putFile(movieUri)
+                            // Register observers to listen for when the download is done or if it fails
+                            uploadTask.addOnFailureListener {
+                                Log.e("TAG","ストレージへ保存失敗")
+                            }.addOnSuccessListener {
+                                Log.e("TAG","ストレージへ保存成功")
+                            }.addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
+                                    downloadUri = task.result
+                                } else {
+                                    Log.e("TAG","URIの生成に失敗")
+                                }
+                            }
+                            val StrURI = downloadUri.toString()
+                            Firebase().WriteToRealtime(StrURI)//Uriと日付を保存する
+
                         }
                         override fun onError(useCaseError: VideoCapture.UseCaseError?, message: String?, cause: Throwable?) {
                             Log.e(tag, "Video Error: $message")
@@ -92,7 +116,6 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
                 }else if(flag==false){
                     flag = true
                     mTimer!!.cancel()
-                    captureButton.setBackgroundColor(Color.RED)
                     videoCapture.stopRecording()
                     Log.e(tag, "録画停止")
                     CameraDialog(this,mTimerSec).showDialog()
@@ -142,7 +165,11 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
         val preview = Preview(previewConfig)
 
         preview.setOnPreviewOutputUpdateListener {
-            viewFinder.surfaceTexture = it.surfaceTexture
+            val parent = viewFinder.parent as ViewGroup
+            parent.removeView(viewFinder)
+            parent.addView(viewFinder, 0)
+            val surfaceTexture: SurfaceTexture = it.surfaceTexture
+            viewFinder.setSurfaceTexture(surfaceTexture)
         }
         //   Create a configuration object for the video use case
         val videoCaptureConfig = VideoCaptureConfig.Builder().apply {
@@ -180,8 +207,8 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
                 mHandler.post {
                     timer.text = String.format("%02d:%02d",minite,seconds)
                     if(mTimerSec >= taskSec){
-                        backView.setBackgroundColor(Color.BLUE)
-                        captureButton.setBackgroundColor(Color.BLUE)
+                        backView.setBackgroundColor(Color.GREEN)
+                        captureButton.setBackgroundColor(Color.GREEN)
                     }
                 }
             }
