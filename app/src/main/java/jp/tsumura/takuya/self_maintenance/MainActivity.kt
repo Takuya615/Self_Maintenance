@@ -10,10 +10,12 @@ import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.fragment.app.*
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import jp.tsumura.takuya.self_maintenance.ForCamera.CameraXActivity
+import jp.tsumura.takuya.self_maintenance.TutorialActivity.Companion.showIfNeeded
 import jp.tsumura.takuya.self_maintenance.forGallery.URIlistFragment
 
 class MainActivity : AppCompatActivity() {
@@ -40,6 +42,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
 
+        showIfNeeded(this,savedInstanceState)
+
         pager = findViewById(R.id.pager1)
         val adapter =FragmentsPagerAdapter(this)
         pager.adapter = adapter
@@ -61,8 +65,7 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val intent= Intent(this, GoalSettingActivity::class.java)
         when (item.itemId) {
-
-            R.id.action_settings -> Log.e("TAG","設定を押しました")
+            R.id.action_settings -> Toast.makeText(applicationContext, "ただいま工事中💦", Toast.LENGTH_LONG).show()
             R.id.action_settings2 ->startActivity(intent)
             else ->Log.e("TAG","設定画面でなにかを押しました")
         }
