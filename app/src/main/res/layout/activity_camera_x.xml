@@ -9,8 +9,8 @@
 
     <TextureView
         android:id="@+id/view_finder1"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="400dp"
+        android:layout_height="400dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -42,5 +42,18 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintVertical_bias="0.02" />
+
+    <ImageButton
+        android:id="@+id/switch_button"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:background="@android:color/transparent"
+        android:scaleType="fitCenter"
+        app:srcCompat="@drawable/ic_switch"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.19"
+        app:layout_constraintBottom_toBottomOf="@+id/capture_button1"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

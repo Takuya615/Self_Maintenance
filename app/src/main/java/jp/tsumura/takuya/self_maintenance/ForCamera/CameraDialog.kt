@@ -6,6 +6,7 @@ import android.content.SharedPreferences
 import android.provider.Settings.Global.getString
 import android.util.Log
 import androidx.appcompat.app.AlertDialog
+import androidx.camera.core.CameraX
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.startActivity
 import com.google.android.material.internal.ContextUtils.getActivity
@@ -139,6 +140,7 @@ class CameraDialog(context: Context,mTimerSec:Int){
             Log.d("UI_PARTS", "肯定ボタン")
             val intent = Intent(mContext,MainActivity::class.java)
             mContext.startActivity(intent)
+            //CameraX.unbindAll()    カメラの再起動時のエラー対策に
         }
         // AlertDialogを作成して表示する
         val alertDialog = alertDialogBuilder.create()

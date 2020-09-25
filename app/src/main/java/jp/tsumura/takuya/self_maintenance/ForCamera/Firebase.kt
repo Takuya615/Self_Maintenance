@@ -15,13 +15,13 @@ import kotlin.collections.HashMap
 class Firebase {
 
 
-    fun WriteToRealtime(uri:String){
+    fun WriteToRealtime(fileName:String){
         val dataBaseReference = FirebaseDatabase.getInstance().reference
         val genreRef = dataBaseReference.child("URIlists")
 
         val data = HashMap<String, String>()
         //val uri = Uri.fromFile(file).toString()
-        data["uri"] = uri//.toString()
+        data["uri"] = fileName
 
         val date= Calendar.getInstance().getTime()
         val dateFormat = SimpleDateFormat("yyyy年MM月dd日HH時mm分")

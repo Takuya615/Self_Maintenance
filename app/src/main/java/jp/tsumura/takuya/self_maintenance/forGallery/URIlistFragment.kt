@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-
 import androidx.fragment.app.Fragment
 import com.google.firebase.database.*
 import jp.tsumura.takuya.self_maintenance.R
@@ -78,9 +77,9 @@ class URIlistFragment : Fragment() {
         listview.setOnItemClickListener { parent, view, position, id ->
             Toast.makeText(requireActivity(), mdateList[position], Toast.LENGTH_SHORT).show()
 
-            val uri = muriList[position]
+            val value = muriList[position]
             val intent = Intent(requireActivity(), GalleryActivity::class.java)
-            intent.putExtra("selectedUri",uri)
+            intent.putExtra("selectedName",value)
             startActivity(intent)
 
         }

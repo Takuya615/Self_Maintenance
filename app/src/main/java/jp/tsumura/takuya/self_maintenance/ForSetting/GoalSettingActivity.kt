@@ -50,12 +50,12 @@ class GoalSettingActivity : AppCompatActivity(){
             TimeCal()
         }
     }
-
+//それぞれの入力内容をFirebaseに保存する
     fun DataSet(){
         val mygoalmsg = Edittext1.text.toString()
         val taskmsg = Edittext2.text.toString()
-        val goaltime = Edittext3.text.toString()
-        val smalltime =Edittext4.text.toString()
+        val goaltime = Edittext3.text.toString()//目標時間（じぶんで決めるとモチベーションに？）
+        val smalltime =Edittext4.text.toString()//パーセンテージ
         val goals = db.collection("Goals")
 
         if(goaltime == null){
@@ -75,6 +75,7 @@ class GoalSettingActivity : AppCompatActivity(){
             .addOnSuccessListener { Log.e("TAG", "ドキュメント作成・上書き成功") }
             .addOnFailureListener { e -> Log.e("TAG", "ドキュメントの作成・上書きエラー", e) }
     }
+    //
     fun TimeCal(){
         val goaltime =Edittext3.text.toString().toInt()
         val pasentage = Edittext4.text.toString().toInt()

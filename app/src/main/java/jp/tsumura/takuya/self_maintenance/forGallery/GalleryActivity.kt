@@ -8,34 +8,54 @@ import android.util.Log
 import android.view.MenuItem
 import android.widget.ImageButton
 import android.widget.VideoView
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import jp.tsumura.takuya.self_maintenance.R
+import java.net.URL
 
 
 class GalleryActivity : AppCompatActivity() {
-
+    private lateinit var uri: Uri
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_gallery)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        val replay = findViewById<ImageButton>(R.id.replay_button)
+        val play = findViewById<ImageButton>(R.id.play_button)
 
+        //リストから指定されたfileNameを取得する
         val videoView: VideoView =findViewById(R.id.myvideoview)
-        val value = intent.getStringExtra("selectedUri")
-        Log.e("TAG","指定されたUriは$value")
+        val value = intent.getStringExtra("selectedName")
+        Log.e("TAG","ギャラリで指定されたURIは$value")
         val convertedUri = Uri.parse(value)
         try {
             videoView.setVideoURI(convertedUri)
+            videoView.start()
+
         }catch(e:Exception){
             Log.e("TAG","URIから動画の取り出しに失敗")
         }
+        //取得したfileNameで、Storageから、そのURIを取得
+        /*
+        val storageRef = Firebase.storage.reference
+        storageRef.child("images/$value").downloadUrl.addOnSuccessListener {
+            uri = it
+            Log.e("TAG","URIは$uri")
+            //ここに追加してた
 
-        val replay = findViewById<ImageButton>(R.id.replay_button)
+        }.addOnFailureListener {
+            Log.e("TAG","URIの取得に失敗")
+        }
+         */
+
+
         replay.setOnClickListener{
             videoView.seekTo(0)
             videoView.start()
         }
 
-        val play = findViewById<ImageButton>(R.id.play_button)
+
         play.setOnClickListener {
             if (videoView.isPlaying()) {
                 // 動画を一時停止する

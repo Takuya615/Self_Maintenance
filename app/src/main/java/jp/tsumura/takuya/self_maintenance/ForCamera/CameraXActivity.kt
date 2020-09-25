@@ -12,7 +12,10 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.util.DisplayMetrics
 import android.util.Log
+import android.util.Rational
+import android.util.Size
 import android.view.MotionEvent
 import android.view.TextureView
 import android.view.ViewGroup
@@ -23,6 +26,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
+import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.UploadTask
@@ -30,6 +34,7 @@ import com.google.firebase.storage.ktx.storage
 import jp.tsumura.takuya.self_maintenance.R
 import kotlinx.android.synthetic.main.activity_camera_x.*
 import java.io.File
+import java.io.FileInputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -39,17 +44,19 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
 
     private lateinit var viewFinder: TextureView
     private lateinit var captureButton: ImageButton
+    private lateinit var switchButton:ImageButton
     private lateinit var backView: ConstraintLayout
     private lateinit var videoCapture: VideoCapture
     private lateinit var prefs:SharedPreferences
 
-    private var downloadUri: UploadTask.TaskSnapshot?=null
     private var mTimer: Timer? = null
     private var mTimerSec:Int = 0
     private var mHandler = Handler()
     private val mFormat = StringBuilder()
     private val formatter = Formatter(mFormat, Locale.getDefault())
     private var dataformat = SimpleDateFormat("mm:SS", Locale.JAPAN)
+
+    private var lensFacing = CameraX.LensFacing.BACK
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,6 +67,7 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
         viewFinder = findViewById(R.id.view_finder1)
         captureButton = findViewById(R.id.capture_button1)
         backView = findViewById(R.id.backview)
+        switchButton = findViewById(R.id.switch_button)
 
         // Request camera permissions
         if (allPermissionsGranted()) {
@@ -70,6 +78,21 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
             ActivityCompat.requestPermissions(
                 this, CameraXActivity.REQUIRED_PERMISSIONS, CameraXActivity.REQUEST_CODE_PERMISSIONS
             )
+        }
+
+        switchButton.setOnClickListener{
+            lensFacing = if (CameraX.LensFacing.FRONT == lensFacing) {
+                CameraX.LensFacing.BACK
+            } else {
+                CameraX.LensFacing.FRONT
+            }
+            try {
+                // Only bind use cases if we can query a camera with this orientation
+                CameraX.getCameraWithLensFacing(lensFacing)
+                startCamera()
+            } catch (exc: Exception) {
+                Log.e("TAG","カメラの切り替えに失敗")
+            }
         }
 
         //撮影開始ボタン、2度目のクリックで停止後、すぐにFirebaseへ保存される。
@@ -85,9 +108,9 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
 
                     val file = File(externalMediaDirs.first(),
                         "${System.currentTimeMillis()}.mp4")
-
                     videoCapture.startRecording(file,object:VideoCapture.OnVideoSavedListener{
                         override fun onVideoSaved(file: File?) {
+
                             val storage = Firebase.storage
                             val storageRef = storage.reference
                             val photoRef = storageRef.child("images/${System.currentTimeMillis()}.mp4")
@@ -98,17 +121,26 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
                                 Log.e("TAG","ストレージへ保存失敗")
                             }.addOnSuccessListener {
                                 Log.e("TAG","ストレージへ保存成功")
+                            }.continueWithTask { task ->
+                                if (!task.isSuccessful) {
+                                    task.exception?.let {
+                                        throw it
+                                    }
+                                }
+                                photoRef.downloadUrl
                             }.addOnCompleteListener { task ->
                                 if (task.isSuccessful) {
-                                    downloadUri = task.result
+                                    val downloadUri = task.result
+                                    Firebase().WriteToRealtime(downloadUri.toString())//Uriと日付を保存する
+                                    Log.e("TAG","URLの取得成功")
                                 } else {
-                                    Log.e("TAG","URIの生成に失敗")
+                                    Log.e("TAG","URLの取得に失敗")
                                 }
                             }
-                            val StrURI = downloadUri.toString()
-                            Firebase().WriteToRealtime(StrURI)//Uriと日付を保存する
+
 
                         }
+
                         override fun onError(useCaseError: VideoCapture.UseCaseError?, message: String?, cause: Throwable?) {
                             Log.e(tag, "Video Error: $message")
                         }
@@ -118,6 +150,7 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
                     mTimer!!.cancel()
                     videoCapture.stopRecording()
                     Log.e(tag, "録画停止")
+
                     CameraDialog(this,mTimerSec).showDialog()
                 }
             }
@@ -159,6 +192,9 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
 //ここからカメラ
 
     private fun startCamera(){
+        // Make sure that there are no other use cases bound to CameraX
+        CameraX.unbindAll()
+
         // Create configuration object for the viewfinder use case
         val previewConfig = PreviewConfig.Builder().build()
 // Build the viewfinder use case
