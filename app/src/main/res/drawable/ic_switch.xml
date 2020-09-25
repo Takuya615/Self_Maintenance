@@ -21,6 +21,8 @@
     android:height="72dp"
     android:viewportWidth="46.0"
     android:viewportHeight="46.0"
+    android:tint="#000000"
+    android:alpha="0.8"
     tools:ignore="VectorRaster">
     <path android:fillAlpha="0" android:fillColor="#D8D8D8"
         android:fillType="evenOdd" android:pathData="M-4,-4h54v54h-54z"

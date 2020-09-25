@@ -87,7 +87,7 @@ class GoalSettingActivity : AppCompatActivity(){
         }else{
             textView7.text = "%)"+ "$minite"+"分"+"$seconds"+"秒"
         }
-        Log.e("TAG","1日に行う秒数は $Cal")
+        Log.e("TAG","1日に行う秒数（タスク時間）は $Cal")
         val e : SharedPreferences.Editor = prefs.edit()
         e.putInt(getString(R.string.preferences_key_smalltime), Cal)
         e.commit()

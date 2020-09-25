@@ -6,11 +6,6 @@ import android.content.SharedPreferences
 import android.provider.Settings.Global.getString
 import android.util.Log
 import androidx.appcompat.app.AlertDialog
-import androidx.camera.core.CameraX
-import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.startActivity
-import com.google.android.material.internal.ContextUtils.getActivity
-import com.google.firebase.firestore.FirebaseFirestore
 import jp.tsumura.takuya.self_maintenance.MainActivity
 import jp.tsumura.takuya.self_maintenance.R
 import java.text.SimpleDateFormat
@@ -20,7 +15,7 @@ class CameraDialog(context: Context,mTimerSec:Int){
 
     private var mTimerSec:Int = mTimerSec
     private var mContext: Context = context
-    private var prefs = mContext.getSharedPreferences("preferences_key_sample", Context.MODE_PRIVATE)
+    private var prefs = mContext.getSharedPreferences( "preferences_key_sample",Context.MODE_PRIVATE)
 
     //ダイアログ
     fun showDialog(){
@@ -39,6 +34,9 @@ class CameraDialog(context: Context,mTimerSec:Int){
         Log.e("TAG","今日は、$IntDateOnlyDay　日")
         Log.e("TAG","設定日は、$memodayOnlyDay 日")
 
+        val numb : Int = prefs.getInt("preferences_key_rev",0)//復活回数
+        var revival = 0//                                        復活回数
+
         if(IntDateOnlyDay - memodayOnlyDay == 1){
             Log.e("TAG","連続日数更新！")
             ncd = memo3 +1
@@ -51,23 +49,14 @@ class CameraDialog(context: Context,mTimerSec:Int){
         }else{
             Log.e("TAG","連続日数リセット")
             ncd = 0
+            revival = numb + 1//                                 　復活回数
+            val j : SharedPreferences.Editor = prefs.edit()//　　　　復活回数
+            j.putInt("preferences_key_rev", revival)//　　　　　　　　　　復活回数
+            j.commit()// 　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　復活回数
         }
-
         val g : SharedPreferences.Editor = prefs.edit()
         g.putInt("preferences_key3", ncd)
         g.commit()
-
-        //復活数
-        val numb : Int = prefs.getInt("preferences_key_rev",0)
-        var revival = 0
-        if(ncd==1){
-            if( IntDateOnlyDay != memodayOnlyDay){
-                revival = numb + 1
-                val j : SharedPreferences.Editor = prefs.edit()
-                j.putInt("preferences_key_rev", revival)
-                j.commit()
-            }
-        }
 
         //継続日数の最長値を保存する
         val MAX : Int = prefs.getInt("preferences_key_MAX",0)
@@ -91,7 +80,7 @@ class CameraDialog(context: Context,mTimerSec:Int){
             Dailytask = false
         }else{
             val e : SharedPreferences.Editor = preference.edit()
-            e.putInt("TEST" , IntDate)//　　　　　　　　　　　　　　　　　　　　　ここで日付の更新をしている
+            e.putInt("TEST" , IntDate)//　　　　　　　　　　　　　　　　　　　　　　　　設定日の更新
             e.commit()
             Dailytask = true
         }
@@ -120,21 +109,13 @@ class CameraDialog(context: Context,mTimerSec:Int){
 
         Log.e("TAG","参照に保存してる秒数$newnum")
 
-
-        //復活数の調整
-        var editrevaival = revival - 1
-        if(editrevaival == -1){
-            editrevaival = 0
-        }
         //ダイアログに記録を表示
-        val list = arrayOf("連続活動日数　　$ncd","復活回数　　$editrevaival","総活動日数　　$daycounter","総活動時間　　$totaltime")
+        val list = arrayOf("連続活動日数　　$ncd","復活回数　　$revival","総活動日数　　$daycounter","総活動時間　　$totaltime")
         val alertDialogBuilder = AlertDialog.Builder(mContext)
         alertDialogBuilder.setTitle("活動の記録")
         alertDialogBuilder.setItems(list){ dialog, which ->
             Log.e("TAG", "${list[which]} が選択されました")
         }
-
-
         // 肯定ボタンに表示される文字列、押したときのリスナーを設定する
         alertDialogBuilder.setPositiveButton("メイン画面へ"){dialog, which ->
             Log.d("UI_PARTS", "肯定ボタン")

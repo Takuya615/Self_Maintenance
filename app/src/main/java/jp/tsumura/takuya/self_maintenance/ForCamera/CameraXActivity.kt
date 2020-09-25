@@ -47,7 +47,6 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
     private lateinit var switchButton:ImageButton
     private lateinit var backView: ConstraintLayout
     private lateinit var videoCapture: VideoCapture
-    private lateinit var prefs:SharedPreferences
 
     private var mTimer: Timer? = null
     private var mTimerSec:Int = 0
@@ -63,7 +62,6 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_camera_x)
 
-        prefs = getSharedPreferences(getString(R.string.preferences_key_sample), Context.MODE_PRIVATE)
         viewFinder = findViewById(R.id.view_finder1)
         captureButton = findViewById(R.id.capture_button1)
         backView = findViewById(R.id.backview)
@@ -137,8 +135,6 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
                                     Log.e("TAG","URLの取得に失敗")
                                 }
                             }
-
-
                         }
 
                         override fun onError(useCaseError: VideoCapture.UseCaseError?, message: String?, cause: Throwable?) {
@@ -195,10 +191,19 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
         // Make sure that there are no other use cases bound to CameraX
         CameraX.unbindAll()
 
+        val metrics = DisplayMetrics().also { viewFinder.display.getRealMetrics(it) }
+        val screenSize = Size(metrics.widthPixels, metrics.heightPixels)
+        val screenAspectRatio = Rational(metrics.widthPixels, metrics.heightPixels)
         // Create configuration object for the viewfinder use case
-        val previewConfig = PreviewConfig.Builder().build()
+        val previewConfig = PreviewConfig.Builder().apply {
+            //...
+            setTargetResolution(screenSize)
+            setTargetAspectRatio(screenAspectRatio)
+            setTargetRotation(viewFinder.display.rotation)
+        }.build()
+        val preview = AutoFitPreviewBuilder.build(previewConfig, viewFinder)
 // Build the viewfinder use case
-        val preview = Preview(previewConfig)
+        //val preview = Preview(previewConfig)
 
         preview.setOnPreviewOutputUpdateListener {
             val parent = viewFinder.parent as ViewGroup
@@ -217,8 +222,9 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
         CameraX.bindToLifecycle(this, preview,videoCapture)
     }
 
-    //ここからタイマー用
+    //ここからタイマー用　　
     private fun TimeRecorder(){
+        val prefs = getSharedPreferences("preferences_key_sample", Context.MODE_PRIVATE)
         val taskSec: Int = prefs.getInt(getString(R.string.preferences_key_smalltime),0)
         Log.e("TAG","タスク所要時間の初期値は$taskSec")
 

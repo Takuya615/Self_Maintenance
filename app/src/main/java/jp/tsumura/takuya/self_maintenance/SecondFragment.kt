@@ -46,12 +46,11 @@ class SecondFragment : Fragment() {
         val tDtext =view.findViewById<TextView>(R.id.textView2_4)
         val tTtext =view.findViewById<TextView>(R.id.textView2_5)
 
+        //Log.e("TAG","復活回数$revival")
         
         ncdtext.text = "$ncd 日"
         MAXtext.text = "$MAX 日"
-        var editrevaival = revival - 1//復活数の調整
-        if(editrevaival == -1){ editrevaival = 0 }
-        revtext.text = "$editrevaival 回"
+        revtext.text = "$revival 回"
         tDtext.text = "$totalday 日"
         val seconds =TT%60;
         val minite =(TT/60)%60;

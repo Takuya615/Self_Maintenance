@@ -20,7 +20,9 @@ class FirstFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        val prefs = requireActivity().getSharedPreferences("preferences_key_sample", Context.MODE_PRIVATE)
+        val taskSec: Int = prefs.getInt(getString(R.string.preferences_key_smalltime),0)
+        Log.e("TAG","タスク所要時間が$taskSec")
     }
 
     override fun onCreateView(
