@@ -31,17 +31,17 @@ class TutorialActivity : WelcomeActivity() {
     override fun configuration(): WelcomeConfiguration {
         return WelcomeConfiguration.Builder(this)
             .defaultBackgroundColor(BackgroundColor(Color.RED))
-            .page(TitlePage(R.mipmap.ic_launcher, "Title"))
+
             .page(BasicPage(
                 android.R.drawable.ic_delete,
-                "Basic page 1",
-                "hogehoge")
+                "ようこそ！！",
+                "このアプリは、望ましい行動を習慣的に持続させやすくなるように、作られた習慣化アプリです。")
                 .background(BackgroundColor(Color.GREEN)))
             .page(BasicPage(
                 android.R.drawable.ic_btn_speak_now,
-                "Basic page 2",
-                "fugafuga")
-                .background(BackgroundColor(Color.BLUE))
+                "主な活動",
+                "自分の行動を毎日少しずつ映像として、記録していきましょう！")
+                .background(BackgroundColor(Color.GREEN))
             )
             .swipeToDismiss(true)
             .build()

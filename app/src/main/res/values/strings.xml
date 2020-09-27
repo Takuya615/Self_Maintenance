@@ -33,4 +33,14 @@
     <string name="delete_button_alt">Delete</string>
     <string name="delete_dialog">Delete current photo?</string>
     <string name="delete_title">Confirm</string>
+    <string name="Tutorial">
+        ここでは習慣にしたいタスクの所要時間を
+        設定できます。\n
+        最高時間➡最終的に1日に行いたい所要時間\n
+        最低時間➡死ぬほど疲れた日でもできる時間\n
+        をそれぞれ設定してください。\n
+        はじめは最低時間で、徐々に最高時間へと時間を伸ばしていきます。\n
+        設定したら、さっそく「撮影」してみましょう。
+
+    </string>
 </resources>

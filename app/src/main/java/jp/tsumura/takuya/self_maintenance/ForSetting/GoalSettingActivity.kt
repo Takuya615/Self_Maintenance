@@ -1,6 +1,7 @@
 package jp.tsumura.takuya.self_maintenance.ForSetting
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -12,8 +13,12 @@ import android.widget.EditText
 import android.widget.Toast
 
 import com.google.firebase.firestore.FirebaseFirestore
+import jp.tsumura.takuya.self_maintenance.MainActivity
 import jp.tsumura.takuya.self_maintenance.R
+import jp.tsumura.takuya.self_maintenance.TutorialCoachMarkActivity
 import kotlinx.android.synthetic.main.activity_goal_setting.*
+import java.util.*
+import kotlin.concurrent.schedule
 
 class GoalSettingActivity : AppCompatActivity(){
 
@@ -39,16 +44,31 @@ class GoalSettingActivity : AppCompatActivity(){
             Edittext2.setText(goal?.task)
             Edittext3.setText(goal?.goaltime)
             Edittext4.setText(goal?.smalltime)
+
             TimeCal()
 
         }.addOnFailureListener { e -> Log.e("TAG", "データ取得に失敗", e) }
 
         //設定ボタンを押したら、その時書いてある値をそのまま保存する。
-        val SetButton=findViewById<Button>(R.id.button)
-        SetButton.setOnClickListener(){
+        val Button=findViewById<Button>(R.id.button)
+        Button.setOnClickListener(){
             DataSet()
             TimeCal()
         }
+        //コーチマークの表示
+        val Coach = TutorialCoachMarkActivity(this)
+        Coach.CoachMark2(this,this)
+
+        val SetButton=findViewById<Button>(R.id.setbutton)
+        SetButton.setOnClickListener(){
+            val intent = Intent(this,MainActivity::class.java)
+            startActivity(intent)
+            //Timer().schedule(1000){
+            //    Coach.CoachMark3(MainActivity(),MainActivity())
+            //}
+
+        }
+
     }
 //それぞれの入力内容をFirebaseに保存する
     fun DataSet(){
@@ -58,10 +78,10 @@ class GoalSettingActivity : AppCompatActivity(){
         val smalltime =Edittext4.text.toString()//パーセンテージ
         val goals = db.collection("Goals")
 
-        if(goaltime == null){
+        if(goaltime.isEmpty()){
             Toast.makeText(this,"目標活動時間を入力してください",Toast.LENGTH_LONG).show()
         }
-        if(smalltime == null){
+        if(smalltime.isEmpty()){
             Toast.makeText(this,"一日にこなすタスク時間を決めてください",Toast.LENGTH_LONG).show()
         }
 
@@ -77,20 +97,26 @@ class GoalSettingActivity : AppCompatActivity(){
     }
     //
     fun TimeCal(){
-        val goaltime =Edittext3.text.toString().toInt()
-        val pasentage = Edittext4.text.toString().toInt()
-        val Cal =goaltime *60 *pasentage/100
-        val seconds =Cal%60;
-        val minite =(Cal/60)%60;
-        if(Cal < 60){
-            textView7.text = "%)　$seconds　秒"
-        }else{
-            textView7.text = "%)"+ "$minite"+"分"+"$seconds"+"秒"
+
+        val goaltimeA =Edittext3.text.toString()//.toInt()
+        val pasentageA = Edittext4.text.toString()//.toInt()
+        if(goaltimeA.isNotEmpty()&&pasentageA.isNotEmpty()){
+            val goaltime = goaltimeA.toInt()
+            val pasentage = pasentageA.toInt()
+            val Cal =goaltime *60 *pasentage/100
+            val seconds =Cal%60;
+            val minite =(Cal/60)%60;
+            if(Cal < 60){
+                textView7.text = "%)　$seconds　秒"
+            }else{
+                textView7.text = "%)"+ "$minite"+"分"+"$seconds"+"秒"
+            }
+            Log.e("TAG","1日に行う秒数（タスク時間）は $Cal")
+            val e : SharedPreferences.Editor = prefs.edit()
+            e.putInt(getString(R.string.preferences_key_smalltime), Cal)
+            e.commit()
         }
-        Log.e("TAG","1日に行う秒数（タスク時間）は $Cal")
-        val e : SharedPreferences.Editor = prefs.edit()
-        e.putInt(getString(R.string.preferences_key_smalltime), Cal)
-        e.commit()
+
     }
     //戻るボタンを押すと今いるviewを削除する
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {

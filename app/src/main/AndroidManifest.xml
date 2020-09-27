@@ -18,9 +18,10 @@
         android:roundIcon="@drawable/tree_seichou02"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".TutorialCoachMarkActivity"></activity>
         <activity
             android:name=".TutorialActivity"
-            android:theme="@style/WelcomeScreenTheme"></activity>
+            android:theme="@style/WelcomeScreenTheme" />
         <activity
             android:name=".ForCamera.CameraXActivity"
             android:theme="@style/AppTheme.NoActionBar" />
