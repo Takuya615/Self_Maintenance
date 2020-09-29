@@ -1,16 +1,20 @@
 package jp.tsumura.takuya.self_maintenance.forGallery
 
 
+import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.VideoView
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import jp.tsumura.takuya.self_maintenance.MainActivity
 import jp.tsumura.takuya.self_maintenance.R
+import kotlinx.android.synthetic.main.activity_gallery.*
 import java.net.URL
 
 
@@ -23,6 +27,7 @@ class GalleryActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         val replay = findViewById<ImageButton>(R.id.replay_button)
         val play = findViewById<ImageButton>(R.id.play_button)
+        val main = findViewById<Button>(R.id.mainbutton)
 
         //リストから指定されたfileNameを取得する
         val videoView: VideoView =findViewById(R.id.myvideoview)
@@ -66,6 +71,10 @@ class GalleryActivity : AppCompatActivity() {
                 videoView.start()
                 play.setImageResource(R.drawable.ic_pause_button)
             }
+        }
+        main.setOnClickListener{
+            val intent= Intent(this, MainActivity::class.java)
+            startActivity(intent)
         }
     }
     //戻るボタンを押すと今いるviewを削除する

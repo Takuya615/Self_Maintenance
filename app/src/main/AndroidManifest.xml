@@ -18,7 +18,9 @@
         android:roundIcon="@drawable/tree_seichou02"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".TutorialCoachMarkActivity"></activity>
+        <activity android:name=".forGallery.UriListActivity"></activity>
+        <activity android:name=".forGallery.MainActivity" />
+        <activity android:name=".TutorialCoachMarkActivity" />
         <activity
             android:name=".TutorialActivity"
             android:theme="@style/WelcomeScreenTheme" />

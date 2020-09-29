@@ -33,16 +33,24 @@ class TutorialActivity : WelcomeActivity() {
             .defaultBackgroundColor(BackgroundColor(Color.RED))
 
             .page(BasicPage(
-                android.R.drawable.ic_delete,
+                android.R.drawable.ic_btn_speak_now,
                 "ようこそ！！",
                 "このアプリは、望ましい行動を習慣的に持続させやすくなるように、作られた習慣化アプリです。")
-                .background(BackgroundColor(Color.GREEN)))
+                .background(BackgroundColor(Color.GREEN))
+            )
             .page(BasicPage(
                 android.R.drawable.ic_btn_speak_now,
                 "主な活動",
-                "自分の行動を毎日少しずつ映像として、記録していきましょう！")
+                "自分の習慣にしたい行動を毎日少しずつ自撮りし、それを継続することを手伝います。")
                 .background(BackgroundColor(Color.GREEN))
             )
+            .page(BasicPage(
+                android.R.drawable.ic_btn_speak_now,
+                "さあ、始めてみましょう",
+                "さっそく始めてみましょう！！")
+                .background(BackgroundColor(Color.GREEN))
+            )
+
             .swipeToDismiss(true)
             .build()
     }

@@ -5,4 +5,4 @@ import android.text.Editable
 data class Goal (val goal: String="",
                  val task:String="",
                  val goaltime:String="0",
-                 val smalltime:String="0")
+                 )

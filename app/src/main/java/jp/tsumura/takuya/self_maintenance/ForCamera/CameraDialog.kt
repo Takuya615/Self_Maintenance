@@ -8,6 +8,7 @@ import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import jp.tsumura.takuya.self_maintenance.MainActivity
 import jp.tsumura.takuya.self_maintenance.R
+import jp.tsumura.takuya.self_maintenance.forGallery.UriListActivity
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -117,11 +118,13 @@ class CameraDialog(context: Context,mTimerSec:Int){
             Log.e("TAG", "${list[which]} が選択されました")
         }
         // 肯定ボタンに表示される文字列、押したときのリスナーを設定する
-        alertDialogBuilder.setPositiveButton("メイン画面へ"){dialog, which ->
-            Log.d("UI_PARTS", "肯定ボタン")
+        alertDialogBuilder.setPositiveButton("メイン画面"){dialog, which ->
             val intent = Intent(mContext,MainActivity::class.java)
             mContext.startActivity(intent)
-            //CameraX.unbindAll()    カメラの再起動時のエラー対策に
+        }
+        alertDialogBuilder.setNegativeButton("動画リスト"){dialog, which ->
+            val intent = Intent(mContext, UriListActivity::class.java)
+            mContext.startActivity(intent)
         }
         // AlertDialogを作成して表示する
         val alertDialog = alertDialogBuilder.create()

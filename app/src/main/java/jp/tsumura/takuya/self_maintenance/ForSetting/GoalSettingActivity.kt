@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.text.InputType
 import android.util.Log
 import android.view.MenuItem
@@ -13,6 +14,7 @@ import android.widget.EditText
 import android.widget.Toast
 
 import com.google.firebase.firestore.FirebaseFirestore
+import jp.tsumura.takuya.self_maintenance.ForCamera.CameraXActivity
 import jp.tsumura.takuya.self_maintenance.MainActivity
 import jp.tsumura.takuya.self_maintenance.R
 import jp.tsumura.takuya.self_maintenance.TutorialCoachMarkActivity
@@ -32,9 +34,7 @@ class GoalSettingActivity : AppCompatActivity(){
 
         prefs = getSharedPreferences("preferences_key_sample", Context.MODE_PRIVATE)
         val et3:EditText = findViewById(R.id.Edittext3)
-        val et4:EditText = findViewById(R.id.Edittext4)
         et3.setInputType( InputType.TYPE_CLASS_NUMBER)
-        et4.setInputType( InputType.TYPE_CLASS_NUMBER)
 
         //このViewを開くと同時に、データを取得。　データがあれば各テキストに反映する。
         val docRef = db.collection("Goals").document("goals")
@@ -43,7 +43,6 @@ class GoalSettingActivity : AppCompatActivity(){
             Edittext1.setText(goal?.goal)
             Edittext2.setText(goal?.task)
             Edittext3.setText(goal?.goaltime)
-            Edittext4.setText(goal?.smalltime)
 
             TimeCal()
 
@@ -55,19 +54,17 @@ class GoalSettingActivity : AppCompatActivity(){
             DataSet()
             TimeCal()
         }
-        //コーチマークの表示
-        val Coach = TutorialCoachMarkActivity(this)
-        Coach.CoachMark2(this,this)
-
         val SetButton=findViewById<Button>(R.id.setbutton)
         SetButton.setOnClickListener(){
-            val intent = Intent(this,MainActivity::class.java)
+            val intent = Intent(this, CameraXActivity::class.java)
             startActivity(intent)
-            //Timer().schedule(1000){
-            //    Coach.CoachMark3(MainActivity(),MainActivity())
-            //}
 
         }
+
+        Handler().postDelayed({
+            val Coach = TutorialCoachMarkActivity(this)
+            Coach.CoachMark2(this,this)
+        }, 1000)
 
     }
 //それぞれの入力内容をFirebaseに保存する
@@ -75,21 +72,18 @@ class GoalSettingActivity : AppCompatActivity(){
         val mygoalmsg = Edittext1.text.toString()
         val taskmsg = Edittext2.text.toString()
         val goaltime = Edittext3.text.toString()//目標時間（じぶんで決めるとモチベーションに？）
-        val smalltime =Edittext4.text.toString()//パーセンテージ
         val goals = db.collection("Goals")
 
         if(goaltime.isEmpty()){
             Toast.makeText(this,"目標活動時間を入力してください",Toast.LENGTH_LONG).show()
         }
-        if(smalltime.isEmpty()){
-            Toast.makeText(this,"一日にこなすタスク時間を決めてください",Toast.LENGTH_LONG).show()
-        }
+
 
         val goal = Goal(
             mygoalmsg,
             taskmsg,
             goaltime,
-            smalltime
+
         )
         goals.document("goals").set(goal)
             .addOnSuccessListener { Log.e("TAG", "ドキュメント作成・上書き成功") }
@@ -99,17 +93,15 @@ class GoalSettingActivity : AppCompatActivity(){
     fun TimeCal(){
 
         val goaltimeA =Edittext3.text.toString()//.toInt()
-        val pasentageA = Edittext4.text.toString()//.toInt()
-        if(goaltimeA.isNotEmpty()&&pasentageA.isNotEmpty()){
+        if(goaltimeA.isNotEmpty()){
             val goaltime = goaltimeA.toInt()
-            val pasentage = pasentageA.toInt()
-            val Cal =goaltime *60 *pasentage/100
+            val Cal =goaltime *60 *3/100
             val seconds =Cal%60;
             val minite =(Cal/60)%60;
             if(Cal < 60){
-                textView7.text = "%)　$seconds　秒"
+                textView6.text = "今日は　$seconds　秒間やりましょう"
             }else{
-                textView7.text = "%)"+ "$minite"+"分"+"$seconds"+"秒"
+                textView6.text = "今日は$minite 分 $seconds 秒間やりましょう"
             }
             Log.e("TAG","1日に行う秒数（タスク時間）は $Cal")
             val e : SharedPreferences.Editor = prefs.edit()
@@ -126,5 +118,11 @@ class GoalSettingActivity : AppCompatActivity(){
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        //Log.d("MainActivity", "onDestroy state:"+lifecycle.currentState)
     }
 }

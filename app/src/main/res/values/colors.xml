@@ -2,6 +2,6 @@
 <resources>
     <color name="colorPrimary">#4689FF</color>
     <color name="colorPrimaryDark">#000000</color>
-    <color name="colorAccent">#00EE00</color>
-    <color name="colorCoachMark">#99000000</color>
+    <color name="colorAccent">#4689FF</color>
+    <color name="colorCoachMark">#C0000000</color>
 </resources>

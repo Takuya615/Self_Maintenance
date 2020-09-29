@@ -6,6 +6,7 @@ import jp.tsumura.takuya.self_maintenance.ForSetting.GoalSettingActivity
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
@@ -14,6 +15,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.animation.DecelerateInterpolator
+import android.widget.Button
 import android.widget.Toast
 import androidx.fragment.app.*
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -26,10 +28,11 @@ import jp.tsumura.takuya.self_maintenance.ForCamera.CameraXActivity
 import jp.tsumura.takuya.self_maintenance.TutorialActivity.Companion.showForcibly
 import jp.tsumura.takuya.self_maintenance.TutorialActivity.Companion.showIfNeeded
 import jp.tsumura.takuya.self_maintenance.forGallery.URIlistFragment
+import jp.tsumura.takuya.self_maintenance.forGallery.UriListActivity
+import kotlinx.android.synthetic.main.content_main.*
 
 class MainActivity : AppCompatActivity() {
     private lateinit var pager : ViewPager2
-
 
 
     inner class FragmentsPagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
@@ -52,29 +55,24 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
 
-
+        progressbar.visibility = android.widget.ProgressBar.INVISIBLE
+        //showIfNeeded(this, savedInstanceState)//全画面のチュートリアル(ウォークスルー)
 
         pager = findViewById(R.id.pager1)
         val adapter =FragmentsPagerAdapter(this)
         pager.adapter = adapter
 
         findViewById<FloatingActionButton>(R.id.fab).setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
+            progressbar.visibility = android.widget.ProgressBar.VISIBLE
             val intent= Intent(this, CameraXActivity::class.java)
             startActivity(intent)
         }
-        val Coach = TutorialCoachMarkActivity(this)
-        Coach.CoachMark1(this,this)
 
 
-
-//showForcibly(this)//全画面のチュートリアル(ウォークスルー)
-
-
-
-
-
+        Handler().postDelayed({
+            val Coach = TutorialCoachMarkActivity(this)
+            Coach.CoachMark1(this,this)
+        }, 1000)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -92,5 +90,4 @@ class MainActivity : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
-
 }
