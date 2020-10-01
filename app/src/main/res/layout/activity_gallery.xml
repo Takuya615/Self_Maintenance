@@ -10,64 +10,39 @@
 
     <VideoView
     android:id="@+id/myvideoview"
-    android:layout_height="600dp"
+    android:layout_height="550dp"
     android:layout_width="400dp"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintHorizontal_bias="0.5"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintVertical_bias="0.3"
-    >
-</VideoView>
+    app:layout_constraintVertical_bias="0.5"
+    />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/cutout_safe_area"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <Button
+        android:id="@+id/mainbutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="メイン画面"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.98"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.02"/>
 
-        <ImageButton
-            android:id="@+id/replay_button"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:contentDescription="@string/back_button_alt"
-            android:scaleType="fitCenter"
-            android:background="@android:color/transparent"
-            app:srcCompat="@drawable/ic_replay_button"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/play_button"
-            app:layout_constraintHorizontal_bias="0.6"
-            app:layout_constraintBottom_toBottomOf="@id/play_button"
-            />
+    <ProgressBar
+        android:id="@+id/progressbar2"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_margin="30dp"
+        android:visibility="gone"
+        style="@android:style/Widget.ProgressBar.Large"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
-
-        <ImageButton
-            android:id="@+id/play_button"
-            android:layout_width="90dp"
-            android:layout_height="90dp"
-            android:contentDescription="@string/delete_button_alt"
-            android:scaleType="fitCenter"
-            android:background="@android:color/transparent"
-            app:srcCompat="@drawable/ic_play_button"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.9"/>
-
-        <Button
-            android:id="@+id/mainbutton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="メイン画面"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.9"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.89"/>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

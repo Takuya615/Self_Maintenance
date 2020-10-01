@@ -32,6 +32,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.UploadTask
 import com.google.firebase.storage.ktx.storage
 import jp.tsumura.takuya.self_maintenance.R
+import jp.tsumura.takuya.self_maintenance.TutorialCoachMarkActivity
 import kotlinx.android.synthetic.main.activity_camera_x.*
 import java.io.File
 import java.io.FileInputStream
@@ -55,7 +56,7 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
     private val formatter = Formatter(mFormat, Locale.getDefault())
     private var dataformat = SimpleDateFormat("mm:SS", Locale.JAPAN)
 
-    private var lensFacing = CameraX.LensFacing.BACK
+    private var lensFacing = CameraX.LensFacing.FRONT
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,20 +79,7 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
             )
         }
 
-        switchButton.setOnClickListener{
-            lensFacing = if (CameraX.LensFacing.FRONT == lensFacing) {
-                CameraX.LensFacing.BACK
-            } else {
-                CameraX.LensFacing.FRONT
-            }
-            try {
-                // Only bind use cases if we can query a camera with this orientation
-                CameraX.getCameraWithLensFacing(lensFacing)
-                startCamera()
-            } catch (exc: Exception) {
-                Log.e("TAG","カメラの切り替えに失敗")
-            }
-        }
+
 
         //撮影開始ボタン、2度目のクリックで停止後、すぐにFirebaseへ保存される。
         var flag = true
@@ -152,6 +140,27 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
             }
             false
         }
+
+        switchButton.setOnClickListener{
+            lensFacing = if (CameraX.LensFacing.FRONT == lensFacing) {
+                CameraX.LensFacing.BACK
+            } else {
+                CameraX.LensFacing.FRONT
+            }
+            try {
+                // Only bind use cases if we can query a camera with this orientation
+                CameraX.getCameraWithLensFacing(lensFacing)
+                startCamera()
+            } catch (exc: Exception) {
+                Log.e("TAG","カメラの切り替えに失敗")
+            }
+        }
+        
+        //コーチマーク
+        Handler().postDelayed({
+            val Coach = TutorialCoachMarkActivity(this)
+            Coach.CoachMark3(this,this)
+        }, 1000)
     }
 
     //ココからパーミッション系
@@ -196,10 +205,11 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
         val screenAspectRatio = Rational(metrics.widthPixels, metrics.heightPixels)
         // Create configuration object for the viewfinder use case
         val previewConfig = PreviewConfig.Builder().apply {
-            //...
+            setLensFacing(lensFacing)//内・外カメラの使い分け用
             setTargetResolution(screenSize)
             setTargetAspectRatio(screenAspectRatio)
             setTargetRotation(viewFinder.display.rotation)
+
         }.build()
         val preview = AutoFitPreviewBuilder.build(previewConfig, viewFinder)
 // Build the viewfinder use case
@@ -214,6 +224,7 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
         }
         //   Create a configuration object for the video use case
         val videoCaptureConfig = VideoCaptureConfig.Builder().apply {
+            setLensFacing(lensFacing)//内・外カメラの使い分け用
             setTargetRotation(viewFinder.display.rotation)
         }.build()
         videoCapture = VideoCapture(videoCaptureConfig)

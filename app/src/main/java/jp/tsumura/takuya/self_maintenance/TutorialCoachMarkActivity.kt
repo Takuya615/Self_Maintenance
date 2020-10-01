@@ -10,6 +10,7 @@ import android.view.View
 import android.view.animation.DecelerateInterpolator
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.TextView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
@@ -26,9 +27,9 @@ import kotlinx.android.synthetic.main.content_main.*
 class TutorialCoachMarkActivity(context:Context) {
 
     val prefs = context.getSharedPreferences( "preferences_key_sample", Context.MODE_PRIVATE)
-    val Tuto1 : Boolean = false//prefs.getBoolean("Tuto1",false)
-    val Tuto2 : Boolean = false//prefs.getBoolean("Tuto2",false)
-    val Tuto3 : Boolean = false//prefs.getBoolean("Tuto3",false)
+    val Tuto1 : Boolean = prefs.getBoolean("Tuto1",false)
+    val Tuto2 : Boolean = prefs.getBoolean("Tuto2",false)
+    val Tuto3 : Boolean = prefs.getBoolean("Tuto3",false)
     val g : SharedPreferences.Editor = prefs.edit()
 
     //メイン画面でのコーチマーク
@@ -38,7 +39,7 @@ class TutorialCoachMarkActivity(context:Context) {
             g.commit()
 
             val target = activity.findViewById<FloatingActionButton>(R.id.fab)
-            val Target = sreateCircleUI(target,activity,"ビデオカメラ","ココからカメラへ移動しましょう",0f,5f,1300f)
+            val Target = sreateCircleUI(target,activity,"ビデオカメラ","ココからカメラへ移動しましょう",0f,0f,-2f)
 
             // コーチマークを作成
             Spotlight.with(activity)
@@ -86,22 +87,22 @@ class TutorialCoachMarkActivity(context:Context) {
             val target1 = activity.findViewById<EditText>(R.id.Edittext1)
             val Target1 = sreateUI(target1,activity,"毎日つづけたいことを書いてください",
                 "例）　筋トレ",
-                0f,0f,600f)
+                0f,0f,2f)
             val target2 = activity.findViewById<EditText>(R.id.Edittext2)
             val Target2 = sreateUI(target2,activity,"具体的に毎日することを決めてください",
                 "例）\n学校から帰り、カバンをおき、手を洗った後、そのままリビングのヨガマットの上で、腹筋・背筋・腕立て",
-                0f,0f,0f)
+                0f,0f,1f)
             val target3 = activity.findViewById<TextView>(R.id.Edittext3)
             val Target3 = sreateUI(target3,activity,"1日何分くらいできるようになりたいのか？",
-                "例）　６０分",1000f,0f,550f)
+                "例）　６０分",1000f,0f,-3f)
             val target4 = activity.findViewById<Button>(R.id.button)
-            val Target4 = sreateUI(target4,activity,"設定後、ここをタップ","",0f,0f,550f)
+            val Target4 = sreateUI(target4,activity,"設定後、ここをタップ","",0f,0f,-1f)
             val target5 = activity.findViewById<TextView>(R.id.textView6)
             val Target5 = sreateUI(target5,activity,"今日のミッション",
-                "あなたの今日のミッションが表示されます\nこのミッションをクリアするたびに、あなたのレベルが上がっていきます",0f,0f,550f)
+                "あなたの今日のミッションが表示されます\nこのミッションをクリアするたびに、あなたのレベルが上がっていきます",0f,0f,-4f)
             val target6 = activity.findViewById<Button>(R.id.setbutton)
             val Target6 = sreateUI(target6,activity,"始めてみましょう",
-                "すべて設定が終わったら、ここをタップしてください",0f,0f,1200f)
+                "すべて設定が終わったら、ここをタップしてください",0f,0f,-2f)
 
 
             // コーチマークを作成
@@ -138,8 +139,13 @@ class TutorialCoachMarkActivity(context:Context) {
             g.putBoolean("Tuto3", true)
             g.commit()
 
-            val target = activity.findViewById<FloatingActionButton>(R.id.fab)
-            val Target = sreateCircleUI(target,activity,"ビデオカメラ","ココからカメラへ移動しましょう",0f,5f,1300f)
+            val target = activity.findViewById<TextView>(R.id.timer)
+            val Target = sreateUI(target,activity,"ミッションの自撮り",
+                "設定した時間がくるまで、ミッションをし、\nその様子を自撮りしてください\n時間になると画面が緑色に変わります",0f,0f,3f)
+            val target2 = activity.findViewById<ImageButton>(R.id.capture_button1)
+            val Target2 = sreateCircleUI(target2,activity,"ミッションスタート",
+                "自撮り後は「動画リスト」から、撮った動画を確認できます。",0f,0f,-3f)
+
 
             // コーチマークを作成
             Spotlight.with(activity)
@@ -150,13 +156,12 @@ class TutorialCoachMarkActivity(context:Context) {
                 // 表示するスピード
                 .setAnimation(DecelerateInterpolator(1f))
                 // 注目されたいところ（複数指定も可能）
-                .setTargets(Target)//firstTarget,
+                .setTargets(Target,Target2)
                 // 注目されたいところ以外をタップする時に閉じられるかどうか
                 .setClosedOnTouchedOutside(true)
                 // コーチマーク表示される時になんかする
                 .setOnSpotlightStateListener(object : OnSpotlightStateChangedListener {
                     override fun onStarted() {
-                        //Toast.makeText(context, "spotlight is started", Toast.LENGTH_SHORT).show()
                     }
                     override fun onEnded() {
                     }
@@ -170,7 +175,7 @@ class TutorialCoachMarkActivity(context:Context) {
 
 
 
-//引数（ボタン、アクティビティ、タイトル、本文、光X、光Y、文字列Y）　　四角の場合
+//引数（ボタン、アクティビティ、タイトル、本文、光X、光Y、文字列下なら正、文字列上なら負のFloat）　　四角の場合
     fun sreateUI(target:View,activity:Activity,title:String?,scrip:String,plusX:Float,plusY:Float,plusP:Float):SimpleTarget{
 
         val targetLocation = IntArray(2)
@@ -181,20 +186,21 @@ class TutorialCoachMarkActivity(context:Context) {
         val UIwidth = target.width.toFloat() + plusX
         val UIheight = target.height.toFloat() + plusY
 
+        //val OverLayPointY = targetLocation[1] + target.height * plusP
+
         // 注目されたいところを設定する
         val firstTarget = SimpleTarget.Builder(activity)
             .setPoint(targetX,targetY)//ハイライトの位置
             .setShape(RoundedRectangle(UIheight,UIwidth,25f))//ハイライトの大きさ
             .setTitle(title)
             .setDescription(scrip)
-            .setOverlayPoint(50f, 200f + plusP)//文字列の位置
+            .setOverlayPoint(50f,targetLocation[1] + target.height * plusP )//文字列の位置
             .build()
 
         return firstTarget
     }
 
-
-    //引数（ボタン、アクティビティ、タイトル、本文、光円半径、なし、文字列Y）　　四角の場合
+    //引数（ボタン、アクティビティ、タイトル、本文、光円半径、なし、文字列下なら正、文字列上なら負のFloat）　　四角の場合
     fun sreateCircleUI(target:View,activity:Activity,title:String?,scrip:String,plusX:Float,plusY:Float,plusP:Float):SimpleTarget{
 
         val targetLocation = IntArray(2)
@@ -202,15 +208,14 @@ class TutorialCoachMarkActivity(context:Context) {
         val targetX = targetLocation[0] + target.width/2f
         val targetY = targetLocation[1] + target.height/2f
         val targetRadius = 78f + plusX
-
-        // 注目されたいところを設定する
         val firstTarget = SimpleTarget.Builder(activity)
             .setPoint(targetX,targetY)//ハイライトの位置
             .setShape(Circle(targetRadius))//ハイライトの大きさ
             .setTitle(title)
             .setDescription(scrip)
-            .setOverlayPoint(50f, 200f + plusP)//文字列の位置
+            .setOverlayPoint(3f, targetLocation[1] + target.height * plusP)//文字列の位置
             .build()
+
 
         return firstTarget
     }
