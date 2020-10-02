@@ -18,6 +18,7 @@ import android.util.Rational
 import android.util.Size
 import android.view.MotionEvent
 import android.view.TextureView
+import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.Toast
@@ -27,6 +28,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import com.google.android.gms.tasks.OnSuccessListener
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.UploadTask
@@ -34,6 +36,7 @@ import com.google.firebase.storage.ktx.storage
 import jp.tsumura.takuya.self_maintenance.R
 import jp.tsumura.takuya.self_maintenance.TutorialCoachMarkActivity
 import kotlinx.android.synthetic.main.activity_camera_x.*
+import kotlinx.android.synthetic.main.content_main.*
 import java.io.File
 import java.io.FileInputStream
 import java.text.SimpleDateFormat
@@ -48,6 +51,7 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
     private lateinit var switchButton:ImageButton
     private lateinit var backView: ConstraintLayout
     private lateinit var videoCapture: VideoCapture
+    private lateinit var mAuth: FirebaseAuth
 
     private var mTimer: Timer? = null
     private var mTimerSec:Int = 0
@@ -67,6 +71,7 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
         captureButton = findViewById(R.id.capture_button1)
         backView = findViewById(R.id.backview)
         switchButton = findViewById(R.id.switch_button)
+        mAuth = FirebaseAuth.getInstance()
 
         // Request camera permissions
         if (allPermissionsGranted()) {
@@ -87,6 +92,7 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
             if (event.action == MotionEvent.ACTION_DOWN) {
                 if(flag){
                     flag = false
+                    switchButton.visibility = View.INVISIBLE
                     captureButton.setImageResource(R.drawable.ic_stop)
                     captureButton.setBackgroundColor(Color.WHITE)
                     backView.setBackgroundColor(Color.WHITE)
@@ -96,33 +102,36 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
                         "${System.currentTimeMillis()}.mp4")
                     videoCapture.startRecording(file,object:VideoCapture.OnVideoSavedListener{
                         override fun onVideoSaved(file: File?) {
-
-                            val storage = Firebase.storage
-                            val storageRef = storage.reference
-                            val photoRef = storageRef.child("images/${System.currentTimeMillis()}.mp4")
-                            val movieUri = Uri.fromFile(file)
-                            val uploadTask = photoRef.putFile(movieUri)
-                            // Register observers to listen for when the download is done or if it fails
-                            uploadTask.addOnFailureListener {
-                                Log.e("TAG","ストレージへ保存失敗")
-                            }.addOnSuccessListener {
-                                Log.e("TAG","ストレージへ保存成功")
-                            }.continueWithTask { task ->
-                                if (!task.isSuccessful) {
-                                    task.exception?.let {
-                                        throw it
+                            val user = mAuth.currentUser
+                            if(user!=null){//ログインしてたら、画像の保存と、URLが取得できる
+                                val storage = Firebase.storage
+                                val storageRef = storage.reference
+                                val photoRef = storageRef.child("${user.uid}/${System.currentTimeMillis()}.mp4")
+                                val movieUri = Uri.fromFile(file)
+                                val uploadTask = photoRef.putFile(movieUri)
+                                // Register observers to listen for when the download is done or if it fails
+                                uploadTask.addOnFailureListener {
+                                    Log.e("TAG","ストレージへ保存失敗")
+                                }.addOnSuccessListener {
+                                    Log.e("TAG","ストレージへ保存成功")
+                                }.continueWithTask { task ->
+                                    if (!task.isSuccessful) {
+                                        task.exception?.let {
+                                            throw it
+                                        }
+                                    }
+                                    photoRef.downloadUrl
+                                }.addOnCompleteListener { task ->
+                                    if (task.isSuccessful) {
+                                        val downloadUri = task.result
+                                        Firebase().WriteToRealtime(downloadUri.toString())//Uriと日付を保存する
+                                        Log.e("TAG","URLの取得成功")
+                                    } else {
+                                        Log.e("TAG","URLの取得に失敗")
                                     }
                                 }
-                                photoRef.downloadUrl
-                            }.addOnCompleteListener { task ->
-                                if (task.isSuccessful) {
-                                    val downloadUri = task.result
-                                    Firebase().WriteToRealtime(downloadUri.toString())//Uriと日付を保存する
-                                    Log.e("TAG","URLの取得成功")
-                                } else {
-                                    Log.e("TAG","URLの取得に失敗")
-                                }
                             }
+
                         }
 
                         override fun onError(useCaseError: VideoCapture.UseCaseError?, message: String?, cause: Throwable?) {
@@ -134,7 +143,6 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
                     mTimer!!.cancel()
                     videoCapture.stopRecording()
                     Log.e(tag, "録画停止")
-
                     CameraDialog(this,mTimerSec).showDialog()
                 }
             }

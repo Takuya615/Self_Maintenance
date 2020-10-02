@@ -17,6 +17,7 @@ import android.view.View
 import android.view.animation.DecelerateInterpolator
 import android.widget.Button
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.*
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
@@ -63,11 +64,18 @@ class MainActivity : AppCompatActivity() {
         pager.adapter = adapter
 
         findViewById<FloatingActionButton>(R.id.fab).setOnClickListener { view ->
-            progressbar.visibility = android.widget.ProgressBar.VISIBLE
+            //progressbar.visibility = android.widget.ProgressBar.VISIBLE
             val intent= Intent(this, CameraXActivity::class.java)
             startActivity(intent)
         }
 
+        //初めて使う場合、ログイン画面にまず遷移する
+        val prefs = getSharedPreferences( "preferences_key_sample", Context.MODE_PRIVATE)
+        val Tuto0 : Boolean = prefs.getBoolean("Tuto0",false)
+        if(!Tuto0){
+            val intent = Intent(this,LoginActivity::class.java)
+            startActivity(intent)
+        }
 
         Handler().postDelayed({
             val Coach = TutorialCoachMarkActivity(this)
@@ -83,9 +91,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val intent= Intent(this, GoalSettingActivity::class.java)
+        val intent2= Intent(this, LoginActivity::class.java)
         when (item.itemId) {
             R.id.action_settings -> Toast.makeText(applicationContext, "ただいま工事中💦", Toast.LENGTH_LONG).show()
             R.id.action_settings2 ->startActivity(intent)
+            R.id.action_login->startActivity(intent2)
             else ->Log.e("TAG","設定画面でなにかを押しました")
         }
         return super.onOptionsItemSelected(item)

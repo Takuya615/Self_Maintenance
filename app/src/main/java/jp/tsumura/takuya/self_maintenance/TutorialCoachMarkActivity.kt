@@ -12,6 +12,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.core.content.ContextCompat.startActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 import com.takusemba.spotlight.OnSpotlightStateChangedListener
@@ -27,10 +28,48 @@ import kotlinx.android.synthetic.main.content_main.*
 class TutorialCoachMarkActivity(context:Context) {
 
     val prefs = context.getSharedPreferences( "preferences_key_sample", Context.MODE_PRIVATE)
+    val Tuto0 : Boolean = prefs.getBoolean("Tuto0",false)
     val Tuto1 : Boolean = prefs.getBoolean("Tuto1",false)
     val Tuto2 : Boolean = prefs.getBoolean("Tuto2",false)
     val Tuto3 : Boolean = prefs.getBoolean("Tuto3",false)
     val g : SharedPreferences.Editor = prefs.edit()
+
+    //ログイン画面でのコーチマーク
+    fun CoachMark0(activity: Activity,context: Context){
+
+        if(!Tuto0){
+            g.putBoolean("Tuto0", true)
+            g.commit()
+
+            val logout = activity.findViewById<Button>(R.id.logoutButton)
+            logout.setText("スキップする")
+            val target = activity.findViewById<Button>(R.id.createButton)
+            val Target = sreateUI(target,activity,"ようこそ",
+                "まずはココからあなたのアカウントを作ってください",0f,0f,-3f)
+
+            // コーチマークを作成
+            Spotlight.with(activity)
+                // コーチマーク表示される時の背景の色
+                .setOverlayColor(R.color.colorCoachMark)
+                // 表示する時間
+                .setDuration(1000L)
+                // 表示するスピード
+                .setAnimation(DecelerateInterpolator(1f))
+                // 注目されたいところ（複数指定も可能）
+                .setTargets(Target)//firstTarget,
+                // 注目されたいところ以外をタップする時に閉じられるかどうか
+                .setClosedOnTouchedOutside(true)
+                // コーチマーク表示される時になんかする
+                .setOnSpotlightStateListener(object : OnSpotlightStateChangedListener {
+                    override fun onStarted() {
+                        //Toast.makeText(context, "spotlight is started", Toast.LENGTH_SHORT).show()
+                    }
+                    override fun onEnded() {
+                    }
+                })
+                .start()
+        }
+    }
 
     //メイン画面でのコーチマーク
     fun CoachMark1(activity: Activity,context: Context){
@@ -175,7 +214,7 @@ class TutorialCoachMarkActivity(context:Context) {
 
 
 
-//引数（ボタン、アクティビティ、タイトル、本文、光X、光Y、文字列下なら正、文字列上なら負のFloat）　　四角の場合
+//引数（ボタン、アクティビティ、タイトル、本文、光X軸より広く、光Y軸より広く、文字列下なら正、文字列上なら負のFloat）　　四角の場合
     fun sreateUI(target:View,activity:Activity,title:String?,scrip:String,plusX:Float,plusY:Float,plusP:Float):SimpleTarget{
 
         val targetLocation = IntArray(2)

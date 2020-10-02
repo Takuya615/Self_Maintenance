@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import jp.tsumura.takuya.self_maintenance.R
 
@@ -16,6 +17,7 @@ class URIlistFragment : Fragment() {
     private lateinit var URIadapter : ArrayAdapter<String>
     private lateinit var mdateList:MutableList<String>
     private lateinit var muriList:MutableList<String>
+    private lateinit var mAuth: FirebaseAuth
 
     private val mEventListener = object : ChildEventListener {
         override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
@@ -60,12 +62,15 @@ class URIlistFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        mAuth = FirebaseAuth.getInstance()
         muriList = mutableListOf<String>()
         mdateList = mutableListOf<String>()
-        val Reference = FirebaseDatabase.getInstance().reference
-        val genreRef = Reference.child("URIlists")
-        genreRef.addChildEventListener(mEventListener)
-
+        val user = mAuth.currentUser
+        if(user!=null){
+            val Reference = FirebaseDatabase.getInstance().reference
+            val genreRef = Reference.child("URIlists")
+            genreRef.addChildEventListener(mEventListener)
+        }
 
         val itemLayoutId = R.layout.fragment_urilist_item
         val textViewId = R.id.label

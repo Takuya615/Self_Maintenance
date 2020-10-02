@@ -9,9 +9,12 @@ import android.os.Handler
 import android.text.InputType
 import android.util.Log
 import android.view.MenuItem
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
 
 import com.google.firebase.firestore.FirebaseFirestore
 import jp.tsumura.takuya.self_maintenance.ForCamera.CameraXActivity
@@ -25,6 +28,7 @@ import kotlin.concurrent.schedule
 class GoalSettingActivity : AppCompatActivity(){
 
     private lateinit var prefs : SharedPreferences
+    private lateinit var mAuth: FirebaseAuth
     val db = FirebaseFirestore.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,21 +36,26 @@ class GoalSettingActivity : AppCompatActivity(){
         setContentView(R.layout.activity_goal_setting)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+        mAuth = FirebaseAuth.getInstance()
         prefs = getSharedPreferences("preferences_key_sample", Context.MODE_PRIVATE)
         val et3:EditText = findViewById(R.id.Edittext3)
         et3.setInputType( InputType.TYPE_CLASS_NUMBER)
 
         //このViewを開くと同時に、データを取得。　データがあれば各テキストに反映する。
-        val docRef = db.collection("Goals").document("goals")
-        docRef.get().addOnSuccessListener { documentSnapshot ->
-            val goal = documentSnapshot.toObject(Goal::class.java)
-            Edittext1.setText(goal?.goal)
-            Edittext2.setText(goal?.task)
-            Edittext3.setText(goal?.goaltime)
+        //ログインしてなければ、反映されない、ミッション時間は一度設定すれば、ログインなしでも使える。
+        val user = mAuth.currentUser
+        if(user!=null){
+            val docRef = db.collection("Goals").document(user.uid)
+            docRef.get().addOnSuccessListener { documentSnapshot ->
+                val goal = documentSnapshot.toObject(Goal::class.java)
+                Edittext1.setText(goal?.goal)
+                Edittext2.setText(goal?.task)
+                Edittext3.setText(goal?.goaltime)
 
-            TimeCal()
+                TimeCal()
 
-        }.addOnFailureListener { e -> Log.e("TAG", "データ取得に失敗", e) }
+            }.addOnFailureListener { e -> Log.e("TAG", "データ取得に失敗", e) }
+        }
 
         //設定ボタンを押したら、その時書いてある値をそのまま保存する。
         val Button=findViewById<Button>(R.id.button)
@@ -73,21 +82,25 @@ class GoalSettingActivity : AppCompatActivity(){
         val taskmsg = Edittext2.text.toString()
         val goaltime = Edittext3.text.toString()//目標時間（じぶんで決めるとモチベーションに？）
         val goals = db.collection("Goals")
+        val user = mAuth.currentUser
 
         if(goaltime.isEmpty()){
             Toast.makeText(this,"目標活動時間を入力してください",Toast.LENGTH_LONG).show()
         }
-
-
         val goal = Goal(
             mygoalmsg,
             taskmsg,
             goaltime,
 
         )
-        goals.document("goals").set(goal)
-            .addOnSuccessListener { Log.e("TAG", "ドキュメント作成・上書き成功") }
-            .addOnFailureListener { e -> Log.e("TAG", "ドキュメントの作成・上書きエラー", e) }
+        if(user==null){
+            Toast.makeText(this,"ログインでデータを保存しておけます",Toast.LENGTH_LONG).show()
+        }else{
+            goals.document(user.uid).set(goal)
+                .addOnSuccessListener { Log.e("TAG", "ドキュメント作成・上書き成功") }
+                .addOnFailureListener { e -> Log.e("TAG", "ドキュメントの作成・上書きエラー", e) }
+        }
+
     }
     //
     fun TimeCal(){

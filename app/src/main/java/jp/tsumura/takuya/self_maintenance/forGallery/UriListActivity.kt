@@ -7,6 +7,7 @@ import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.Toast
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -18,6 +19,7 @@ class UriListActivity : AppCompatActivity() {
     private lateinit var URIadapter : ArrayAdapter<String>
     private lateinit var mdateList:MutableList<String>
     private lateinit var muriList:MutableList<String>
+    private lateinit var mAuth: FirebaseAuth
 
     private val mEventListener = object : ChildEventListener {
         override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
@@ -54,12 +56,18 @@ class UriListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_uri_list)
+        title = "動画リスト"
 
+        mAuth = FirebaseAuth.getInstance()
         muriList = mutableListOf<String>()
         mdateList = mutableListOf<String>()
-        val Reference = FirebaseDatabase.getInstance().reference
-        val genreRef = Reference.child("URIlists")
-        genreRef.addChildEventListener(mEventListener)
+        val user = mAuth.currentUser
+        if(user!=null){
+            val Reference = FirebaseDatabase.getInstance().reference
+            val genreRef = Reference.child(user.uid)
+            genreRef.addChildEventListener(mEventListener)
+        }
+
 
 
         val itemLayoutId = R.layout.fragment_urilist_item
