@@ -3,7 +3,6 @@ package jp.tsumura.takuya.self_maintenance.ForCamera
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
 
 import android.graphics.Color
@@ -27,18 +26,13 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
-import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.UploadTask
 import com.google.firebase.storage.ktx.storage
 import jp.tsumura.takuya.self_maintenance.R
-import jp.tsumura.takuya.self_maintenance.TutorialCoachMarkActivity
+import jp.tsumura.takuya.self_maintenance.ForStart.TutorialCoachMarkActivity
 import kotlinx.android.synthetic.main.activity_camera_x.*
-import kotlinx.android.synthetic.main.content_main.*
 import java.io.File
-import java.io.FileInputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -250,7 +244,7 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
         val totalday : Int = prefs.getInt("preferences_key2",0)//総日数の値を取得
         val times =totalday/2 //総日数が、2日更新されるごとに、強度を上げる場合。（totalday=1なら、1/2で、times=0となる）
 
-        if(times!=0) {//　　　割り算の演算子は整数までしか計算しないので、少数点以下は無視して出力される。
+        if(times!=0 ) {//　　　割り算の演算子は整数までしか計算しないので、少数点以下は無視して出力される。
             val A = taskSec * times
             taskSec + A
             Log.e("TAG","現在のタスク所要時間は$taskSec")
@@ -267,7 +261,7 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
                 val minite =(mTimerSec/60)%60;
                 mHandler.post {
                     timer.text = String.format("%02d:%02d",minite,seconds)
-                    if(mTimerSec >= taskSec){
+                    if(mTimerSec >= taskSec && taskSec!=0){
                         backView.setBackgroundColor(Color.GREEN)
                         captureButton.setBackgroundColor(Color.GREEN)
                     }

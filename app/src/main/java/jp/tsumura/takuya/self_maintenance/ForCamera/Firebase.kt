@@ -15,7 +15,7 @@ import kotlin.collections.HashMap
 
 class Firebase {
 
-
+//fire RealtimeDatabase
     fun WriteToRealtime(fileName:String){
         val user = FirebaseAuth.getInstance().currentUser
         val dataBaseReference = FirebaseDatabase.getInstance().reference
@@ -36,17 +36,25 @@ class Firebase {
 
     }
 
-    fun SaveVideoToStorage(file:File?){
-        val storage = Firebase.storage
-        val storageRef = storage.reference
-        val photoRef = storageRef.child("images")
-        val movieUri = Uri.fromFile(file)
-        val uploadTask = photoRef.putFile(movieUri)
-        // Register observers to listen for when the download is done or if it fails
-        uploadTask.addOnFailureListener {
-            Log.e("TAG","ストレージへ保存失敗")
-        }.addOnSuccessListener {
-            Log.e("TAG","ストレージへ保存成功")
+//Fire Store
+    fun WriteToRealtime2(fileName:String){
+        val user = FirebaseAuth.getInstance().currentUser
+        val dataBaseReference = FirebaseDatabase.getInstance().reference
+        if(user!=null){
+            val genreRef = dataBaseReference.child(user.uid)
+
+            val data = HashMap<String, String>()
+            //val uri = Uri.fromFile(file).toString()
+            data["uri"] = fileName
+
+            val date= Calendar.getInstance().getTime()
+            val dateFormat = SimpleDateFormat("yyyy年MM月dd日HH時mm分")
+            val StrDate =dateFormat.format(date).toString()
+            data["date"]=StrDate
+
+            genreRef.push().setValue(data)
         }
+
     }
+
 }

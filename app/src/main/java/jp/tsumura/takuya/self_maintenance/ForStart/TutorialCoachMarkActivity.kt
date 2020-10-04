@@ -1,10 +1,9 @@
-package jp.tsumura.takuya.self_maintenance
+package jp.tsumura.takuya.self_maintenance.ForStart
 
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.graphics.Point
 import android.graphics.PointF
 import android.view.View
 import android.view.animation.DecelerateInterpolator
@@ -12,7 +11,6 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
-import androidx.core.content.ContextCompat.startActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 import com.takusemba.spotlight.OnSpotlightStateChangedListener
@@ -20,8 +18,8 @@ import com.takusemba.spotlight.Spotlight
 import com.takusemba.spotlight.shape.Circle
 import com.takusemba.spotlight.shape.RoundedRectangle
 import com.takusemba.spotlight.target.SimpleTarget
-import jp.tsumura.takuya.self_maintenance.ForCamera.CameraXActivity
 import jp.tsumura.takuya.self_maintenance.ForSetting.GoalSettingActivity
+import jp.tsumura.takuya.self_maintenance.R
 import kotlinx.android.synthetic.main.content_main.*
 
 
@@ -45,7 +43,7 @@ class TutorialCoachMarkActivity(context:Context) {
             logout.setText("スキップする")
             val target = activity.findViewById<Button>(R.id.createButton)
             val Target = sreateUI(target,activity,"ようこそ",
-                "まずはココからあなたのアカウントを作ってください",0f,0f,-3f)
+                "まずはココからあなたのアカウントを\n作ってください",0f,0f,-3f)
 
             // コーチマークを作成
             Spotlight.with(activity)
@@ -105,14 +103,6 @@ class TutorialCoachMarkActivity(context:Context) {
             })
                 .start()
         }
-        /*
-        else{
-            activity.progressbar.visibility = android.widget.ProgressBar.VISIBLE
-            val intent= Intent(context, CameraXActivity::class.java)
-            activity.startActivity(intent)
-        }
-
-         */
     }
 
 
@@ -233,7 +223,7 @@ class TutorialCoachMarkActivity(context:Context) {
             .setShape(RoundedRectangle(UIheight,UIwidth,25f))//ハイライトの大きさ
             .setTitle(title)
             .setDescription(scrip)
-            .setOverlayPoint(50f,targetLocation[1] + target.height * plusP )//文字列の位置
+            .setOverlayPoint(2f,targetLocation[1] + target.height * plusP )//文字列の位置
             .build()
 
         return firstTarget
@@ -252,7 +242,7 @@ class TutorialCoachMarkActivity(context:Context) {
             .setShape(Circle(targetRadius))//ハイライトの大きさ
             .setTitle(title)
             .setDescription(scrip)
-            .setOverlayPoint(3f, targetLocation[1] + target.height * plusP)//文字列の位置
+            .setOverlayPoint(2f, targetLocation[1] + target.height * plusP)//文字列の位置
             .build()
 
 

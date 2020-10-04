@@ -4,32 +4,21 @@ package jp.tsumura.takuya.self_maintenance
 import android.content.Context
 import jp.tsumura.takuya.self_maintenance.ForSetting.GoalSettingActivity
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.view.animation.DecelerateInterpolator
-import android.widget.Button
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.*
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
-import com.takusemba.spotlight.OnSpotlightStateChangedListener
-import com.takusemba.spotlight.Spotlight
-import com.takusemba.spotlight.shape.Circle
-import com.takusemba.spotlight.target.SimpleTarget
 import jp.tsumura.takuya.self_maintenance.ForCamera.CameraXActivity
-import jp.tsumura.takuya.self_maintenance.TutorialActivity.Companion.showForcibly
-import jp.tsumura.takuya.self_maintenance.TutorialActivity.Companion.showIfNeeded
+import jp.tsumura.takuya.self_maintenance.ForStart.LoginActivity
+import jp.tsumura.takuya.self_maintenance.ForStart.TutorialCoachMarkActivity
 import jp.tsumura.takuya.self_maintenance.forGallery.URIlistFragment
-import jp.tsumura.takuya.self_maintenance.forGallery.UriListActivity
 import kotlinx.android.synthetic.main.content_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -73,14 +62,16 @@ class MainActivity : AppCompatActivity() {
         val prefs = getSharedPreferences( "preferences_key_sample", Context.MODE_PRIVATE)
         val Tuto0 : Boolean = prefs.getBoolean("Tuto0",false)
         if(!Tuto0){
-            val intent = Intent(this,LoginActivity::class.java)
+            val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
+        }else{
+            Handler().postDelayed({
+                val Coach = TutorialCoachMarkActivity(this)
+                Coach.CoachMark1(this,this)
+            }, 1000)
         }
 
-        Handler().postDelayed({
-            val Coach = TutorialCoachMarkActivity(this)
-            Coach.CoachMark1(this,this)
-        }, 1000)
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

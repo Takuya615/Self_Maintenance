@@ -9,21 +9,15 @@ import android.os.Handler
 import android.text.InputType
 import android.util.Log
 import android.view.MenuItem
-import android.view.View
-import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 
 import com.google.firebase.firestore.FirebaseFirestore
 import jp.tsumura.takuya.self_maintenance.ForCamera.CameraXActivity
-import jp.tsumura.takuya.self_maintenance.MainActivity
 import jp.tsumura.takuya.self_maintenance.R
-import jp.tsumura.takuya.self_maintenance.TutorialCoachMarkActivity
+import jp.tsumura.takuya.self_maintenance.ForStart.TutorialCoachMarkActivity
 import kotlinx.android.synthetic.main.activity_goal_setting.*
-import java.util.*
-import kotlin.concurrent.schedule
 
 class GoalSettingActivity : AppCompatActivity(){
 
@@ -58,16 +52,20 @@ class GoalSettingActivity : AppCompatActivity(){
         }
 
         //設定ボタンを押したら、その時書いてある値をそのまま保存する。
-        val Button=findViewById<Button>(R.id.button)
-        Button.setOnClickListener(){
+        //val Button=findViewById<Button>(R.id.button)
+        button.setOnClickListener(){
             DataSet()
             TimeCal()
         }
-        val SetButton=findViewById<Button>(R.id.setbutton)
-        SetButton.setOnClickListener(){
+        //val SetButton=findViewById<Button>(R.id.setbutton)
+        setbutton.setOnClickListener(){
             val intent = Intent(this, CameraXActivity::class.java)
             startActivity(intent)
 
+        }
+        //val SetButton=findViewById<Button>(R.id.setbutton)
+        help.setOnClickListener(){
+            SettingDialog().showDialog(this)
         }
 
         Handler().postDelayed({
@@ -85,7 +83,7 @@ class GoalSettingActivity : AppCompatActivity(){
         val user = mAuth.currentUser
 
         if(goaltime.isEmpty()){
-            Toast.makeText(this,"目標活動時間を入力してください",Toast.LENGTH_LONG).show()
+            Toast.makeText(this,"１日のなん分続けたいか入力してください",Toast.LENGTH_LONG).show()
         }
         val goal = Goal(
             mygoalmsg,
@@ -104,8 +102,8 @@ class GoalSettingActivity : AppCompatActivity(){
     }
     //
     fun TimeCal(){
-
         val goaltimeA =Edittext3.text.toString()//.toInt()
+        val e : SharedPreferences.Editor = prefs.edit()
         if(goaltimeA.isNotEmpty()){
             val goaltime = goaltimeA.toInt()
             val Cal =goaltime *60 *3/100
@@ -117,8 +115,12 @@ class GoalSettingActivity : AppCompatActivity(){
                 textView6.text = "今日は$minite 分 $seconds 秒間やりましょう"
             }
             Log.e("TAG","1日に行う秒数（タスク時間）は $Cal")
-            val e : SharedPreferences.Editor = prefs.edit()
             e.putInt(getString(R.string.preferences_key_smalltime), Cal)
+            e.commit()
+        }else{
+            //数字が設定されなければ、値0に戻る。
+            val Empty = 0
+            e.putInt(getString(R.string.preferences_key_smalltime), Empty)
             e.commit()
         }
 
@@ -131,11 +133,5 @@ class GoalSettingActivity : AppCompatActivity(){
             }
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-
-        //Log.d("MainActivity", "onDestroy state:"+lifecycle.currentState)
     }
 }

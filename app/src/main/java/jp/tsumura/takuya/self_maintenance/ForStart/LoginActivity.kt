@@ -1,9 +1,10 @@
-package jp.tsumura.takuya.self_maintenance
+package jp.tsumura.takuya.self_maintenance.ForStart
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import android.view.MenuItem
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
@@ -12,8 +13,9 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.*
 import com.google.firebase.firestore.FirebaseFirestore
+import jp.tsumura.takuya.self_maintenance.MainActivity
+import jp.tsumura.takuya.self_maintenance.R
 import kotlinx.android.synthetic.main.activity_login.*
 import java.util.HashMap
 
@@ -39,9 +41,29 @@ class LoginActivity : AppCompatActivity() {
         //mDataBaseReference = FirebaseDatabase.getInstance().reference
 
         db = FirebaseFirestore.getInstance()
-
         // FirebaseAuthのオブジェクトを取得する
         mAuth = FirebaseAuth.getInstance()
+
+
+        //メールとアカウント名を記録する
+        val user = mAuth.currentUser
+        if(user!=null){
+            val docRef = db.collection("UserPATH").document(user.uid)
+            docRef.get()
+                .addOnSuccessListener { document ->
+                    if (document != null) {
+                        Log.d("TAG", "DocumentSnapshot data: ${document.data}")
+                    } else {
+                        Log.e("TAG", "名前とメールアドレスが登録されてない")
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    Log.e("TAG", "取得失敗",exception)
+                }
+        }else{
+            Log.e("TAG", "まだログインしていません")
+        }
+
 
         // アカウント作成処理のリスナー
         mCreateAccountListener = OnCompleteListener { task ->
@@ -155,7 +177,9 @@ class LoginActivity : AppCompatActivity() {
         logoutButton.setOnClickListener{
             if(mAuth.currentUser ==null){
                 //Snackbar.make(it, "すでにサインアウトされています", Snackbar.LENGTH_LONG).show()
-                finish()
+                //finish()
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
             }else{
                 mAuth.signOut()
                 Toast.makeText(this,"サインアウトしました",Toast.LENGTH_LONG).show()

@@ -18,12 +18,12 @@
         android:roundIcon="@drawable/tree_seichou02"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".LoginActivity"></activity>
+        <activity android:name=".ForStart.LoginActivity"></activity>
         <activity android:name=".forGallery.UriListActivity" />
         <activity android:name=".forGallery.MainActivity" />
-        <activity android:name=".TutorialCoachMarkActivity" />
+        <activity android:name=".ForStart.TutorialCoachMarkActivity" />
         <activity
-            android:name=".TutorialActivity"
+            android:name=".ForStart.TutorialActivity"
             android:theme="@style/WelcomeScreenTheme" />
         <activity
             android:name=".ForCamera.CameraXActivity"

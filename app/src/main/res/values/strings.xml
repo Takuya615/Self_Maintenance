@@ -34,10 +34,8 @@
     <string name="delete_dialog">Delete current photo?</string>
     <string name="delete_title">Confirm</string>
     <string name="Tutorial">
-        最高時間➡最終的に1日にこなしたい時間\n
-        最低時間➡死ぬほど疲れた日でもできる時間\n\n
-        最低時間からはじめて、徐々に最高時間へと時間を伸ばして行くことができます。\n
-        設定したら、さっそく「撮影」してみましょう。
-
+        最初は簡単なミッションから初めます。
+        日を重ねるごとに難しさを上げていきます。
+        こうすることで、心的負担を減らし、より継続しやすくなることがわかっています
     </string>
 </resources>

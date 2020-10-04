@@ -68,7 +68,7 @@ class URIlistFragment : Fragment() {
         val user = mAuth.currentUser
         if(user!=null){
             val Reference = FirebaseDatabase.getInstance().reference
-            val genreRef = Reference.child("URIlists")
+            val genreRef = Reference.child(user.uid)
             genreRef.addChildEventListener(mEventListener)
         }
 

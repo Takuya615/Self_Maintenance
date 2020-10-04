@@ -51,7 +51,6 @@ class GalleryActivity : AppCompatActivity() {
                 mp.start()
                 mp.setOnVideoSizeChangedListener(object:MediaPlayer.OnVideoSizeChangedListener {
                     override fun onVideoSizeChanged(mp:MediaPlayer , arg1:Int , arg2:Int ) {
-                        Log.e("TAG", "Changed")
                         progressbar2.visibility = android.widget.ProgressBar.GONE
                     }
                 })
