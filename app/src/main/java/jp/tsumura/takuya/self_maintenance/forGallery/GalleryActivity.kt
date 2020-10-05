@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
+import android.view.WindowManager
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.MediaController
@@ -29,6 +30,8 @@ class GalleryActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_gallery)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        //画面をオンのままにしておく
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         //val replay = findViewById<ImageButton>(R.id.replay_button)
         //val play = findViewById<ImageButton>(R.id.play_button)
         //progressbar2.visibility = android.widget.ProgressBar.VISIBLE

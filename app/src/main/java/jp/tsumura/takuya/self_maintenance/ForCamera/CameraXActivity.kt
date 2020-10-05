@@ -15,10 +15,7 @@ import android.util.DisplayMetrics
 import android.util.Log
 import android.util.Rational
 import android.util.Size
-import android.view.MotionEvent
-import android.view.TextureView
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.camera.core.*
@@ -60,6 +57,8 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_camera_x)
+        //画面をオンのままにしておく
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         viewFinder = findViewById(R.id.view_finder1)
         captureButton = findViewById(R.id.capture_button1)
