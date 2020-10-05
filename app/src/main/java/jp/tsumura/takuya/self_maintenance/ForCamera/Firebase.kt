@@ -6,6 +6,8 @@ import android.os.Environment
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import java.io.File
@@ -39,10 +41,9 @@ class Firebase {
 //Fire Store
     fun WriteToRealtime2(fileName:String){
         val user = FirebaseAuth.getInstance().currentUser
-        val dataBaseReference = FirebaseDatabase.getInstance().reference
+        val db = FirebaseFirestore.getInstance()
         if(user!=null){
-            val genreRef = dataBaseReference.child(user.uid)
-
+            val docRef = db.collection("VideoURIs").document(user.uid)
             val data = HashMap<String, String>()
             //val uri = Uri.fromFile(file).toString()
             data["uri"] = fileName
@@ -52,7 +53,9 @@ class Firebase {
             val StrDate =dateFormat.format(date).toString()
             data["date"]=StrDate
 
-            genreRef.push().setValue(data)
+            docRef.set(data, SetOptions.merge())
+                .addOnSuccessListener { Log.e("TAG", "動画作成日とURIの保存成功") }
+                .addOnFailureListener { e -> Log.e("TAG", "動画作成日とURIの保存成功", e) }
         }
 
     }

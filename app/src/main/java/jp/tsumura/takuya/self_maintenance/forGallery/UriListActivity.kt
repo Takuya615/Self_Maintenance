@@ -12,7 +12,10 @@ import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.FirebaseFirestore
+import jp.tsumura.takuya.self_maintenance.ForSetting.Goal
 import jp.tsumura.takuya.self_maintenance.R
+import kotlinx.android.synthetic.main.activity_goal_setting.*
 
 class UriListActivity : AppCompatActivity() {
 
@@ -20,7 +23,8 @@ class UriListActivity : AppCompatActivity() {
     private lateinit var mdateList:MutableList<String>
     private lateinit var muriList:MutableList<String>
     private lateinit var mAuth: FirebaseAuth
-
+    private val db = FirebaseFirestore.getInstance()
+/*
     private val mEventListener = object : ChildEventListener {
         override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
             val map = dataSnapshot.value as Map<String, String>
@@ -52,6 +56,8 @@ class UriListActivity : AppCompatActivity() {
         }
     }
 
+ */
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,12 +69,21 @@ class UriListActivity : AppCompatActivity() {
         mdateList = mutableListOf<String>()
         val user = mAuth.currentUser
         if(user!=null){
-            val Reference = FirebaseDatabase.getInstance().reference
-            val genreRef = Reference.child(user.uid)
-            genreRef.addChildEventListener(mEventListener)
+            val docRef = db.collection("VideoURIs").document(user.uid)
+            docRef.get().addOnSuccessListener { documentSnapshot ->
+                val videoUris = documentSnapshot.toObject(VideoUris::class.java)
+                if(videoUris != null){
+                    val date = videoUris.date
+                    val uri = videoUris.Uri
+                    mdateList.add(date)
+                    muriList.add(uri)
+                    URIadapter.notifyDataSetChanged()
+                }
+            }
+            //val Reference = FirebaseDatabase.getInstance().reference
+            //val genreRef = Reference.child(user.uid)
+            //genreRef.addChildEventListener(mEventListener)
         }
-
-
 
         val itemLayoutId = R.layout.fragment_urilist_item
         val textViewId = R.id.label

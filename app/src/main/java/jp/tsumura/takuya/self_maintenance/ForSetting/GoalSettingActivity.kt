@@ -74,7 +74,7 @@ class GoalSettingActivity : AppCompatActivity(){
         }, 1000)
 
     }
-//それぞれの入力内容をFirebaseに保存する
+//それぞれの入力内容をFirebaseStoreに保存する
     fun DataSet(){
         val mygoalmsg = Edittext1.text.toString()
         val taskmsg = Edittext2.text.toString()
