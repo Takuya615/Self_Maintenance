@@ -120,7 +120,8 @@ class LoginActivity : AppCompatActivity() {
                 Toast.makeText(this,"ログインしました",Toast.LENGTH_LONG).show()
                 // プログレスバーを非表示にする
                 progressBar.visibility = View.GONE
-
+                val intent = Intent(this, LoginActivity::class.java)
+                startActivity(intent)
                 // Activityを閉じる
                 finish()
 
@@ -177,12 +178,15 @@ class LoginActivity : AppCompatActivity() {
         logoutButton.setOnClickListener{
             if(mAuth.currentUser ==null){
                 //Snackbar.make(it, "すでにサインアウトされています", Snackbar.LENGTH_LONG).show()
-                //finish()
+                
                 val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)
+                finish()
             }else{
                 mAuth.signOut()
                 Toast.makeText(this,"サインアウトしました",Toast.LENGTH_LONG).show()
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
                 finish()
             }
         }

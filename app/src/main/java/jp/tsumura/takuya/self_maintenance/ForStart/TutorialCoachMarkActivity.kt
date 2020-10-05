@@ -120,18 +120,18 @@ class TutorialCoachMarkActivity(context:Context) {
             val target2 = activity.findViewById<EditText>(R.id.Edittext2)
             val Target2 = sreateUI(target2,activity,"具体的に毎日することを決めてください",
                 "例）\n学校から帰り、カバンをおき、手を洗った後、そのままリビングのヨガマットの上で、腹筋・背筋・腕立て",
-                0f,0f,1f)
+                0f,0f,2f)
             val target3 = activity.findViewById<TextView>(R.id.Edittext3)
             val Target3 = sreateUI(target3,activity,"1日何分くらいできるようになりたいのか？",
-                "例）　６０分",1000f,0f,-3f)
+                "例）　６０分",1000f,0f,1f)
             val target4 = activity.findViewById<Button>(R.id.button)
             val Target4 = sreateUI(target4,activity,"設定後、ここをタップ","",0f,0f,-1f)
             val target5 = activity.findViewById<TextView>(R.id.textView6)
             val Target5 = sreateUI(target5,activity,"今日のミッション",
-                "あなたの今日のミッションが表示されます\nこのミッションをクリアするたびに、あなたのレベルが上がっていきます",0f,0f,-4f)
+                "あなたの今日のミッションが表示されます\nこのミッションをクリアするたびに、あなたのレベルが上がっていきます",0f,0f,-2f)
             val target6 = activity.findViewById<Button>(R.id.setbutton)
             val Target6 = sreateUI(target6,activity,"始めてみましょう",
-                "すべて設定が終わったら、ここをタップしてください",0f,0f,-2f)
+                "すべて設定が終わったら、ここをタップしてください",0f,0f,-3f)
 
 
             // コーチマークを作成
@@ -143,7 +143,7 @@ class TutorialCoachMarkActivity(context:Context) {
                 // 表示するスピード
                 .setAnimation(DecelerateInterpolator(1f))
                 // 注目されたいところ（複数指定も可能）
-                .setTargets(Target1,Target2,Target3,Target4,Target5,Target6)
+                .setTargets(Target1,Target3,Target2,Target4,Target5,Target6)
                 // 注目されたいところ以外をタップする時に閉じられるかどうか
                 .setClosedOnTouchedOutside(true)
                 /*

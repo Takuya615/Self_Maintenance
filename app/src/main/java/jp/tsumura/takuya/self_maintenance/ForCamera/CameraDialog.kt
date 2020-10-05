@@ -35,7 +35,7 @@ class CameraDialog(context: Context,mTimerSec:Int){
         Log.e("TAG","今日は、$IntDateOnlyDay　日")
         Log.e("TAG","設定日は、$memodayOnlyDay 日")
 
-        val numb : Int = prefs.getInt("preferences_key_rev",0)//復活回数
+        val numb : Int = prefs.getInt("preferences_key_rev",-1)//復活回数
         var revival = 0//                                        復活回数
 
         if(IntDateOnlyDay - memodayOnlyDay == 1){
@@ -111,7 +111,7 @@ class CameraDialog(context: Context,mTimerSec:Int){
         Log.e("TAG","参照に保存してる秒数$newnum")
 
         //ダイアログに記録を表示
-        val list = arrayOf("連続活動日数　　$ncd","復活回数　　$revival","総活動日数　　$daycounter","総活動時間　　$totaltime")
+        val list = arrayOf("連続活動日数　　$ncd","復活回数　　$revival","総活動日数　　$daycounter")
         val alertDialogBuilder = AlertDialog.Builder(mContext)
         alertDialogBuilder.setTitle("活動の記録")
         alertDialogBuilder.setItems(list){ dialog, which ->

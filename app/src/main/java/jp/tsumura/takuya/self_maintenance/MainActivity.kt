@@ -64,6 +64,7 @@ class MainActivity : AppCompatActivity() {
         if(!Tuto0){
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
+            finish()
         }else{
             Handler().postDelayed({
                 val Coach = TutorialCoachMarkActivity(this)
