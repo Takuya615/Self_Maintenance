@@ -120,7 +120,7 @@ class TutorialCoachMarkActivity(context:Context) {
             val target2 = activity.findViewById<EditText>(R.id.Edittext2)
             val Target2 = sreateUI(target2,activity,"具体的に毎日することを決めてください",
                 "例）\n学校から帰り、カバンをおき、手を洗った後、そのままリビングのヨガマットの上で、腹筋・背筋・腕立て",
-                0f,0f,2f)
+                0f,0f,1f)
             val target3 = activity.findViewById<TextView>(R.id.Edittext3)
             val Target3 = sreateUI(target3,activity,"1日何分くらいできるようになりたいのか？",
                 "例）　６０分",1000f,0f,1f)
@@ -131,7 +131,7 @@ class TutorialCoachMarkActivity(context:Context) {
                 "あなたの今日のミッションが表示されます\nこのミッションをクリアするたびに、あなたのレベルが上がっていきます",0f,0f,-2f)
             val target6 = activity.findViewById<Button>(R.id.setbutton)
             val Target6 = sreateUI(target6,activity,"始めてみましょう",
-                "すべて設定が終わったら、ここをタップしてください",0f,0f,-3f)
+                "最後に、ここをタップしてください",0f,0f,-3f)
 
 
             // コーチマークを作成

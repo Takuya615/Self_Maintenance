@@ -60,7 +60,7 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
         //画面をオンのままにしておく
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
-        viewFinder = findViewById(R.id.view_finder1)
+        viewFinder = findViewById(R.id.view_finder)
         captureButton = findViewById(R.id.capture_button1)
         backView = findViewById(R.id.backview)
         switchButton = findViewById(R.id.switch_button)
@@ -202,17 +202,15 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
         CameraX.unbindAll()
 
         val metrics = DisplayMetrics().also { viewFinder.display.getRealMetrics(it) }
-        val screenSize = Size(metrics.widthPixels, metrics.heightPixels)
-        val screenAspectRatio = Rational(metrics.widthPixels, metrics.heightPixels)
-        // Create configuration object for the viewfinder use case
+        //val screenSize = Size(metrics.widthPixels, metrics.heightPixels)
+        //val screenAspectRatio = Rational(metrics.widthPixels, metrics.heightPixels)
         val previewConfig = PreviewConfig.Builder().apply {
             setLensFacing(lensFacing)//内・外カメラの使い分け用
-            setTargetResolution(screenSize)
-            setTargetAspectRatio(screenAspectRatio)
+            //setTargetResolution(screenSize)//　　　Size(1280, 720)Size(metrics.widthPixels, metrics.heightPixels)
+            //setTargetAspectRatio(screenAspectRatio)
             setTargetRotation(viewFinder.display.rotation)
-
         }.build()
-        val preview = AutoFitPreviewBuilder.build(previewConfig, viewFinder)
+        val preview = AutoFitPreviewBuilder.build(previewConfig, viewFinder)//
 // Build the viewfinder use case
         //val preview = Preview(previewConfig)
 
@@ -227,7 +225,8 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
         val videoCaptureConfig = VideoCaptureConfig.Builder().apply {
             setLensFacing(lensFacing)//内・外カメラの使い分け用
             setTargetRotation(viewFinder.display.rotation)
-        }.build()
+            setTargetResolution(Size(metrics.widthPixels/100, metrics.heightPixels/100))//　　　　　ここで画質を下げている
+            }.build()
         videoCapture = VideoCapture(videoCaptureConfig)
 
 // Bind use cases to lifecycle

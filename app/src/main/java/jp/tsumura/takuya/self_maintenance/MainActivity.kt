@@ -26,12 +26,12 @@ class MainActivity : AppCompatActivity() {
 
 
     inner class FragmentsPagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
-        override fun getItemCount(): Int = 3
+        override fun getItemCount(): Int = 2
         override fun createFragment(position: Int): Fragment {
             when (position) {
                 0 -> return FirstFragment();
                 1 -> return SecondFragment()
-                2 -> return URIlistFragment()
+                //2 -> return URIlistFragment()
                 else -> return FirstFragment()
 
             }

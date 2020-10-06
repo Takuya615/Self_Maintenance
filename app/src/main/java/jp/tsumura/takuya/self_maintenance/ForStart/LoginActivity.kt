@@ -96,14 +96,13 @@ class LoginActivity : AppCompatActivity() {
                 if (mIsCreateAccount) {
                     // アカウント作成の時は表示名をFirebaseに保存する
                     val name = nameText.text.toString()
-
                     val data = HashMap<String, String>()
                     data["name"] = name
                     users.document(user!!.uid).set(data)
                     //userRef.setValue(data)
-
-
+                    Toast.makeText(this,"アカウントが作成されました",Toast.LENGTH_LONG).show()
                 } else {
+                    Toast.makeText(this,"ログインしました",Toast.LENGTH_LONG).show()
                     /*
                     userRef.addListenerForSingleValueEvent(object : ValueEventListener {
                         override fun onDataChange(snapshot: DataSnapshot) {
@@ -117,10 +116,10 @@ class LoginActivity : AppCompatActivity() {
                      */
                 }
 
-                Toast.makeText(this,"ログインしました",Toast.LENGTH_LONG).show()
+
                 // プログレスバーを非表示にする
                 progressBar.visibility = View.GONE
-                val intent = Intent(this, LoginActivity::class.java)
+                val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)
                 // Activityを閉じる
                 finish()
@@ -177,18 +176,14 @@ class LoginActivity : AppCompatActivity() {
         }
         logoutButton.setOnClickListener{
             if(mAuth.currentUser ==null){
-                //Snackbar.make(it, "すでにサインアウトされています", Snackbar.LENGTH_LONG).show()
-                
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
-                finish()
+                Toast.makeText(this,"すでにログアウトされています",Toast.LENGTH_LONG).show()
             }else{
                 mAuth.signOut()
-                Toast.makeText(this,"サインアウトしました",Toast.LENGTH_LONG).show()
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
-                finish()
+                Toast.makeText(this,"ログアウトしました",Toast.LENGTH_LONG).show()
             }
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            finish()
         }
     }
 

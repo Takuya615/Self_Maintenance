@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.MenuItem
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.Toast
@@ -56,6 +57,7 @@ class UriListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_uri_list)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         title = "動画リスト"
 
         mAuth = FirebaseAuth.getInstance()
@@ -86,5 +88,14 @@ class UriListActivity : AppCompatActivity() {
             startActivity(intent)
 
         }
+    }
+    //戻るボタンを押すと今いるviewを削除する
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when(item!!.itemId){
+            android.R.id.home->{
+                finish()
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 }
