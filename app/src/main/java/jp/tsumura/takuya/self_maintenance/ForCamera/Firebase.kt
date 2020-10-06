@@ -43,7 +43,7 @@ class Firebase {
         val user = FirebaseAuth.getInstance().currentUser
         val db = FirebaseFirestore.getInstance()
         if(user!=null){
-            val docRef = db.collection("VideoURIs").document(user.uid)
+            val docRef = db.collection(user.uid)
             val data = HashMap<String, String>()
             //val uri = Uri.fromFile(file).toString()
             data["uri"] = fileName
@@ -53,7 +53,10 @@ class Firebase {
             val StrDate =dateFormat.format(date).toString()
             data["date"]=StrDate
 
-            docRef.set(data, SetOptions.merge())
+            val dateForm = SimpleDateFormat("yyyyMMddHHmm")
+            val IntDate =dateForm.format(date)//.toInt()今日の日付
+
+            docRef.document(IntDate).set(data)
                 .addOnSuccessListener { Log.e("TAG", "動画作成日とURIの保存成功") }
                 .addOnFailureListener { e -> Log.e("TAG", "動画作成日とURIの保存成功", e) }
         }
