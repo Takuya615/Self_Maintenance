@@ -13,6 +13,7 @@ import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.FirebaseFirestore
 import jp.tsumura.takuya.self_maintenance.R
 
 class UriListActivity : AppCompatActivity() {
@@ -21,7 +22,9 @@ class UriListActivity : AppCompatActivity() {
     private lateinit var mdateList:MutableList<String>
     private lateinit var muriList:MutableList<String>
     private lateinit var mAuth: FirebaseAuth
+    private val db = FirebaseFirestore.getInstance()
 
+/*
     private val mEventListener = object : ChildEventListener {
         override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
             val map = dataSnapshot.value as Map<String, String>
@@ -53,6 +56,8 @@ class UriListActivity : AppCompatActivity() {
         }
     }
 
+ */
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,9 +70,25 @@ class UriListActivity : AppCompatActivity() {
         mdateList = mutableListOf<String>()
         val user = mAuth.currentUser
         if(user!=null){
-            val Reference = FirebaseDatabase.getInstance().reference
-            val genreRef = Reference.child(user.uid)
-            genreRef.addChildEventListener(mEventListener)
+            val docRef = db.collection(user.uid)
+            docRef.get()
+                .addOnSuccessListener{ result ->
+                    for (document in result) {
+                        Log.e("TAG", "${document.id} => ${document.data}")
+                        //val videoUris= document.toObject(VideoUris::class.java)
+                        val date = document.data["date"].toString()
+                        val uri = document.data["uri"].toString()
+                        mdateList.add(date)
+                        muriList.add(uri)
+                        URIadapter.notifyDataSetChanged()
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    Log.e("TAG", "エラー getting documents: ", exception)
+                }
+            //val Reference = FirebaseDatabase.getInstance().reference
+            //val genreRef = Reference.child(user.uid)
+            //genreRef.addChildEventListener(mEventListener)
         }
 
 

@@ -117,7 +117,7 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
                                 }.addOnCompleteListener { task ->
                                     if (task.isSuccessful) {
                                         val downloadUri = task.result
-                                        Firebase().WriteToRealtime(downloadUri.toString())//Uriと日付を保存する
+                                        Firebase().WriteToStore(downloadUri.toString())//Uriと日付を保存する
                                         Log.e("TAG","URLの取得成功")
                                     } else {
                                         Log.e("TAG","URLの取得に失敗")
