@@ -24,41 +24,6 @@ class UriListActivity : AppCompatActivity() {
     private lateinit var mAuth: FirebaseAuth
     private val db = FirebaseFirestore.getInstance()
 
-/*
-    private val mEventListener = object : ChildEventListener {
-        override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
-            val map = dataSnapshot.value as Map<String, String>
-
-            val date = map["date"].toString()
-            val uri = map["uri"].toString()
-            //val only = onlydate(date).date
-
-            mdateList.add(date)
-            muriList.add(uri)
-            URIadapter.notifyDataSetChanged()
-            Log.e("TAG","リストの要素$map　を追加しました")
-        }
-
-        override fun onChildChanged(dataSnapshot: DataSnapshot, s: String?) {
-
-        }
-
-        override fun onChildRemoved(dataSnapshot: DataSnapshot) {
-
-        }
-
-        override fun onChildMoved(dataSnapshot: DataSnapshot, s: String?) {
-
-        }
-
-        override fun onCancelled(databaseError: DatabaseError) {
-            Log.w("TAG", "loadPost:onCancelled失敗", databaseError.toException())
-        }
-    }
-
- */
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_uri_list)
@@ -86,9 +51,7 @@ class UriListActivity : AppCompatActivity() {
                 .addOnFailureListener { exception ->
                     Log.e("TAG", "エラー getting documents: ", exception)
                 }
-            //val Reference = FirebaseDatabase.getInstance().reference
-            //val genreRef = Reference.child(user.uid)
-            //genreRef.addChildEventListener(mEventListener)
+
         }
 
 

@@ -18,4 +18,10 @@
         android:orderInCategory="100"
         android:title="ログイン"
         app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_friend"
+        android:orderInCategory="100"
+        android:title="フレンド登録"
+        app:showAsAction="never"/>
+
 </menu>

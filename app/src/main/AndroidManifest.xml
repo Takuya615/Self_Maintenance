@@ -18,7 +18,8 @@
         android:roundIcon="@drawable/tree_seichou02"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ForStart.LoginActivity"></activity>
+        <activity android:name=".ForSetting.SearchFriendsActivity"></activity>
+        <activity android:name=".ForStart.LoginActivity" />
         <activity android:name=".forGallery.UriListActivity" />
         <activity android:name=".forGallery.MainActivity" />
         <activity android:name=".ForStart.TutorialCoachMarkActivity" />
