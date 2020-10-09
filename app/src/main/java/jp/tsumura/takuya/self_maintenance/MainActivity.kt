@@ -15,10 +15,10 @@ import android.widget.Toast
 import androidx.fragment.app.*
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import io.realm.Realm
 import jp.tsumura.takuya.self_maintenance.ForCamera.CameraXActivity
-import jp.tsumura.takuya.self_maintenance.ForStart.LoginActivity
+import jp.tsumura.takuya.self_maintenance.ForSetting.LoginActivity
 import jp.tsumura.takuya.self_maintenance.ForStart.TutorialCoachMarkActivity
-import jp.tsumura.takuya.self_maintenance.forGallery.URIlistFragment
 import kotlinx.android.synthetic.main.content_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -44,6 +44,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
+        Realm.init(this)
 
         progressbar.visibility = android.widget.ProgressBar.INVISIBLE
         //showIfNeeded(this, savedInstanceState)//全画面のチュートリアル(ウォークスルー)

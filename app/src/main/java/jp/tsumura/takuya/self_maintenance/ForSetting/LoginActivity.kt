@@ -1,9 +1,10 @@
-package jp.tsumura.takuya.self_maintenance.ForStart
+package jp.tsumura.takuya.self_maintenance.ForSetting
 
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.text.Editable
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -14,10 +15,10 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import jp.tsumura.takuya.self_maintenance.ForStart.TutorialCoachMarkActivity
 import jp.tsumura.takuya.self_maintenance.MainActivity
 import jp.tsumura.takuya.self_maintenance.R
 import kotlinx.android.synthetic.main.activity_login.*
-import java.util.HashMap
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var mAuth: FirebaseAuth
@@ -48,18 +49,9 @@ class LoginActivity : AppCompatActivity() {
         //メールとアカウント名を記録する
         val user = mAuth.currentUser
         if(user!=null){
-            val docRef = db.collection("UserPATH").document(user.uid)
-            docRef.get()
-                .addOnSuccessListener { document ->
-                    if (document != null) {
-                        Log.d("TAG", "DocumentSnapshot data: ${document.data}")
-                    } else {
-                        Log.e("TAG", "名前とメールアドレスが登録されてない")
-                    }
-                }
-                .addOnFailureListener { exception ->
-                    Log.e("TAG", "取得失敗",exception)
-                }
+            val setName :String? = Realm().UidToName(user.uid)//同じUidのアカウント名を返す
+            nameText.text = Editable.Factory.getInstance().newEditable(setName)
+            Log.e("TAG", "ログインしています")
         }else{
             Log.e("TAG", "まだログインしていません")
         }
@@ -74,12 +66,10 @@ class LoginActivity : AppCompatActivity() {
                 val password = passwordText.text.toString()
                 login(email, password)
             } else {
-
                 // 失敗した場合
                 // エラーを表示する
                 val view = findViewById<View>(android.R.id.content)
                 Snackbar.make(view, "アカウント作成に失敗しました", Snackbar.LENGTH_LONG).show()
-
                 // プログレスバーを非表示にする
                 progressBar.visibility = View.GONE
             }
@@ -89,46 +79,27 @@ class LoginActivity : AppCompatActivity() {
         mLoginListener = OnCompleteListener { task ->
             if (task.isSuccessful) {
                 // 成功した場合
-                val user = mAuth.currentUser
-                //val userRef = mDataBaseReference.child("UsersPATH").child(user!!.uid)
-                val users = db.collection("UserPATH")
-
                 if (mIsCreateAccount) {
-                    // アカウント作成の時は表示名をFirebaseに保存する
-                    val name = nameText.text.toString()
-                    val data = HashMap<String, String>()
-                    data["name"] = name
-                    users.document(user!!.uid).set(data)
-                    //userRef.setValue(data)
                     Toast.makeText(this,"アカウントが作成されました",Toast.LENGTH_LONG).show()
+
+                    Handler().postDelayed({
+                        val name = nameText.text.toString()// アカウント作成の時はアカウント名とUidをRealmに保存する
+                        val AcUid = user!!.uid
+                        Realm().addPerson(name,AcUid)
+                    }, 1000)
+
                 } else {
                     Toast.makeText(this,"ログインしました",Toast.LENGTH_LONG).show()
-                    /*
-                    userRef.addListenerForSingleValueEvent(object : ValueEventListener {
-                        override fun onDataChange(snapshot: DataSnapshot) {
-                            val data = snapshot.value as Map<*, *>?
-                            //saveName(data!!["name"] as String)
-                        }
-
-                        override fun onCancelled(firebaseError: DatabaseError) {}
-                    })
-
-                     */
                 }
 
-
-                // プログレスバーを非表示にする
                 progressBar.visibility = View.GONE
                 val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)
-                // Activityを閉じる
                 finish()
 
             } else {
                 // 失敗した場合
-                // エラーを表示する
-                Toast.makeText(this,"ログインに失敗しました",Toast.LENGTH_LONG).show()
-                // プログレスバーを非表示にする
+                Toast.makeText(this,"ログイン失敗\nメールアドレスかパスワードに間違いがないか確認してください",Toast.LENGTH_LONG).show()
                 progressBar.visibility = View.GONE
             }
         }
@@ -145,11 +116,15 @@ class LoginActivity : AppCompatActivity() {
             val password = passwordText.text.toString()
             val name = nameText.text.toString()
 
-            if (email.length != 0 && password.length >= 6 && name.length != 0) {
-                // ログイン時に表示名を保存するようにフラグを立てる
-                mIsCreateAccount = true
+            if (email.length != 0 && password.length >= 6&& name.length != 0) {
+                if(Realm().SearchSameName(name)){
+                    // ログイン時に表示名とUidを保存するようにフラグを立てる
+                    mIsCreateAccount = true
+                    createAccount(email, password)
+                }else{
+                    Snackbar.make(v, "このアカウント名はすでに使われています", Snackbar.LENGTH_LONG).show()
+                }
 
-                createAccount(email, password)
             } else {
                 // エラーを表示する
                 Snackbar.make(v, "正しく入力してください", Snackbar.LENGTH_LONG).show()
@@ -163,8 +138,9 @@ class LoginActivity : AppCompatActivity() {
 
             val email = emailText.text.toString()
             val password = passwordText.text.toString()
+            val name=nameText.text.toString()
 
-            if (email.length != 0 && password.length >= 6) {
+            if (email.length != 0 && password.length >= 6 ) {
                 // フラグを落としておく
                 mIsCreateAccount = false
 
