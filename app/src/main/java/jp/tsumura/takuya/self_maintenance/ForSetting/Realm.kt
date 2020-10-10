@@ -37,19 +37,20 @@ class Realm {
         realm.close()
     }
 
-    fun NameToUid(SearchedName:String):String{
+    fun SearchName(SearchedName:String?):Person{
         if(!realm.isInTransaction){
             realm.beginTransaction()
         }
         val taskRealmResults = realm.where(Person::class.java).findAll()
         for (i in taskRealmResults) {
             if(i.Name == SearchedName){
-
-                return i.AcUid
+                val info = Person(i.id,i.Name,i.AcUid)
+                return info
             }
         }
         realm.close()
-        return "完全一致する名前が見つかりません"
+        val info =Person(-1,"完全一致する名前が見つかりません","")
+        return info
     }
     //
     fun UidToName(SearchedUid:String):String{

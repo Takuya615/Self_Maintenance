@@ -17,6 +17,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import io.realm.Realm
 import jp.tsumura.takuya.self_maintenance.ForCamera.CameraXActivity
+import jp.tsumura.takuya.self_maintenance.ForSetting.FriendSearchActivity
 import jp.tsumura.takuya.self_maintenance.ForSetting.LoginActivity
 import jp.tsumura.takuya.self_maintenance.ForStart.TutorialCoachMarkActivity
 import kotlinx.android.synthetic.main.content_main.*
@@ -85,12 +86,14 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val intent= Intent(this, GoalSettingActivity::class.java)
         val intent2= Intent(this, LoginActivity::class.java)
-        val intent3= Intent(this, LoginActivity::class.java)
+
         when (item.itemId) {
             R.id.action_settings -> Toast.makeText(applicationContext, "ただいま工事中💦", Toast.LENGTH_LONG).show()
-            R.id.action_settings2 ->startActivity(intent)
+            R.id.action_settings2 -> startActivity(intent)
             R.id.action_login->startActivity(intent2)
-            R.id.action_friend->startActivity(intent3)
+            R.id.action_search -> {
+                startActivity(Intent(this, FriendSearchActivity::class.java))
+            }
             else ->Log.e("TAG","設定画面でなにかを押しました")
         }
         return super.onOptionsItemSelected(item)

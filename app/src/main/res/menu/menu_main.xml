@@ -4,24 +4,28 @@
     tools:context="jp.tsumura.takuya.self_maintenance.MainActivity">
 
     <item
+        android:id="@+id/action_search"
+        android:icon="@android:drawable/ic_menu_search"
+        android:title="action_search"
+        app:showAsAction="ifRoom"
+        android:orderInCategory="100" />
+
+    <item
         android:id="@+id/action_settings2"
         android:orderInCategory="100"
         android:title="目標設定"
         app:showAsAction="never" />
-    <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="設定"
-        app:showAsAction="never" />
+
     <item
         android:id="@+id/action_login"
         android:orderInCategory="100"
         android:title="ログイン"
         app:showAsAction="never"/>
+
     <item
-        android:id="@+id/action_friend"
+        android:id="@+id/action_settings"
         android:orderInCategory="100"
-        android:title="フレンド登録"
-        app:showAsAction="never"/>
+        android:title="設定"
+        app:showAsAction="never" />
 
 </menu>

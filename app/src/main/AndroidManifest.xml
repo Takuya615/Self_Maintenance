@@ -18,9 +18,18 @@
         android:roundIcon="@drawable/tree_seichou02"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".forGallery.FriendListActivity"></activity>
+        <activity android:name=".ForSetting.FriendSearchActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+        </activity>
         <activity android:name=".ForSetting.LoginActivity" />
         <activity android:name=".forGallery.UriListActivity" />
-
         <activity
             android:name=".ForStart.TutorialActivity"
             android:theme="@style/WelcomeScreenTheme" />
