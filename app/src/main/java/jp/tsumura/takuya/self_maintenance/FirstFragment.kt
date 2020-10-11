@@ -13,7 +13,9 @@ import android.widget.Button
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
+import jp.tsumura.takuya.self_maintenance.forGallery.FriendListActivity
 import jp.tsumura.takuya.self_maintenance.forGallery.UriListActivity
+import kotlinx.android.synthetic.main.fragment_first.*
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
@@ -25,8 +27,6 @@ class FirstFragment : Fragment() {
         val prefs = requireActivity().getSharedPreferences("preferences_key_sample", Context.MODE_PRIVATE)
         val taskSec: Int = prefs.getInt(getString(R.string.preferences_key_smalltime),0)
         Log.e("TAG","タスク所要時間が$taskSec")
-
-
     }
 
     override fun onCreateView(
@@ -35,11 +35,15 @@ class FirstFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
 
-
         val view = inflater.inflate(R.layout.fragment_first, container, false)
         val button = view.findViewById<Button>(R.id.galleryButton)
         button.setOnClickListener {
             val intent= Intent(requireActivity(), UriListActivity::class.java)
+            startActivity(intent)
+        }
+        val button2 = view.findViewById<Button>(R.id.friendButton)
+        button2.setOnClickListener{
+            val intent= Intent(requireActivity(), FriendListActivity::class.java)
             startActivity(intent)
         }
 

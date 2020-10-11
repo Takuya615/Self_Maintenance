@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.text.Editable
 import android.util.Log
+import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
@@ -33,6 +34,7 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         Handler().postDelayed({
             val Coach = TutorialCoachMarkActivity(this)
@@ -177,6 +179,16 @@ class LoginActivity : AppCompatActivity() {
 
         // ログインする
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(mLoginListener)
+    }
+
+    //戻るボタンを押すと今いるviewを削除する
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when(item!!.itemId){
+            android.R.id.home->{
+                finish()
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
 
