@@ -23,19 +23,16 @@ class Firebase {
     val db = FirebaseFirestore.getInstance()
     if(user!=null){
         val docRef = db.collection(user.uid)
-        val data = HashMap<String, String>()
-        //val uri = Uri.fromFile(file).toString()
-        data["uri"] = fileName
-
         val date= Calendar.getInstance().getTime()
         val dateFormat = SimpleDateFormat("yyyy年MM月dd日HH時mm分")
         val StrDate =dateFormat.format(date).toString()
-        data["date"]=StrDate
+        val data = hashMapOf(
+            "friend" to false,
+            "uri" to fileName,
+            "date" to StrDate
+        )
 
-        val dateForm = SimpleDateFormat("yyyyMMddHHmm")
-        val IntDate =dateForm.format(date)//.toInt()今日の日付
-
-        docRef.document(IntDate).set(data)
+        docRef.document(StrDate).set(data)
             .addOnSuccessListener { Log.e("TAG", "動画作成日とURIの保存成功") }
             .addOnFailureListener { e -> Log.e("TAG", "動画作成日とURIの保存成功", e) }
     }

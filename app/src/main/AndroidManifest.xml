@@ -29,6 +29,7 @@
                 android:resource="@xml/searchable" />
         </activity>
         <activity android:name=".ForSetting.LoginActivity" />
+        <activity android:name=".forGallery.VideoListActivity" />
         <activity android:name=".forGallery.UriListActivity" />
         <activity
             android:name=".ForStart.TutorialActivity"

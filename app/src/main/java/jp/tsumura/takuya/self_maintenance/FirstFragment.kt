@@ -15,6 +15,7 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import jp.tsumura.takuya.self_maintenance.forGallery.FriendListActivity
 import jp.tsumura.takuya.self_maintenance.forGallery.UriListActivity
+import jp.tsumura.takuya.self_maintenance.forGallery.VideoListActivity
 import kotlinx.android.synthetic.main.fragment_first.*
 
 /**
@@ -38,7 +39,7 @@ class FirstFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_first, container, false)
         val button = view.findViewById<Button>(R.id.galleryButton)
         button.setOnClickListener {
-            val intent= Intent(requireActivity(), UriListActivity::class.java)
+            val intent= Intent(requireActivity(), VideoListActivity::class.java)
             startActivity(intent)
         }
         val button2 = view.findViewById<Button>(R.id.friendButton)

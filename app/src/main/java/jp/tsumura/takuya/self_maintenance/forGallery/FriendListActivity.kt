@@ -5,26 +5,31 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import jp.tsumura.takuya.self_maintenance.ForSetting.Goal
 import jp.tsumura.takuya.self_maintenance.ForSetting.Realm
 import jp.tsumura.takuya.self_maintenance.R
+import kotlinx.android.synthetic.main.activity_camera_x.*
+import kotlinx.android.synthetic.main.activity_friend_list.*
 import kotlinx.android.synthetic.main.activity_goal_setting.*
 
 class FriendListActivity : AppCompatActivity() {
 
-    private lateinit var friendsadapter : ArrayAdapter<String>
+    //private lateinit var friendsadapter : ArrayAdapter<String>
+    private lateinit var adapter : FriendListAdapter
     private lateinit var mnameList:MutableList<String>
     private lateinit var muidList:MutableList<String>
     private lateinit var mAuth: FirebaseAuth
     private lateinit var db : FirebaseFirestore
-    private var response :Boolean = false
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +47,7 @@ class FriendListActivity : AppCompatActivity() {
             val docRef = db.collection(user.uid).document("friendRequest")
             docRef.get().addOnSuccessListener { documentSnapshot ->
                 val friendUid = documentSnapshot.data!!["friendUid"]
-                Log.e("TAG","フレンドリストアクティビティのit（Uri?）= $friendUid")
+                Log.e("TAG","フレンドからのリクエスト（Uri?）= $friendUid")
                 if(friendUid !=null){
                     val requestName = Realm().UidToName(friendUid.toString())
                     //ダイアログ
@@ -58,7 +63,10 @@ class FriendListActivity : AppCompatActivity() {
                                 "uid" to friendUid//.toString()
                             )
                             docRef2.set(map)
-                                .addOnSuccessListener { Log.e("TAG","承認成功")}
+                                .addOnSuccessListener {
+                                    Log.e("TAG","承認成功")
+                                    adapter.notifyDataSetChanged()
+                                }
                                 .addOnFailureListener { Log.e("TAG","承認失敗") }
 
                             //保存されているデータをnullに戻さないと。。。
@@ -80,12 +88,12 @@ class FriendListActivity : AppCompatActivity() {
         db.collection(user!!.uid).whereEqualTo("friend", true).get()
             .addOnSuccessListener { documents ->
                 for (document in documents) {
-                    Log.d("TAG", "${document.id} => ${document.data}")
+                    Log.e("TAG", "${document.id} => ${document.data}")
                     val name = document.data["name"].toString()
                     val uid = document.data["uid"].toString()
                     mnameList.add(name)
                     muidList.add(uid)
-                    friendsadapter.notifyDataSetChanged()
+                    adapter.notifyDataSetChanged()
 
                 }
             }
@@ -93,6 +101,42 @@ class FriendListActivity : AppCompatActivity() {
                 Log.w("TAG", "Error getting documents: ", exception)
             }
 
+
+        Log.e("TAG", "namelistは$mnameList")
+        adapter = FriendListAdapter(mnameList)
+        val layoutManager = LinearLayoutManager(this)
+
+        // アダプターとレイアウトマネージャーをセット
+        simpleRecyclerView.layoutManager = layoutManager
+        simpleRecyclerView.adapter = adapter
+        simpleRecyclerView.setHasFixedSize(true)
+
+        // インターフェースの実装
+        adapter.setOnItemClickListener(object:FriendListAdapter.OnItemClickListener{
+            override fun onItemClickListener(view: View, position: Int, clickedText: String) {
+                when(view.getId()){
+                    R.id.itemTextView -> {
+                        val friendName = mnameList[position]
+                        val friendUid = muidList[position]
+                        val intent = Intent(this@FriendListActivity, VideoListActivity::class.java)
+                        intent.putExtra("friendName",friendName)
+                        intent.putExtra("friendUid",friendUid)
+                        startActivity(intent)
+                        //Toast.makeText(applicationContext, "${clickedText}がタップされました", Toast.LENGTH_LONG).show()
+                    }
+                    R.id.itemdeleate -> {
+                        db.collection(user.uid).document(clickedText)
+                            .delete()
+                            .addOnSuccessListener { Log.e("TAG", "DocumentSnapshot successfully deleted!") }
+                            .addOnFailureListener { e -> Log.w("TAG", "Error deleting document", e) }
+                        //Toast.makeText(applicationContext, "${clickedText}の「削除」がタップされました", Toast.LENGTH_LONG).show()
+                        adapter.notifyDataSetChanged()
+                    }
+                }
+            }
+        })
+
+/*
         val itemLayoutId = R.layout.fragment_urilist_item
         val textViewId = R.id.label
         friendsadapter = ArrayAdapter(this,itemLayoutId,textViewId,mnameList)
@@ -109,6 +153,8 @@ class FriendListActivity : AppCompatActivity() {
             startActivity(intent)
 
         }
+
+ */
     }
 
     //戻るボタンを押すと今いるviewを削除する
