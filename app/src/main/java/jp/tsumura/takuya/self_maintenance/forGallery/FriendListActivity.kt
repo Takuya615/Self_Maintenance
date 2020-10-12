@@ -129,7 +129,7 @@ class FriendListActivity : AppCompatActivity() {
                             .delete()
                             .addOnSuccessListener { Log.e("TAG", "DocumentSnapshot successfully deleted!") }
                             .addOnFailureListener { e -> Log.w("TAG", "Error deleting document", e) }
-                        //Toast.makeText(applicationContext, "${clickedText}の「削除」がタップされました", Toast.LENGTH_LONG).show()
+                        Toast.makeText(applicationContext, "${clickedText}を削除しました", Toast.LENGTH_LONG).show()
                         adapter.notifyDataSetChanged()
                     }
                 }

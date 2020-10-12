@@ -17,12 +17,14 @@ import kotlinx.android.synthetic.main.activity_friend_list.*
 
 class VideoListActivity: AppCompatActivity() {
 
-    private lateinit var adapter : FriendListAdapter
+    private lateinit var adapter : VideoListAdapter
     private lateinit var mdateList:MutableList<String>
     private lateinit var muriList:MutableList<String>
+    private lateinit var mlikeList:MutableList<String>
     private lateinit var mAuth: FirebaseAuth
     private lateinit var db : FirebaseFirestore
     private lateinit var coll :CollectionReference
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,6 +33,7 @@ class VideoListActivity: AppCompatActivity() {
 
         muriList = mutableListOf<String>()
         mdateList = mutableListOf<String>()
+        mlikeList = mutableListOf<String>()
         mAuth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
         val user = mAuth.currentUser
@@ -61,8 +64,10 @@ class VideoListActivity: AppCompatActivity() {
 
                     val date = document.data["date"].toString()
                     val uri = document.data["uri"].toString()
+                    val like = document.data["like"].toString()
                     mdateList.add(date)
                     muriList.add(uri)
+                    mlikeList.add(like)
                     adapter.notifyDataSetChanged()
                 }
             }
@@ -70,7 +75,7 @@ class VideoListActivity: AppCompatActivity() {
                 Log.w("TAG", "Error getting documents: ", exception)
             }
 
-        adapter = FriendListAdapter(mdateList)
+        adapter = VideoListAdapter(mdateList,mlikeList)
         val layoutManager = LinearLayoutManager(this)
 
         // アダプターとレイアウトマネージャーをセット
@@ -79,13 +84,15 @@ class VideoListActivity: AppCompatActivity() {
         simpleRecyclerView.setHasFixedSize(true)
 
         // インターフェースの実装
-        adapter.setOnItemClickListener(object:FriendListAdapter.OnItemClickListener{
+        adapter.setOnItemClickListener(object:VideoListAdapter.OnItemClickListener{
             override fun onItemClickListener(view: View, position: Int, clickedText: String) {
                 when(view.getId()){
                     R.id.itemTextView -> {
                         val VideoUri = muriList[position]
                         val intent = Intent(this@VideoListActivity, GalleryActivity::class.java)
                         intent.putExtra("selectedName",VideoUri)
+                        intent.putExtra("friendUid",friendUid)
+                        intent.putExtra("date",mdateList[position])
                         startActivity(intent)
                         //Toast.makeText(applicationContext, "${clickedText}がタップされました", Toast.LENGTH_LONG).show()
                     }
@@ -94,7 +101,7 @@ class VideoListActivity: AppCompatActivity() {
                             .delete()
                             .addOnSuccessListener { Log.e("TAG", "DocumentSnapshot successfully deleted!") }
                             .addOnFailureListener { e -> Log.w("TAG", "Error deleting document", e) }
-                        //Toast.makeText(applicationContext, "${clickedText}の「削除」がタップされました", Toast.LENGTH_LONG).show()
+                        Toast.makeText(applicationContext, "${clickedText}を削除しました", Toast.LENGTH_LONG).show()
                         adapter.notifyDataSetChanged()
                     }
                 }

@@ -4,27 +4,26 @@ package jp.tsumura.takuya.self_maintenance.forGallery
 import android.content.Intent
 import android.media.MediaPlayer
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
-import android.view.View
 import android.view.WindowManager
 import android.widget.Button
-import android.widget.ImageButton
 import android.widget.MediaController
 import android.widget.VideoView
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.firestore.FirebaseFirestore
 import jp.tsumura.takuya.self_maintenance.MainActivity
 import jp.tsumura.takuya.self_maintenance.R
 import kotlinx.android.synthetic.main.activity_gallery.*
-import kotlinx.android.synthetic.main.content_main.*
-import java.net.URL
 
 
 class GalleryActivity : AppCompatActivity() {
-    private lateinit var uri: Uri
+
+
+    private lateinit var db : FirebaseFirestore
+    private var like = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +34,10 @@ class GalleryActivity : AppCompatActivity() {
         //val replay = findViewById<ImageButton>(R.id.replay_button)
         //val play = findViewById<ImageButton>(R.id.play_button)
         //progressbar2.visibility = android.widget.ProgressBar.VISIBLE
+
+
+        db = FirebaseFirestore.getInstance()
+
 
         var mediaControls: MediaController? = null
         //リストから指定されたfileNameを取得する
@@ -49,11 +52,11 @@ class GalleryActivity : AppCompatActivity() {
         }
 
         progressbar2.visibility = android.widget.ProgressBar.VISIBLE
-        videoView.setOnPreparedListener(object:MediaPlayer.OnPreparedListener {
-            override fun onPrepared(mp:MediaPlayer){
+        videoView.setOnPreparedListener(object : MediaPlayer.OnPreparedListener {
+            override fun onPrepared(mp: MediaPlayer) {
                 mp.start()
-                mp.setOnVideoSizeChangedListener(object:MediaPlayer.OnVideoSizeChangedListener {
-                    override fun onVideoSizeChanged(mp:MediaPlayer , arg1:Int , arg2:Int ) {
+                mp.setOnVideoSizeChangedListener(object : MediaPlayer.OnVideoSizeChangedListener {
+                    override fun onVideoSizeChanged(mp: MediaPlayer, arg1: Int, arg2: Int) {
                         progressbar2.visibility = android.widget.ProgressBar.GONE
                     }
                 })
@@ -62,13 +65,44 @@ class GalleryActivity : AppCompatActivity() {
 
         videoView.setMediaController(mediaControls)
         val value = intent.getStringExtra("selectedName")
-        Log.e("TAG","ギャラリで指定されたURIは$value")
+        val friendUid = intent.getStringExtra("friendUid")
+        val documentName = intent.getStringExtra("date")
+        Log.e("TAG", "ギャラリで指定されたURIは$value")
         val convertedUri = Uri.parse(value)
         try {
             videoView.setVideoURI(convertedUri)
             videoView.start()
-        }catch(e:Exception){
-            Log.e("TAG","URIから動画の取り出しに失敗")
+            videoView.setOnCompletionListener{
+                if(friendUid!=null&&documentName!=null){
+                    val alertDialogBuilder = AlertDialog.Builder(this)
+                    alertDialogBuilder.setTitle("この動画に いいね！ を送りますか？")
+                    alertDialogBuilder.setMessage("")
+                    //alertDialogBuilder.setView(iv)
+                    // 肯定ボタンに表示される文字列、押したときのリスナーを設定する
+                    alertDialogBuilder.setPositiveButton("いいね！"){ dialog, which ->
+                        val coll = db.collection(friendUid).document(documentName)
+                        coll.get().addOnSuccessListener { document ->
+                            like = document["like"].toString().toInt()
+                            Log.e("TAG", "like  の値は　$like")
+
+                        }
+                        val liked = like +1
+                       coll.update("like",liked)
+                           .addOnSuccessListener { Log.e("TAG", "likeの保存成功") }
+                           .addOnFailureListener { e -> Log.e("TAG", "likeの保存失敗", e) }
+
+                        Log.e("TAG", "documentName$documentName")
+                    }
+                    alertDialogBuilder.setNegativeButton("skip"){ dialog, which ->
+                        Log.e("TAG", "閉じる")
+                    }
+                    // AlertDialogを作成して表示する
+                    val alertDialog = alertDialogBuilder.create()
+                    alertDialog.show()
+                }
+            }
+        }catch (e: Exception){
+            Log.e("TAG", "URIから動画の取り出しに失敗")
         }
         //取得したfileNameで、Storageから、そのURIを取得
         /*
@@ -105,12 +139,13 @@ class GalleryActivity : AppCompatActivity() {
         main.setOnClickListener{
             val intent= Intent(this, MainActivity::class.java)
             startActivity(intent)
+            finish()
         }
     }
     //戻るボタンを押すと今いるviewを削除する
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when(item!!.itemId){
-            android.R.id.home->{
+            android.R.id.home -> {
                 finish()
             }
         }

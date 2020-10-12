@@ -3,23 +3,22 @@ package jp.tsumura.takuya.self_maintenance.ForCamera
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.provider.Settings.Global.getString
 import android.util.Log
+import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import jp.tsumura.takuya.self_maintenance.MainActivity
 import jp.tsumura.takuya.self_maintenance.R
-import jp.tsumura.takuya.self_maintenance.forGallery.UriListActivity
+import jp.tsumura.takuya.self_maintenance.forGallery.VideoListActivity
 import java.text.SimpleDateFormat
 import java.util.*
 
-class CameraDialog(context: Context,mTimerSec:Int){
-
-    private var mTimerSec:Int = mTimerSec
-    private var mContext: Context = context
-    private var prefs = mContext.getSharedPreferences( "preferences_key_sample",Context.MODE_PRIVATE)
+class CameraDialog(){
 
     //ダイアログ
-    fun showDialog(){
+    fun showDialog(mContext: Context,mTimerSec:Int){
+
+        val prefs = mContext.getSharedPreferences( "preferences_key_sample",Context.MODE_PRIVATE)
+
 
         val preference = mContext.getSharedPreferences("TEST", Context.MODE_PRIVATE)
         val memoday : Int = preference.getInt("TEST",19930615)
@@ -123,12 +122,13 @@ class CameraDialog(context: Context,mTimerSec:Int){
             mContext.startActivity(intent)
         }
         alertDialogBuilder.setNegativeButton("動画リスト"){dialog, which ->
-            val intent = Intent(mContext, UriListActivity::class.java)
+            val intent = Intent(mContext, VideoListActivity::class.java)
             mContext.startActivity(intent)
         }
         // AlertDialogを作成して表示する
         val alertDialog = alertDialogBuilder.create()
         alertDialog.show()
-
     }
+
+
 }

@@ -7,7 +7,8 @@ import androidx.recyclerview.widget.RecyclerView
 import jp.tsumura.takuya.self_maintenance.R
 import kotlinx.android.synthetic.main.friend_list_item.view.*
 
-class FriendListAdapter(private val customList: MutableList<String>) : RecyclerView.Adapter<FriendListAdapter.CustomViewHolder>() {
+class VideoListAdapter(private val customList: MutableList<String>,private val customList2: MutableList<String>) : RecyclerView.Adapter<VideoListAdapter.CustomViewHolder>() {
+
 
     //リスナー
     lateinit var listener: OnItemClickListener
@@ -16,6 +17,7 @@ class FriendListAdapter(private val customList: MutableList<String>) : RecyclerV
     class CustomViewHolder(val view: View): RecyclerView.ViewHolder(view) {
         val sampleImg = view.itemdeleate
         val sampleTxt = view.itemTextView
+        val ampleLike = view.itemLike
     }
 
     // getItemCount onCreateViewHolder onBindViewHolderを実装
@@ -34,7 +36,7 @@ class FriendListAdapter(private val customList: MutableList<String>) : RecyclerV
     // ViewHolderに表示する画像とテキストを挿入
     override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
         holder.view.itemTextView.text = customList[position]
-
+        holder.view.itemLike.text = customList2[position]
 
         holder.view.itemTextView.setOnClickListener {
             listener.onItemClickListener(it, position, customList[position])
@@ -54,4 +56,5 @@ class FriendListAdapter(private val customList: MutableList<String>) : RecyclerV
     fun setOnItemClickListener(listener: OnItemClickListener){
         this.listener = listener
     }
+
 }

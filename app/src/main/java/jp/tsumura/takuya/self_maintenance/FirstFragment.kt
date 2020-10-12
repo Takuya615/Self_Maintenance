@@ -1,6 +1,5 @@
 package jp.tsumura.takuya.self_maintenance
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -12,11 +11,8 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
-import androidx.navigation.fragment.findNavController
 import jp.tsumura.takuya.self_maintenance.forGallery.FriendListActivity
-import jp.tsumura.takuya.self_maintenance.forGallery.UriListActivity
 import jp.tsumura.takuya.self_maintenance.forGallery.VideoListActivity
-import kotlinx.android.synthetic.main.fragment_first.*
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.

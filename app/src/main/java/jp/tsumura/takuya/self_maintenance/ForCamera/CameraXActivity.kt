@@ -4,21 +4,22 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
-
 import android.graphics.Color
 import android.graphics.SurfaceTexture
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.util.DisplayMetrics
 import android.util.Log
-import android.util.Rational
 import android.util.Size
 import android.view.*
 import android.widget.ImageButton
 import android.widget.Toast
-import androidx.camera.core.*
+import androidx.appcompat.app.AppCompatActivity
+import androidx.camera.core.CameraX
+import androidx.camera.core.PreviewConfig
+import androidx.camera.core.VideoCapture
+import androidx.camera.core.VideoCaptureConfig
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -26,8 +27,8 @@ import androidx.lifecycle.LifecycleOwner
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
-import jp.tsumura.takuya.self_maintenance.R
 import jp.tsumura.takuya.self_maintenance.ForStart.TutorialCoachMarkActivity
+import jp.tsumura.takuya.self_maintenance.R
 import kotlinx.android.synthetic.main.activity_camera_x.*
 import java.io.File
 import java.text.SimpleDateFormat
@@ -91,22 +92,25 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
                     backView.setBackgroundColor(Color.WHITE)
                     TimeRecorder()
 
-                    val file = File(externalMediaDirs.first(),
-                        "${System.currentTimeMillis()}.mp4")
-                    videoCapture.startRecording(file,object:VideoCapture.OnVideoSavedListener{
+                    val file = File(
+                        externalMediaDirs.first(),
+                        "${System.currentTimeMillis()}.mp4"
+                    )
+                    videoCapture.startRecording(file, object : VideoCapture.OnVideoSavedListener {
                         override fun onVideoSaved(file: File?) {
                             val user = mAuth.currentUser
-                            if(user!=null){//ログインしてたら、画像の保存と、URLが取得できる
+                            if (user != null) {//ログインしてたら、画像の保存と、URLが取得できる
                                 val storage = Firebase.storage
                                 val storageRef = storage.reference
-                                val photoRef = storageRef.child("${user.uid}/${System.currentTimeMillis()}.mp4")
+                                val photoRef =
+                                    storageRef.child("${user.uid}/${System.currentTimeMillis()}.mp4")
                                 val movieUri = Uri.fromFile(file)
                                 val uploadTask = photoRef.putFile(movieUri)
                                 // Register observers to listen for when the download is done or if it fails
                                 uploadTask.addOnFailureListener {
-                                    Log.e("TAG","ストレージへ保存失敗")
+                                    Log.e("TAG", "ストレージへ保存失敗")
                                 }.addOnSuccessListener {
-                                    Log.e("TAG","ストレージへ保存成功")
+                                    Log.e("TAG", "ストレージへ保存成功")
                                 }.continueWithTask { task ->
                                     if (!task.isSuccessful) {
                                         task.exception?.let {
@@ -118,16 +122,20 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
                                     if (task.isSuccessful) {
                                         val downloadUri = task.result
                                         Firebase().WriteToStore(downloadUri.toString())//Uriと日付を保存する
-                                        Log.e("TAG","URLの取得成功")
+                                        Log.e("TAG", "URLの取得成功")
                                     } else {
-                                        Log.e("TAG","URLの取得に失敗")
+                                        Log.e("TAG", "URLの取得に失敗")
                                     }
                                 }
                             }
 
                         }
 
-                        override fun onError(useCaseError: VideoCapture.UseCaseError?, message: String?, cause: Throwable?) {
+                        override fun onError(
+                            useCaseError: VideoCapture.UseCaseError?,
+                            message: String?,
+                            cause: Throwable?
+                        ) {
                             Log.e(tag, "Video Error: $message")
                         }
                     })
@@ -136,7 +144,7 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
                     mTimer!!.cancel()
                     videoCapture.stopRecording()
                     Log.e(tag, "録画停止")
-                    CameraDialog(this,mTimerSec).showDialog()
+                    CameraDialog().showDialog(this, mTimerSec)
                 }
             }
             false
@@ -153,28 +161,31 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
                 CameraX.getCameraWithLensFacing(lensFacing)
                 startCamera()
             } catch (exc: Exception) {
-                Log.e("TAG","カメラの切り替えに失敗")
+                Log.e("TAG", "カメラの切り替えに失敗")
             }
         }
         
         //コーチマーク
         Handler().postDelayed({
             val Coach = TutorialCoachMarkActivity(this)
-            Coach.CoachMark3(this,this)
+            Coach.CoachMark3(this, this)
         }, 1000)
     }
 
     //ココからパーミッション系
     override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        requestCode: Int, permissions: Array<String>, grantResults: IntArray
+    ) {
 
         if (requestCode == CameraXActivity.REQUEST_CODE_PERMISSIONS) {
             if (allPermissionsGranted()) {
                 viewFinder.post { startCamera() }
             } else {
-                Toast.makeText(this,
+                Toast.makeText(
+                    this,
                     "許可がないと動作しません",
-                    Toast.LENGTH_LONG).show()
+                    Toast.LENGTH_LONG
+                ).show()
                 finish()
             }
         }
@@ -184,7 +195,8 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
     private fun allPermissionsGranted(): Boolean {
         for (permission in REQUIRED_PERMISSIONS) {
             if (ContextCompat.checkSelfPermission(
-                    this, permission) != PackageManager.PERMISSION_GRANTED) {
+                    this, permission
+                ) != PackageManager.PERMISSION_GRANTED) {
                 return false
             }
         }
@@ -225,27 +237,27 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
         val videoCaptureConfig = VideoCaptureConfig.Builder().apply {
             setLensFacing(lensFacing)//内・外カメラの使い分け用
             setTargetRotation(viewFinder.display.rotation)
-            setTargetResolution(Size(metrics.widthPixels/100, metrics.heightPixels/100))//　　　　　ここで画質を下げている
+            setTargetResolution(Size(metrics.widthPixels / 100, metrics.heightPixels / 100))//　　　　　ここで画質を下げている
             }.build()
         videoCapture = VideoCapture(videoCaptureConfig)
 
 // Bind use cases to lifecycle
-        CameraX.bindToLifecycle(this, preview,videoCapture)
+        CameraX.bindToLifecycle(this, preview, videoCapture)
     }
 
     //ここからタイマー用　　
     private fun TimeRecorder(){
         val prefs = getSharedPreferences("preferences_key_sample", Context.MODE_PRIVATE)
-        val taskSec: Int = prefs.getInt(getString(R.string.preferences_key_smalltime),0)
-        Log.e("TAG","タスク所要時間の初期値は$taskSec")
+        val taskSec: Int = prefs.getInt(getString(R.string.preferences_key_smalltime), 0)
+        Log.e("TAG", "タスク所要時間の初期値は$taskSec")
 
-        val totalday : Int = prefs.getInt("preferences_key2",0)//総日数の値を取得
+        val totalday : Int = prefs.getInt("preferences_key2", 0)//総日数の値を取得
         val times =totalday/2 //総日数が、2日更新されるごとに、強度を上げる場合。（totalday=1なら、1/2で、times=0となる）
 
         if(times!=0 ) {//　　　割り算の演算子は整数までしか計算しないので、少数点以下は無視して出力される。
             val A = taskSec * times
             taskSec + A
-            Log.e("TAG","現在のタスク所要時間は$taskSec")
+            Log.e("TAG", "現在のタスク所要時間は$taskSec")
         }
 
         // タイマーの作成
@@ -255,11 +267,11 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
         mTimer!!.schedule(object : TimerTask() {
             override fun run() {
                 mTimerSec += 1
-                val seconds =mTimerSec%60;
-                val minite =(mTimerSec/60)%60;
+                val seconds = mTimerSec % 60;
+                val minite = (mTimerSec / 60) % 60;
                 mHandler.post {
-                    timer.text = String.format("%02d:%02d",minite,seconds)
-                    if(mTimerSec >= taskSec && taskSec!=0){
+                    timer.text = String.format("%02d:%02d", minite, seconds)
+                    if (mTimerSec >= taskSec && taskSec != 0) {
                         backView.setBackgroundColor(Color.GREEN)
                         captureButton.setBackgroundColor(Color.GREEN)
                     }
@@ -273,6 +285,9 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
         private const val tag = "CameraXBasic"
         private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
         private const val REQUEST_CODE_PERMISSIONS = 10
-        private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
+        private val REQUIRED_PERMISSIONS = arrayOf(
+            Manifest.permission.CAMERA,
+            Manifest.permission.RECORD_AUDIO
+        )
     }
 }
