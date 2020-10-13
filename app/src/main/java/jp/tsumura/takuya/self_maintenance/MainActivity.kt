@@ -91,9 +91,7 @@ class MainActivity : AppCompatActivity() {
             R.id.action_settings -> Toast.makeText(applicationContext, "ただいま工事中💦", Toast.LENGTH_LONG).show()
             R.id.action_settings2 -> startActivity(intent)
             R.id.action_login->startActivity(intent2)
-            R.id.action_search -> {
-                startActivity(Intent(this, FriendSearchActivity::class.java))
-            }
+            //R.id.action_search -> { startActivity(Intent(this, FriendSearchActivity::class.java)) }
             else ->Log.e("TAG","設定画面でなにかを押しました")
         }
         return super.onOptionsItemSelected(item)

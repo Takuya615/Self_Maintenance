@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ArrayAdapter
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import jp.tsumura.takuya.self_maintenance.ForSetting.FriendSearchActivity
 import jp.tsumura.takuya.self_maintenance.ForSetting.Goal
 import jp.tsumura.takuya.self_maintenance.ForSetting.Realm
 import jp.tsumura.takuya.self_maintenance.R
@@ -25,6 +27,7 @@ class FriendListActivity : AppCompatActivity() {
 
     //private lateinit var friendsadapter : ArrayAdapter<String>
     private lateinit var adapter : FriendListAdapter
+    private lateinit var layoutManager: LinearLayoutManager
     private lateinit var mnameList:MutableList<String>
     private lateinit var muidList:MutableList<String>
     private lateinit var mAuth: FirebaseAuth
@@ -65,6 +68,9 @@ class FriendListActivity : AppCompatActivity() {
                             docRef2.set(map)
                                 .addOnSuccessListener {
                                     Log.e("TAG","承認成功")
+
+                                    mnameList.add(requestName)
+                                    muidList.add(friendUid.toString())
                                     adapter.notifyDataSetChanged()
                                 }
                                 .addOnFailureListener { Log.e("TAG","承認失敗") }
@@ -104,8 +110,7 @@ class FriendListActivity : AppCompatActivity() {
 
         Log.e("TAG", "namelistは$mnameList")
         adapter = FriendListAdapter(mnameList)
-        val layoutManager = LinearLayoutManager(this)
-
+        layoutManager = LinearLayoutManager(this)
         // アダプターとレイアウトマネージャーをセット
         simpleRecyclerView.layoutManager = layoutManager
         simpleRecyclerView.adapter = adapter
@@ -129,8 +134,11 @@ class FriendListActivity : AppCompatActivity() {
                             .delete()
                             .addOnSuccessListener { Log.e("TAG", "DocumentSnapshot successfully deleted!") }
                             .addOnFailureListener { e -> Log.w("TAG", "Error deleting document", e) }
-                        Toast.makeText(applicationContext, "${clickedText}を削除しました", Toast.LENGTH_LONG).show()
-                        adapter.notifyDataSetChanged()
+                        //Toast.makeText(applicationContext, "${clickedText}を削除しました", Toast.LENGTH_LONG).show()
+                        mnameList.remove(mnameList[position])
+                        muidList.remove(muidList[position])
+                        adapter.notifyItemRemoved(position)
+
                     }
                 }
             }
@@ -157,11 +165,20 @@ class FriendListActivity : AppCompatActivity() {
  */
     }
 
+    //メニューバーのレイアウトを設定する
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.menu_friend_list, menu)
+        return true
+    }
     //戻るボタンを押すと今いるviewを削除する
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when(item!!.itemId){
             android.R.id.home->{
                 finish()
+            }
+            R.id.action_search -> {
+                startActivity(Intent(this, FriendSearchActivity::class.java))
             }
         }
         return super.onOptionsItemSelected(item)

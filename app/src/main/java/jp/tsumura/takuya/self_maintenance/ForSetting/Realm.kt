@@ -49,7 +49,7 @@ class Realm {
             }
         }
         realm.close()
-        val info =Person(-1,"完全一致する名前が見つかりません","")
+        val info =Person(-1,"完全一致する名前が\n見つかりません","")
         return info
     }
     //

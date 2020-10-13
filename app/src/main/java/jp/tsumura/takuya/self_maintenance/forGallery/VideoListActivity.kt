@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import jp.tsumura.takuya.self_maintenance.ForSetting.Realm
 import jp.tsumura.takuya.self_maintenance.R
 import kotlinx.android.synthetic.main.activity_friend_list.*
@@ -57,7 +58,7 @@ class VideoListActivity: AppCompatActivity() {
             coll =db.collection(friendUid)
         }
 
-        coll.whereEqualTo("friend", false).get()
+        coll.whereEqualTo("friend", false).get()//.orderBy("date", Query.Direction.DESCENDING)
             .addOnSuccessListener { documents ->
                 for (document in documents) {
                     Log.e("TAG", "${document.id} => ${document.data}")
@@ -102,7 +103,10 @@ class VideoListActivity: AppCompatActivity() {
                             .addOnSuccessListener { Log.e("TAG", "DocumentSnapshot successfully deleted!") }
                             .addOnFailureListener { e -> Log.w("TAG", "Error deleting document", e) }
                         Toast.makeText(applicationContext, "${clickedText}を削除しました", Toast.LENGTH_LONG).show()
-                        adapter.notifyDataSetChanged()
+
+                        mdateList.remove(mdateList[position])
+                        muriList.remove(muriList[position])
+                        adapter.notifyItemRemoved(position)
                     }
                 }
             }
