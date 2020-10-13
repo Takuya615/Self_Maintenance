@@ -6,6 +6,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import jp.tsumura.takuya.self_maintenance.R
 import kotlinx.android.synthetic.main.friend_list_item.view.*
+import kotlinx.android.synthetic.main.friend_list_item.view.itemTextView
+import kotlinx.android.synthetic.main.friend_list_item.view.itemdeleate
+import kotlinx.android.synthetic.main.video_list_item.view.*
 
 class VideoListAdapter(private val customList: MutableList<String>,private val customList2: MutableList<String>) : RecyclerView.Adapter<VideoListAdapter.CustomViewHolder>() {
 
@@ -24,7 +27,7 @@ class VideoListAdapter(private val customList: MutableList<String>,private val c
     // 上記のViewHolderクラスを使ってViewHolderを作成
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        val item = layoutInflater.inflate(R.layout.friend_list_item, parent, false)
+        val item = layoutInflater.inflate(R.layout.video_list_item, parent, false)
         return CustomViewHolder(item)
     }
 
