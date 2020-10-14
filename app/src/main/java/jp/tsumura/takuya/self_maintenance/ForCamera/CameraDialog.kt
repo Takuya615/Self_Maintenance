@@ -18,101 +18,68 @@ class CameraDialog(){
     fun showDialog(mContext: Context,mTimerSec:Int){
 
         val prefs = mContext.getSharedPreferences( "preferences_key_sample",Context.MODE_PRIVATE)
+        val save : SharedPreferences.Editor = prefs.edit()
+        var newCon:Int = 0
+        var newRec:Int = 0
 
+        val fromday : String? = prefs.getString("TEST","1993/06/15")//前回利用した日
+        val date =Calendar.getInstance().getTime()
+        val dateFormatOnlyDay = SimpleDateFormat("yyyy/MM/dd")
+        val today =dateFormatOnlyDay.format(date).toString()
+        val different = dateDiff(today,fromday)
+        if(different == 1){
+            //継続日数
+            val Continue : Int = prefs.getInt("continue",0)
+            newCon = Continue + 1
+            save.putInt("continue", newCon)
+            //復活数
+            val recover: Int = prefs.getInt("recover",0)
+            newRec = recover
+            //総日数
+            val total: Int = prefs.getInt("totalday",0)
+            val newtot = total + 1
+            save.putInt("totalday", newtot)
 
-        val preference = mContext.getSharedPreferences("TEST", Context.MODE_PRIVATE)
-        val memoday : Int = preference.getInt("TEST",19930615)
-        val today =Calendar.getInstance()
-        val date=today.getTime()
+        }else if(different < 2){
+            //継続リセット
+            newCon = 0
+            save.putInt("continue", newCon)
+            //復活数
+            val recover : Int = prefs.getInt("recover",-1)
+            newRec = recover + 1
+            save.putInt("recover", newRec)
+            //総日数
+            val total: Int = prefs.getInt("totalday",0)
+            val newtot = total + 1
+            save.putInt("totalday", newtot)
 
-        //連続活動日数
-        val memodayOnlyDay = memoday%100
-        val dateFormatOnlyDay = SimpleDateFormat("dd")
-        val IntDateOnlyDay =dateFormatOnlyDay.format(date).toInt()
-        var ncd = 0
-        val memo3 : Int = prefs.getInt("preferences_key3",0)
-        Log.e("TAG","今日は、$IntDateOnlyDay　日")
-        Log.e("TAG","設定日は、$memodayOnlyDay 日")
-
-        val numb : Int = prefs.getInt("preferences_key_rev",-1)//復活回数
-        var revival = 0//                                        復活回数
-
-        if(IntDateOnlyDay - memodayOnlyDay == 1){
-            Log.e("TAG","連続日数更新！")
-            ncd = memo3 +1
-        }else if(IntDateOnlyDay == 1 && 28<=memodayOnlyDay){
-            Log.e("TAG","連続日数更新！")
-            ncd = memo3 +1
-        }else if( IntDateOnlyDay == memodayOnlyDay){
-            Log.e("TAG","連続日数カウントなし")
-            ncd = memo3
-        }else{
-            Log.e("TAG","連続日数リセット")
-            ncd = 0
-            revival = numb + 1//                                 　復活回数
-            val j : SharedPreferences.Editor = prefs.edit()//　　　　復活回数
-            j.putInt("preferences_key_rev", revival)//　　　　　　　　　　復活回数
-            j.commit()// 　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　復活回数
+        }else if(different==0){
+            //継続日数
+            val Continue : Int = prefs.getInt("continue",0)
+            newCon = Continue
+            //復活数
+            val recover: Int = prefs.getInt("recover",0)
+            newRec = recover
         }
-        val g : SharedPreferences.Editor = prefs.edit()
-        g.putInt("preferences_key3", ncd)
-        g.commit()
 
         //継続日数の最長値を保存する
         val MAX : Int = prefs.getInt("preferences_key_MAX",0)
-        if(MAX < ncd){
-            val updatedMAX = ncd
-            val i : SharedPreferences.Editor = prefs.edit()
-            i.putInt("preferences_key_MAX", updatedMAX)
-            i.commit()
-            Log.e("TAG","最長記録更新$updatedMAX")
-        }
-
-
-        //総活動日数
-        val dateFormat = SimpleDateFormat("yyyyMMdd")
-        val IntDate =dateFormat.format(date).toInt()//今日の日付
-        var Dailytask = false
-        var daycounter = 0
-        Log.e("TAG","今日は、$IntDate")
-        Log.e("TAG","設定日は、$memoday")
-        if(memoday >= IntDate){
-            Dailytask = false
-        }else{
-            val e : SharedPreferences.Editor = preference.edit()
-            e.putInt("TEST" , IntDate)//　　　　　　　　　　　　　　　　　　　　　　　　設定日の更新
-            e.commit()
-            Dailytask = true
-        }
-        if(Dailytask){
-            Log.e("TAG","総日数更新")
-            val memo2 : Int = prefs.getInt("preferences_key2",0)
-            daycounter = memo2 +1
-            val g : SharedPreferences.Editor = prefs.edit()
-            g.putInt("preferences_key2" , daycounter)
-            g.commit()
-        }else{
-            Log.e("TAG","DailyTaskは遂行済み、総日数カウントなし")
-            val memo2 : Int = prefs.getInt("preferences_key2",0)
-            daycounter = memo2
+        if(MAX < newCon){
+            val updatedMAX = newCon
+            save.putInt("preferences_key_MAX", updatedMAX)
         }
 
         //総活動時間
-        val memo : Int = prefs.getInt("preferences_key",0)
-        val newnum=memo + mTimerSec
-        val seconds =newnum%60;
-        val minite =(newnum/60)%60;
-        val totaltime="$minite"+"分"+"$seconds"+"秒"
-        val e : SharedPreferences.Editor = prefs.edit()
-        e.putInt("preferences_key" , newnum)
-        e.commit()
+        val totaltime : Int = prefs.getInt("totaltime",0)
+        val newnum=totaltime + mTimerSec
+        save.putInt("totaltime" , newnum)
 
-        Log.e("TAG","参照に保存してる秒数$newnum")
+        save.apply()
 
         //ダイアログに記録を表示
-        val list = arrayOf("連続活動日数　　$ncd","復活回数　　$revival","総活動日数　　$daycounter")
+        val list = arrayOf("継続日数　　$newCon","復活回数　　$newRec")
         val alertDialogBuilder = AlertDialog.Builder(mContext)
-        alertDialogBuilder.setTitle("活動の記録")
+        //alertDialogBuilder.setTitle("活動の記録")
         alertDialogBuilder.setItems(list){ dialog, which ->
             Log.e("TAG", "${list[which]} が選択されました")
         }
@@ -129,6 +96,22 @@ class CameraDialog(){
         val alertDialog = alertDialogBuilder.create()
         alertDialog.show()
     }
+
+    //差が０ー＞クリア済み、１－＞継続日数と総日数、2以上ー＞復帰回数と総日数（サボった日数更新する）
+    fun dateDiff(dateToStr:String,dateFromStr:String?):Int{
+        val sdf = SimpleDateFormat("yyyy/MM/dd")
+        var dateFrom:Date? =null
+        var dateTo:Date? = null
+        dateFrom = sdf.parse(dateFromStr)
+        dateTo = sdf.parse(dateToStr)
+
+        val To = dateTo.time
+        val From = dateFrom.time
+        val dayDiff = (To - From)
+        Log.e("TAG","dayDiffは${dayDiff}")
+        return dayDiff.toInt()
+    }
+
 
 
 }

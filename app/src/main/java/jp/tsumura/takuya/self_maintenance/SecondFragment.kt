@@ -34,11 +34,11 @@ class SecondFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         prefs = requireActivity().getSharedPreferences("preferences_key_sample", Context.MODE_PRIVATE)
 
-        val ncd = prefs.getInt("preferences_key3",0)//連続日数
+        val ncd = prefs.getInt("continue",0)//連続日数
         val MAX : Int = prefs.getInt("preferences_key_MAX",0)//最長連続日数
-        val revival = prefs.getInt("preferences_key_rev",0)//復活回数
-        val totalday =prefs.getInt("preferences_key2",0)//総日数
-        val TT = prefs.getInt("preferences_key",0)//総時間
+        val revival = prefs.getInt("recover",0)//復活回数
+        val totalday =prefs.getInt("totalday",0)//総日数
+        val TT = prefs.getInt("totaltime",0)//総時間
 
         val ncdtext =view.findViewById<TextView>(R.id.textView2_1)
         val MAXtext =view.findViewById<TextView>(R.id.textView2_2)
