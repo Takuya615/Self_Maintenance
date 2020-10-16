@@ -247,17 +247,33 @@ class TutorialCoachMarkActivity(context:Context) {
 
     }
 
-    //撮影停止ボタンを押した後
+    //フレンド　リストの
     fun CoachMark5(activity: Activity,context: Context){
         if(!Tuto4){
             g.putBoolean("Tuto4", true)
             g.commit()
 
-            val target = activity.findViewById<TextView>(R.id.action_search)
-            val Target = sreateUI(
-                target, activity, "",
-                "継続日数 ➡ 何日間連続で継続できているか\n復活回数 ➡ １度休んだとしても何度そこから立ち直ったか\nを記録しています。", -250f, 50f, -1f
-            )
+            // 注目されたいところを設定する
+            val firstTarget = SimpleTarget.Builder(activity)
+                .setShape(Circle(0f))//ハイライトの大きさ
+                .setTitle("友達の動画をチェック")
+                .setDescription("友人からの承認リクエストを受け取れば、このリスト内に追加されます。\n相手の撮影した動画がチェックでき、いいね！を送ることもできます。")
+                .setOverlayPoint(2f,500f )//文字列の位置
+                .build()
+
+            val target:View = activity.findViewById(R.id.friendview)
+            val targetLocation = IntArray(2)
+            target.getLocationInWindow(targetLocation)
+            val targetX =1000f// targetLocation[0] + target.width.toFloat()//2f
+            val targetY = 0f//targetLocation[1] + target.height/2f
+
+            val secondTarget = SimpleTarget.Builder(activity)
+                .setPoint(targetX,targetY)//ハイライトの位置
+                .setShape(Circle(300f))//ハイライトの大きさ
+                .setTitle("フレンドリクエストを送る")
+                .setDescription("検索アイコンから、友人へリクエストを送ることもできます。")
+                .setOverlayPoint(2f,500f )//文字列の位置
+                .build()
 
 
             // コーチマークを作成
@@ -269,7 +285,7 @@ class TutorialCoachMarkActivity(context:Context) {
                 // 表示するスピード
                 .setAnimation(DecelerateInterpolator(1f))
                 // 注目されたいところ（複数指定も可能）
-                .setTargets(Target)
+                .setTargets(firstTarget,secondTarget)
                 // 注目されたいところ以外をタップする時に閉じられるかどうか
                 .setClosedOnTouchedOutside(true)
                 // コーチマーク表示される時になんかする

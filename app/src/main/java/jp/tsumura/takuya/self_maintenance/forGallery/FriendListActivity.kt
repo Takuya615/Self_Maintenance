@@ -18,6 +18,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import jp.tsumura.takuya.self_maintenance.ForSetting.FriendSearchActivity
 import jp.tsumura.takuya.self_maintenance.ForSetting.Goal
 import jp.tsumura.takuya.self_maintenance.ForSetting.Realm
+import jp.tsumura.takuya.self_maintenance.ForStart.TutorialCoachMarkActivity
 import jp.tsumura.takuya.self_maintenance.R
 import kotlinx.android.synthetic.main.activity_camera_x.*
 import kotlinx.android.synthetic.main.activity_friend_list.*
@@ -39,6 +40,10 @@ class FriendListActivity : AppCompatActivity() {
         setContentView(R.layout.activity_friend_list)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         title = "フレンドリスト"
+
+        //コーチマーク
+        val Coach = TutorialCoachMarkActivity(this)
+        Coach.CoachMark5(this,this)
 
         muidList = mutableListOf<String>()
         mnameList = mutableListOf<String>()
@@ -91,7 +96,7 @@ class FriendListActivity : AppCompatActivity() {
             }.addOnFailureListener { e -> Log.e("TAG", "データ取得に失敗", e) }
 
 
-            db.collection(user!!.uid).whereEqualTo("friend", true).get()
+            db.collection(user.uid).whereEqualTo("friend", true).get()
                 .addOnSuccessListener { documents ->
                     for (document in documents) {
                         Log.e("TAG", "${document.id} => ${document.data}")
