@@ -89,60 +89,63 @@ class FriendListActivity : AppCompatActivity() {
 
                 }
             }.addOnFailureListener { e -> Log.e("TAG", "データ取得に失敗", e) }
+
+
+            db.collection(user!!.uid).whereEqualTo("friend", true).get()
+                .addOnSuccessListener { documents ->
+                    for (document in documents) {
+                        Log.e("TAG", "${document.id} => ${document.data}")
+                        val name = document.data["name"].toString()
+                        val uid = document.data["uid"].toString()
+                        mnameList.add(name)
+                        muidList.add(uid)
+                        adapter.notifyDataSetChanged()
+
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    Log.w("TAG", "Error getting documents: ", exception)
+                }
+
+
+            Log.e("TAG", "namelistは$mnameList")
+            adapter = FriendListAdapter(mnameList)
+            layoutManager = LinearLayoutManager(this)
+            // アダプターとレイアウトマネージャーをセット
+            simpleRecyclerView.layoutManager = layoutManager
+            simpleRecyclerView.adapter = adapter
+            simpleRecyclerView.setHasFixedSize(true)
+
+            // インターフェースの実装
+            adapter.setOnItemClickListener(object:FriendListAdapter.OnItemClickListener{
+                override fun onItemClickListener(view: View, position: Int, clickedText: String) {
+                    when(view.getId()){
+                        R.id.itemTextView -> {
+                            val friendName = mnameList[position]
+                            val friendUid = muidList[position]
+                            val intent = Intent(this@FriendListActivity, VideoListActivity::class.java)
+                            intent.putExtra("friendName",friendName)
+                            intent.putExtra("friendUid",friendUid)
+                            startActivity(intent)
+                            //Toast.makeText(applicationContext, "${clickedText}がタップされました", Toast.LENGTH_LONG).show()
+                        }
+                        R.id.itemdeleate -> {
+                            db.collection(user.uid).document(clickedText)
+                                .delete()
+                                .addOnSuccessListener { Log.e("TAG", "DocumentSnapshot successfully deleted!") }
+                                .addOnFailureListener { e -> Log.w("TAG", "Error deleting document", e) }
+                            //Toast.makeText(applicationContext, "${clickedText}を削除しました", Toast.LENGTH_LONG).show()
+                            mnameList.remove(mnameList[position])
+                            muidList.remove(muidList[position])
+                            adapter.notifyItemRemoved(position)
+
+                        }
+                    }
+                }
+            })
+
+
         }
-
-        db.collection(user!!.uid).whereEqualTo("friend", true).get()
-            .addOnSuccessListener { documents ->
-                for (document in documents) {
-                    Log.e("TAG", "${document.id} => ${document.data}")
-                    val name = document.data["name"].toString()
-                    val uid = document.data["uid"].toString()
-                    mnameList.add(name)
-                    muidList.add(uid)
-                    adapter.notifyDataSetChanged()
-
-                }
-            }
-            .addOnFailureListener { exception ->
-                Log.w("TAG", "Error getting documents: ", exception)
-            }
-
-
-        Log.e("TAG", "namelistは$mnameList")
-        adapter = FriendListAdapter(mnameList)
-        layoutManager = LinearLayoutManager(this)
-        // アダプターとレイアウトマネージャーをセット
-        simpleRecyclerView.layoutManager = layoutManager
-        simpleRecyclerView.adapter = adapter
-        simpleRecyclerView.setHasFixedSize(true)
-
-        // インターフェースの実装
-        adapter.setOnItemClickListener(object:FriendListAdapter.OnItemClickListener{
-            override fun onItemClickListener(view: View, position: Int, clickedText: String) {
-                when(view.getId()){
-                    R.id.itemTextView -> {
-                        val friendName = mnameList[position]
-                        val friendUid = muidList[position]
-                        val intent = Intent(this@FriendListActivity, VideoListActivity::class.java)
-                        intent.putExtra("friendName",friendName)
-                        intent.putExtra("friendUid",friendUid)
-                        startActivity(intent)
-                        //Toast.makeText(applicationContext, "${clickedText}がタップされました", Toast.LENGTH_LONG).show()
-                    }
-                    R.id.itemdeleate -> {
-                        db.collection(user.uid).document(clickedText)
-                            .delete()
-                            .addOnSuccessListener { Log.e("TAG", "DocumentSnapshot successfully deleted!") }
-                            .addOnFailureListener { e -> Log.w("TAG", "Error deleting document", e) }
-                        //Toast.makeText(applicationContext, "${clickedText}を削除しました", Toast.LENGTH_LONG).show()
-                        mnameList.remove(mnameList[position])
-                        muidList.remove(muidList[position])
-                        adapter.notifyItemRemoved(position)
-
-                    }
-                }
-            }
-        })
 
 /*
         val itemLayoutId = R.layout.fragment_urilist_item

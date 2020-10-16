@@ -18,7 +18,8 @@
         android:roundIcon="@drawable/tree_seichou02"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".forGallery.FriendListActivity"></activity>
+        <activity android:name=".ForSetting.AccountSettingActivity"></activity>
+        <activity android:name=".forGallery.FriendListActivity" />
         <activity android:name=".ForSetting.FriendSearchActivity">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />

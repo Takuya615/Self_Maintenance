@@ -20,7 +20,7 @@
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
-        android:title="設定"
+        android:title="アカウント設定"
         app:showAsAction="never" />
 
 </menu>

@@ -10,7 +10,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
+import com.google.firebase.auth.FirebaseAuth
 import jp.tsumura.takuya.self_maintenance.forGallery.FriendListActivity
 import jp.tsumura.takuya.self_maintenance.forGallery.VideoListActivity
 
@@ -19,8 +21,11 @@ import jp.tsumura.takuya.self_maintenance.forGallery.VideoListActivity
  */
 class FirstFragment : Fragment() {
 
+    private lateinit var mAuth: FirebaseAuth
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        mAuth = FirebaseAuth.getInstance()
         val prefs = requireActivity().getSharedPreferences("preferences_key_sample", Context.MODE_PRIVATE)
         val taskSec: Int = prefs.getInt(getString(R.string.preferences_key_smalltime),0)
         Log.e("TAG","タスク所要時間が$taskSec")
@@ -35,13 +40,26 @@ class FirstFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_first, container, false)
         val button = view.findViewById<Button>(R.id.galleryButton)
         button.setOnClickListener {
-            val intent= Intent(requireActivity(), VideoListActivity::class.java)
-            startActivity(intent)
+            val user = mAuth.currentUser
+            if(user !=null ){
+                
+                val intent= Intent(requireActivity(), VideoListActivity::class.java)
+                startActivity(intent)
+            }else{
+                Toast.makeText(requireActivity(),"ログインしてください",Toast.LENGTH_LONG).show()
+            }
+
         }
         val button2 = view.findViewById<Button>(R.id.friendButton)
         button2.setOnClickListener{
-            val intent= Intent(requireActivity(), FriendListActivity::class.java)
-            startActivity(intent)
+            val user = mAuth.currentUser
+            if(user !=null ){
+                val intent= Intent(requireActivity(), FriendListActivity::class.java)
+                startActivity(intent)
+            }else{
+                Toast.makeText(requireActivity(),"ログインしてください",Toast.LENGTH_LONG).show()
+            }
+
         }
 
         return view

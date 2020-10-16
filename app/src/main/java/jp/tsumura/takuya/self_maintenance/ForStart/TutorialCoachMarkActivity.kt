@@ -30,6 +30,7 @@ class TutorialCoachMarkActivity(context:Context) {
     val Tuto1 : Boolean = prefs.getBoolean("Tuto1",false)
     val Tuto2 : Boolean = prefs.getBoolean("Tuto2",false)
     val Tuto3 : Boolean = prefs.getBoolean("Tuto3",false)
+    val Tuto4 : Boolean = prefs.getBoolean("Tuto4",false)
     val g : SharedPreferences.Editor = prefs.edit()
 
     //ログイン画面でのコーチマーク
@@ -109,8 +110,8 @@ class TutorialCoachMarkActivity(context:Context) {
 //設定画面でのコーチマーク
     fun CoachMark2(activity: Activity,context: Context){
         if(!Tuto2){
-            g.putBoolean("Tuto2", true)
-            g.commit()
+            //g.putBoolean("Tuto2", true)
+            //g.commit()
 
             //コーチマークの実装    //引数（ボタン、アクティビティ、タイトル、本文、光X、光Y、文字列Y）
             val target1 = activity.findViewById<EditText>(R.id.Edittext1)
@@ -143,7 +144,7 @@ class TutorialCoachMarkActivity(context:Context) {
                 // 表示するスピード
                 .setAnimation(DecelerateInterpolator(1f))
                 // 注目されたいところ（複数指定も可能）
-                .setTargets(Target1,Target3,Target2,Target4,Target5,Target6)
+                .setTargets(Target1,Target3,Target2,Target4)//,Target5,Target6
                 // 注目されたいところ以外をタップする時に閉じられるかどうか
                 .setClosedOnTouchedOutside(true)
                 /*
@@ -163,6 +164,51 @@ class TutorialCoachMarkActivity(context:Context) {
         }
     }
 
+    fun CoachMark4(activity: Activity,context: Context){
+        if(!Tuto2){
+            g.putBoolean("Tuto2", true)
+            g.commit()
+
+            //コーチマークの実装    //引数（ボタン、アクティビティ、タイトル、本文、光X、光Y、文字列Y）
+            val target5 = activity.findViewById<TextView>(R.id.textView6)
+            val Target5 = sreateUI(target5,activity,"今日のミッション",
+                "あなたの今日のミッションが表示されます\n毎日続けていくと、少しずつこの時間が長くなり、" +
+                        "最終的に目標の時間までムリなく続けられるようになります。",250f,0f,-2f)
+            val target6 = activity.findViewById<Button>(R.id.setbutton)
+            val Target6 = sreateUI(target6,activity,"始めてみましょう",
+                "さっそく今日のミッション達成のため、自撮りしてみましょう！\nこの設定でよければ、ここをタップしてください",0f,0f,-3f)
+
+
+            // コーチマークを作成
+            Spotlight.with(activity)
+                // コーチマーク表示される時の背景の色
+                .setOverlayColor(R.color.colorCoachMark)
+                // 表示する時間
+                .setDuration(1000L)
+                // 表示するスピード
+                .setAnimation(DecelerateInterpolator(1f))
+                // 注目されたいところ（複数指定も可能）
+                .setTargets(Target5,Target6)
+                // 注目されたいところ以外をタップする時に閉じられるかどうか
+                .setClosedOnTouchedOutside(true)
+                /*
+            // コーチマーク表示される時になんかする
+            .setOnSpotlightStateListener(object : OnSpotlightStateChangedListener {
+                override fun onStarted() {
+                    Toast.makeText(context, "spotlight is started", Toast.LENGTH_SHORT)
+                        .show()
+                }
+
+                override fun onEnded() {
+                    Toast.makeText(context, "spotlight is ended", Toast.LENGTH_SHORT).show()
+                }
+            })
+                 */
+                .start()
+        }
+    }
+
+//撮影画面でのコーチマーク
     fun CoachMark3(activity: Activity,context: Context){
         if(!Tuto3){
             g.putBoolean("Tuto3", true)
@@ -170,10 +216,11 @@ class TutorialCoachMarkActivity(context:Context) {
 
             val target = activity.findViewById<TextView>(R.id.timer)
             val Target = sreateUI(target,activity,"ミッションの自撮り",
-                "設定した時間がくるまで、ミッションをし、\nその様子を自撮りしてください\n時間になると画面が緑色に変わります",0f,0f,3f)
+                "設定した時間がくるまで、ミッションをし、\nその様子を自撮りしてください\n時間になると画面が緑色に変わり、ミッション達成です",0f,0f,3f)
             val target2 = activity.findViewById<ImageButton>(R.id.capture_button1)
             val Target2 = sreateCircleUI(target2,activity,"ミッションスタート",
-                "自撮り後は「動画リスト」から、撮った動画を確認できます。",0f,0f,-3f)
+                "自撮り後は以下のことが確認できます\n継続日数 ➡ 何日間連続で継続できているか\n" +
+                        "復活回数 ➡ １度休んだとしても何度そこから立ち直ったか",0f,0f,-3f)
 
 
             // コーチマークを作成
@@ -199,6 +246,46 @@ class TutorialCoachMarkActivity(context:Context) {
         }
 
     }
+
+    //撮影停止ボタンを押した後
+    fun CoachMark5(activity: Activity,context: Context){
+        if(!Tuto4){
+            g.putBoolean("Tuto4", true)
+            g.commit()
+
+            val target = activity.findViewById<TextView>(R.id.action_search)
+            val Target = sreateUI(
+                target, activity, "",
+                "継続日数 ➡ 何日間連続で継続できているか\n復活回数 ➡ １度休んだとしても何度そこから立ち直ったか\nを記録しています。", -250f, 50f, -1f
+            )
+
+
+            // コーチマークを作成
+            Spotlight.with(activity)
+                // コーチマーク表示される時の背景の色
+                .setOverlayColor(R.color.colorCoachMark)
+                // 表示する時間
+                .setDuration(1000L)
+                // 表示するスピード
+                .setAnimation(DecelerateInterpolator(1f))
+                // 注目されたいところ（複数指定も可能）
+                .setTargets(Target)
+                // 注目されたいところ以外をタップする時に閉じられるかどうか
+                .setClosedOnTouchedOutside(true)
+                // コーチマーク表示される時になんかする
+                .setOnSpotlightStateListener(object : OnSpotlightStateChangedListener {
+                    override fun onStarted() {
+                    }
+                    override fun onEnded() {
+                    }
+                })
+                .start()
+        }
+
+    }
+
+
+
 
 
 
@@ -229,7 +316,7 @@ class TutorialCoachMarkActivity(context:Context) {
         return firstTarget
     }
 
-    //引数（ボタン、アクティビティ、タイトル、本文、光円半径、なし、文字列下なら正、文字列上なら負のFloat）　　四角の場合
+    //引数（ボタン、アクティビティ、タイトル、本文、光円半径、なし、文字列下なら正、文字列上なら負のFloat）　　円の場合
     fun sreateCircleUI(target:View,activity:Activity,title:String?,scrip:String,plusX:Float,plusY:Float,plusP:Float):SimpleTarget{
 
         val targetLocation = IntArray(2)

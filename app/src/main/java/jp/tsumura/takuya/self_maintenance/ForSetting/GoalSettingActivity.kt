@@ -9,6 +9,7 @@ import android.os.Handler
 import android.text.InputType
 import android.util.Log
 import android.view.MenuItem
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
@@ -56,6 +57,11 @@ class GoalSettingActivity : AppCompatActivity(){
         button.setOnClickListener(){
             DataSet()
             TimeCal()
+            // キーボードが出てたら閉じる
+            val im = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            im.hideSoftInputFromWindow(it.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
+            val Coach = TutorialCoachMarkActivity(this)
+            Coach.CoachMark4(this,this)
         }
         //val SetButton=findViewById<Button>(R.id.setbutton)
         setbutton.setOnClickListener(){
@@ -83,7 +89,7 @@ class GoalSettingActivity : AppCompatActivity(){
         val user = mAuth.currentUser
 
         if(goaltime.isEmpty()){
-            Toast.makeText(this,"１日のなん分続けたいか入力してください",Toast.LENGTH_LONG).show()
+            Toast.makeText(this,"目標の時間を入力してください",Toast.LENGTH_LONG).show()
         }
         val goal = Goal(
             mygoalmsg,
@@ -92,7 +98,7 @@ class GoalSettingActivity : AppCompatActivity(){
 
         )
         if(user==null){
-            Toast.makeText(this,"ログインでデータを保存しておけます",Toast.LENGTH_LONG).show()
+            Toast.makeText(this,"ログインすればデータを保存できます",Toast.LENGTH_LONG).show()
         }else{
             goals.document(user.uid).set(goal)
                 .addOnSuccessListener { Log.e("TAG", "ドキュメント作成・上書き成功") }

@@ -16,6 +16,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import jp.tsumura.takuya.self_maintenance.ForStart.TutorialActivity
 import jp.tsumura.takuya.self_maintenance.ForStart.TutorialCoachMarkActivity
 import jp.tsumura.takuya.self_maintenance.MainActivity
 import jp.tsumura.takuya.self_maintenance.R
@@ -36,6 +37,8 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+        TutorialActivity.showIfNeeded(this, savedInstanceState)//チューとリアル
+
         Handler().postDelayed({
             val Coach = TutorialCoachMarkActivity(this)
             Coach.CoachMark0(this,this)
@@ -52,7 +55,12 @@ class LoginActivity : AppCompatActivity() {
         val user = mAuth.currentUser
         if(user!=null){
             val setName :String? = Realm().UidToName(user.uid)//同じUidのアカウント名を返す
-            nameText.text = Editable.Factory.getInstance().newEditable(setName)
+            if(setName!!.isEmpty()){
+                nameText.text = Editable.Factory.getInstance().newEditable("アカウント名がリセットされています。\n「アカウント設定」画面から、名前を再設定してください")
+                //Toast.makeText(this,"",Toast.LENGTH_LONG).show()
+            }else{
+                nameText.text = Editable.Factory.getInstance().newEditable(setName)
+            }
             Log.e("TAG", "ログインしています")
         }else{
             Log.e("TAG", "まだログインしていません")
@@ -154,7 +162,7 @@ class LoginActivity : AppCompatActivity() {
         }
         logoutButton.setOnClickListener{
             if(mAuth.currentUser ==null){
-                Toast.makeText(this,"すでにログアウトされています",Toast.LENGTH_LONG).show()
+                //Toast.makeText(this,"すでにログアウトされています",Toast.LENGTH_LONG).show()
             }else{
                 mAuth.signOut()
                 Toast.makeText(this,"ログアウトしました",Toast.LENGTH_LONG).show()
