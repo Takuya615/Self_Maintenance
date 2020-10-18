@@ -12,6 +12,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.mlkit.vision.pose.PoseDetection
+import com.google.mlkit.vision.pose.defaults.PoseDetectorOptions
 import jp.tsumura.takuya.self_maintenance.ForSetting.Realm
 import jp.tsumura.takuya.self_maintenance.R
 import kotlinx.android.synthetic.main.activity_friend_list.*
@@ -38,6 +40,8 @@ class VideoListActivity: AppCompatActivity() {
         mAuth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
         val user = mAuth.currentUser
+
+
 
         //フレンドリスト由来のビデオリストなら、そのフレンドの名前が送られてくる
         val value = intent.getStringExtra("friendName")

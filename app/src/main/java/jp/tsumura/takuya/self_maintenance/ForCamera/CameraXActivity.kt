@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.SurfaceTexture
+import android.media.MediaActionSound
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -16,10 +17,8 @@ import android.view.*
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.camera.core.CameraX
-import androidx.camera.core.PreviewConfig
-import androidx.camera.core.VideoCapture
-import androidx.camera.core.VideoCaptureConfig
+import androidx.camera.core.*
+
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -27,6 +26,9 @@ import androidx.lifecycle.LifecycleOwner
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.pose.PoseDetection
+import com.google.mlkit.vision.pose.defaults.PoseDetectorOptions
 import jp.tsumura.takuya.self_maintenance.ForStart.TutorialCoachMarkActivity
 import jp.tsumura.takuya.self_maintenance.R
 import kotlinx.android.synthetic.main.activity_camera_x.*
@@ -67,6 +69,7 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
         switchButton = findViewById(R.id.switch_button)
         mAuth = FirebaseAuth.getInstance()
 
+
         // Request camera permissions
         if (allPermissionsGranted()) {
             viewFinder.post {
@@ -78,10 +81,9 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
             )
         }
 
-
-
         //撮影開始ボタン、2度目のクリックで停止後、すぐにFirebaseへ保存される。
         var flag = true
+        val sound = MediaActionSound()//シャッター音
         captureButton.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_DOWN) {
                 if(flag){
@@ -91,19 +93,20 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
                     captureButton.setBackgroundColor(Color.WHITE)
                     backView.setBackgroundColor(Color.WHITE)
                     TimeRecorder()
+                    sound.play(MediaActionSound.START_VIDEO_RECORDING)//シャッター音
 
                     val file = File(
                         externalMediaDirs.first(),
                         "${System.currentTimeMillis()}.mp4"
                     )
+
                     videoCapture.startRecording(file, object : VideoCapture.OnVideoSavedListener {
                         override fun onVideoSaved(file: File?) {
                             val user = mAuth.currentUser
                             if (user != null) {//ログインしてたら、画像の保存と、URLが取得できる
                                 val storage = Firebase.storage
                                 val storageRef = storage.reference
-                                val photoRef =
-                                    storageRef.child("${user.uid}/${System.currentTimeMillis()}.mp4")
+                                val photoRef = storageRef.child("${user.uid}/${System.currentTimeMillis()}.mp4")
                                 val movieUri = Uri.fromFile(file)
                                 val uploadTask = photoRef.putFile(movieUri)
                                 // Register observers to listen for when the download is done or if it fails
@@ -120,13 +123,14 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
                                     photoRef.downloadUrl
                                 }.addOnCompleteListener { task ->
                                     if (task.isSuccessful) {
-                                        val downloadUri = task.result
+                                        val downloadUri:Uri? = task.result
                                         Firebase().WriteToStore(downloadUri.toString())//Uriと日付を保存する
                                         Log.e("TAG", "URLの取得成功")
                                     } else {
                                         Log.e("TAG", "URLの取得に失敗")
                                     }
                                 }
+
                             }
 
                         }
@@ -143,6 +147,7 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
                     flag = true
                     mTimer!!.cancel()
                     videoCapture.stopRecording()
+                    sound.play(MediaActionSound.STOP_VIDEO_RECORDING)//シャッター音
                     Log.e(tag, "録画停止")
                     CameraDialog().showDialog(this, mTimerSec)
                 }
@@ -237,9 +242,10 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
         val videoCaptureConfig = VideoCaptureConfig.Builder().apply {
             setLensFacing(lensFacing)//内・外カメラの使い分け用
             setTargetRotation(viewFinder.display.rotation)
-            setTargetResolution(Size(metrics.widthPixels / 100, metrics.heightPixels / 100))//　　　　　ここで画質を下げている
+            setTargetResolution(Size(metrics.widthPixels/100, metrics.heightPixels/100))//　　　　　ここで画質を下げている
             }.build()
         videoCapture = VideoCapture(videoCaptureConfig)
+
 
 // Bind use cases to lifecycle
         CameraX.bindToLifecycle(this, preview, videoCapture)
@@ -280,7 +286,6 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
         }, 1000, 1000)
     }
 
-
     companion object{
         private const val tag = "CameraXBasic"
         private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
@@ -290,4 +295,5 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
             Manifest.permission.RECORD_AUDIO
         )
     }
+
 }

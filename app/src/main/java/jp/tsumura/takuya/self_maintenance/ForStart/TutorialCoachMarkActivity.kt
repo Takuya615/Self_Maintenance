@@ -269,9 +269,9 @@ class TutorialCoachMarkActivity(context:Context) {
 
             val secondTarget = SimpleTarget.Builder(activity)
                 .setPoint(targetX,targetY)//ハイライトの位置
-                .setShape(Circle(300f))//ハイライトの大きさ
+                .setShape(Circle(0f))//ハイライトの大きさ
                 .setTitle("フレンドリクエストを送る")
-                .setDescription("検索アイコンから、友人へリクエストを送ることもできます。")
+                .setDescription("右上の検索アイコンから、友人へリクエストを送ることもできます。")
                 .setOverlayPoint(2f,500f )//文字列の位置
                 .build()
 

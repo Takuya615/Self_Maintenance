@@ -13,10 +13,18 @@ import android.widget.MediaController
 import android.widget.VideoView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.common.InputImage.*
+import com.google.mlkit.vision.pose.Pose
+import com.google.mlkit.vision.pose.PoseDetection
+import com.google.mlkit.vision.pose.defaults.PoseDetectorOptions
 import jp.tsumura.takuya.self_maintenance.MainActivity
 import jp.tsumura.takuya.self_maintenance.R
 import kotlinx.android.synthetic.main.activity_gallery.*
+import java.io.File
+import com.google.mlkit.vision.common.InputImage.fromFilePath as fromFilePath1
 
 
 class GalleryActivity : AppCompatActivity() {
@@ -141,7 +149,52 @@ class GalleryActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
+
+        //ポーズ検出のインスタンス
+/*
+        try {
+            val options = PoseDetectorOptions.Builder()
+                .setDetectorMode(PoseDetectorOptions.STREAM_MODE)
+                .build()
+            val poseDetector = PoseDetection.getClient(options)
+            val uri = myUri(convertedUri)
+            val image : InputImage= InputImage.fromFilePath(this,uri)
+            // result:Task<Pose> =
+            poseDetector.process(image)
+                .addOnSuccessListener { results ->
+                    Log.e("TAG","成功結果は、、、$results")
+                    // Task completed successfully
+                    // ...
+                }
+                .addOnFailureListener { e ->
+                    Log.e("TAG","分析に失敗")
+                    // Task failed with an exception
+                    // ...
+                }
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Log.e("TAG","分析に失敗なぜじゃー")
+        }
+
+ */
+
+
     }
+
+    fun myUri(originalUri:Uri):Uri{
+        var returnedUri:Uri = originalUri
+        if (originalUri.getScheme() == null){
+            returnedUri = Uri.fromFile(File(originalUri.getPath()));
+            // or you can just do -->
+            // returnedUri = Uri.parse("file://"+camUri.getPath());
+        }else{
+            returnedUri = originalUri;
+        }
+        return returnedUri
+    }
+
+
     //戻るボタンを押すと今いるviewを削除する
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when(item!!.itemId){
