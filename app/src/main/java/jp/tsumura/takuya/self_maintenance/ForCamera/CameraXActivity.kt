@@ -3,6 +3,7 @@ package jp.tsumura.takuya.self_maintenance.ForCamera
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.SurfaceTexture
@@ -26,9 +27,8 @@ import androidx.lifecycle.LifecycleOwner
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
-import com.google.mlkit.vision.common.InputImage
-import com.google.mlkit.vision.pose.PoseDetection
-import com.google.mlkit.vision.pose.defaults.PoseDetectorOptions
+import jp.tsumura.takuya.self_maintenance.ForSetting.FriendSearchActivity
+
 import jp.tsumura.takuya.self_maintenance.ForStart.TutorialCoachMarkActivity
 import jp.tsumura.takuya.self_maintenance.R
 import kotlinx.android.synthetic.main.activity_camera_x.*
@@ -46,6 +46,7 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
     private lateinit var backView: ConstraintLayout
     private lateinit var videoCapture: VideoCapture
     private lateinit var mAuth: FirebaseAuth
+    //private lateinit var sound:Sounds
 
     private var mTimer: Timer? = null
     private var mTimerSec:Int = 0
@@ -60,6 +61,8 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_camera_x)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        title = "フレンドリスト"
         //画面をオンのままにしておく
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
@@ -92,7 +95,7 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
                     captureButton.setImageResource(R.drawable.ic_stop)
                     captureButton.setBackgroundColor(Color.WHITE)
                     backView.setBackgroundColor(Color.WHITE)
-                    TimeRecorder()
+                    TimeRecorder(this)
                     sound.play(MediaActionSound.START_VIDEO_RECORDING)//シャッター音
 
                     val file = File(
@@ -252,12 +255,12 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
     }
 
     //ここからタイマー用　　
-    private fun TimeRecorder(){
+    private fun TimeRecorder(context:Context){
         val prefs = getSharedPreferences("preferences_key_sample", Context.MODE_PRIVATE)
-        val taskSec: Int = prefs.getInt(getString(R.string.preferences_key_smalltime), 0)
+        val taskSec: Int = prefs.getInt(getString(R.string.preferences_key_smalltime), 0)//習慣の初期値
         Log.e("TAG", "タスク所要時間の初期値は$taskSec")
 
-        val totalday : Int = prefs.getInt("preferences_key2", 0)//総日数の値を取得
+        val totalday : Int = prefs.getInt("totalday", 0)//総日数の値を取得
         val times =totalday/2 //総日数が、2日更新されるごとに、強度を上げる場合。（totalday=1なら、1/2で、times=0となる）
 
         if(times!=0 ) {//　　　割り算の演算子は整数までしか計算しないので、少数点以下は無視して出力される。
@@ -280,6 +283,7 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
                     if (mTimerSec >= taskSec && taskSec != 0) {
                         backView.setBackgroundColor(Color.GREEN)
                         captureButton.setBackgroundColor(Color.GREEN)
+                        Sounds.getInstance(context).playSound(Sounds.SOUND_DRUMROLL)
                     }
                 }
             }
@@ -296,4 +300,16 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
         )
     }
 
+    //戻るボタンを押すと今いるviewを削除する
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when(item!!.itemId){
+            android.R.id.home->{
+                finish()
+            }
+            R.id.action_search -> {
+                startActivity(Intent(this, FriendSearchActivity::class.java))
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
 }

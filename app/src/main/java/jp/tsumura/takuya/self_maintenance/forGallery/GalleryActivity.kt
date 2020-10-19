@@ -15,16 +15,12 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.mlkit.vision.common.InputImage
-import com.google.mlkit.vision.common.InputImage.*
-import com.google.mlkit.vision.pose.Pose
-import com.google.mlkit.vision.pose.PoseDetection
-import com.google.mlkit.vision.pose.defaults.PoseDetectorOptions
+
 import jp.tsumura.takuya.self_maintenance.MainActivity
 import jp.tsumura.takuya.self_maintenance.R
 import kotlinx.android.synthetic.main.activity_gallery.*
 import java.io.File
-import com.google.mlkit.vision.common.InputImage.fromFilePath as fromFilePath1
+
 
 
 class GalleryActivity : AppCompatActivity() {

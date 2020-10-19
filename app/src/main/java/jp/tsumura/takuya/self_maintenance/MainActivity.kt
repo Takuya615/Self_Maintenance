@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.core.app.AppLaunchChecker
 import androidx.fragment.app.*
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
@@ -50,8 +51,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
         Realm.init(this)
-
-
 
         progressbar.visibility = android.widget.ProgressBar.INVISIBLE
         //showIfNeeded(this, savedInstanceState)//全画面のチュートリアル(ウォークスルー)
@@ -98,6 +97,12 @@ class MainActivity : AppCompatActivity() {
             R.id.action_settings2 -> startActivity(intent)
             R.id.action_login->startActivity(intent2)
             R.id.action_settings -> startActivity(intent3)
+            R.id.action_tutoreal -> {
+                val Coach = TutorialCoachMarkActivity(this)
+                Coach.reset()
+                recreate()
+                TutorialActivity.showForcibly(this)//チューとリアル
+            }
             //R.id.action_search -> { startActivity(Intent(this, FriendSearchActivity::class.java)) }
             else ->Log.e("TAG","設定画面でなにかを押しました")
         }

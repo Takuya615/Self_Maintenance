@@ -52,45 +52,47 @@ class FriendListActivity : AppCompatActivity() {
         //フレンドリクエストが来ている場合、ダイアログを表示するYesなら、相手のUidをドキュメントとしてFirebaseに追加する
         val user = mAuth.currentUser
         if(user!=null){
-            val docRef = db.collection(user.uid).document("friendRequest")
-            docRef.get().addOnSuccessListener { documentSnapshot ->
-                val friendUid = documentSnapshot.data!!["friendUid"]
-                Log.e("TAG","フレンドからのリクエスト（Uri?）= $friendUid")
-                if(friendUid !=null){
-                    val requestName = Realm().UidToName(friendUid.toString())
-                    //ダイアログ
-                    val alertDialogBuilder = AlertDialog.Builder(this)
-                    alertDialogBuilder.apply {
-                        setTitle("$requestName　さんからフレンドリクエストが届いてます")
-                        setMessage("フレンドになると、その人の日々のミッションを応援してあげることができます\n\nリクエストを承認しますか？")
-                        setPositiveButton("承認する"){dialog, which ->
-                            val docRef2 = db.collection(user.uid).document(requestName)
-                            val map = hashMapOf(
-                                "friend" to true,
-                                "name" to requestName,
-                                "uid" to friendUid//.toString()
-                            )
-                            docRef2.set(map)
-                                .addOnSuccessListener {
-                                    Log.e("TAG","承認成功")
+            val docRef = db.collection(user.uid).document("friendRequest")//whereEqualTo("request",true)
+            docRef.get().addOnSuccessListener { document ->
+                if(document.data != null){
+                    val friendUid = document.data!!["friendUid"]
+                    Log.e("TAG","フレンドからのリクエスト（Uri?）= $friendUid")
+                    if(friendUid !=null){
+                        val requestName = Realm().UidToName(friendUid.toString())
+                        //ダイアログ
+                        val alertDialogBuilder = AlertDialog.Builder(this)
+                        alertDialogBuilder.apply {
+                            setTitle("$requestName　さんからフレンドリクエストが届いてます")
+                            setMessage("フレンドになると、その人の日々のミッションを応援してあげることができます\n\nリクエストを承認しますか？")
+                            setPositiveButton("承認する"){dialog, which ->
+                                val docRef2 = db.collection(user.uid).document(requestName)
+                                val map = hashMapOf(
+                                    "friend" to true,
+                                    "name" to requestName,
+                                    "uid" to friendUid//.toString()
+                                )
+                                docRef2.set(map)
+                                    .addOnSuccessListener {
+                                        Log.e("TAG","承認成功")
 
-                                    mnameList.add(requestName)
-                                    muidList.add(friendUid.toString())
-                                    adapter.notifyDataSetChanged()
-                                }
-                                .addOnFailureListener { Log.e("TAG","承認失敗") }
+                                        mnameList.add(requestName)
+                                        muidList.add(friendUid.toString())
+                                        adapter.notifyDataSetChanged()
+                                    }
+                                    .addOnFailureListener { Log.e("TAG","承認失敗") }
 
-                            //保存されているデータをnullに戻さないと。。。
-                            docRef.set(hashMapOf("friendUid" to null ))
+                                //保存されているデータをnullに戻さないと。。。
+                                docRef.set(hashMapOf("friendUid" to null ))
+                            }
+                            setNegativeButton("見なかったことにする"){dialog, which ->
+                                Log.e("TAG","キャンセル")
+                                //保存されているデータをnullに戻さないと。。。
+                                docRef.set(hashMapOf("friendUid" to null ))
+                            }
                         }
-                        setNegativeButton("見なかったことにする"){dialog, which ->
-                            Log.e("TAG","キャンセル")
-                            //保存されているデータをnullに戻さないと。。。
-                            docRef.set(hashMapOf("friendUid" to null ))
-                        }
+                        val alertDialog = alertDialogBuilder.create()
+                        alertDialog.show()
                     }
-                    val alertDialog = alertDialogBuilder.create()
-                    alertDialog.show()
 
                 }
             }.addOnFailureListener { e -> Log.e("TAG", "データ取得に失敗", e) }

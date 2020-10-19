@@ -5,7 +5,7 @@ package jp.tsumura.takuya.self_maintenance.ForCamera
 運動の強度を計測しようとしたけど、CameraXではビデオでアナリシスが使えないみたい？？
 とりあえず保留。
  */
-
+/*
 import android.util.Log
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
@@ -46,4 +46,6 @@ private class ImageAnalyzer : ImageAnalysis.Analyzer {
         }
     }
 }
+
+ */
 

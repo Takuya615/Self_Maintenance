@@ -37,7 +37,7 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        TutorialActivity.showIfNeeded(this, savedInstanceState)//チューとリアル
+        TutorialActivity.showIfNeeded(this,savedInstanceState)//チューとリアル
 
         Handler().postDelayed({
             val Coach = TutorialCoachMarkActivity(this)

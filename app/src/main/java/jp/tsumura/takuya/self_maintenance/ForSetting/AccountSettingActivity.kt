@@ -40,6 +40,7 @@ class AccountSettingActivity : AppCompatActivity() {
 
             if(Realm().SearchSameName(Name)){
                 Realm().addPerson(Name,uid)
+                Snackbar.make(it, "このアカウント名を登録しました", Snackbar.LENGTH_LONG).show()
             }else{
                 Snackbar.make(it, "このアカウント名はすでに使われています。ちがう名前を設定してください", Snackbar.LENGTH_LONG).show()
             }

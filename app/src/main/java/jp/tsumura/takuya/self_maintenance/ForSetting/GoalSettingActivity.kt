@@ -112,24 +112,28 @@ class GoalSettingActivity : AppCompatActivity(){
         val e : SharedPreferences.Editor = prefs.edit()
         if(goaltimeA.isNotEmpty()){
             val goaltime = goaltimeA.toInt()
-            val Cal =goaltime *60 *3/100
-            val seconds =Cal%60;
-            val minite =(Cal/60)%60;
-            if(Cal < 60){
-                textView6.text = "今日は　$seconds　秒間やりましょう"
-            }else{
-                textView6.text = "今日は$minite 分 $seconds 秒間やりましょう"
-            }
-            Log.e("TAG","1日に行う秒数（タスク時間）は $Cal")
+            val totalday : Int = prefs.getInt("totalday", 0)//総日数の値を取得
+            val times =totalday/2
+            val Cal =goaltime *60 *1/100//　　　　　　　初期値は１％からスタート
             e.putInt(getString(R.string.preferences_key_smalltime), Cal)
-            e.commit()
+            e.apply()
+            var Caltimes = Cal
+            if(times!=0){ Caltimes = Cal*times }
+            val seconds =Caltimes%60;
+            val minite =(Caltimes/60)%60;
+            if(Caltimes < 60){
+                textView6.text = "今日は　$seconds　秒間（${times+1} %）やりましょう"
+            }else{
+                textView6.text = "今日は$minite 分 $seconds 秒間（${times+1} %）やりましょう"
+            }
+            Log.e("TAG","1日に行う秒数（タスク時間）は $Caltimes")
+
         }else{
             //数字が設定されなければ、値0に戻る。
             val Empty = 0
             e.putInt(getString(R.string.preferences_key_smalltime), Empty)
             e.commit()
         }
-
     }
     //戻るボタンを押すと今いるviewを削除する
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {

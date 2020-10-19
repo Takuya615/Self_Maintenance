@@ -100,6 +100,7 @@ class TutorialCoachMarkActivity(context:Context) {
                     activity.progressbar.visibility = android.widget.ProgressBar.VISIBLE
                     val intent= Intent(context, GoalSettingActivity::class.java)
                     activity.startActivity(intent)
+                    activity.recreate()
                 }
             })
                 .start()
@@ -222,7 +223,6 @@ class TutorialCoachMarkActivity(context:Context) {
                 "自撮り後は以下のことが確認できます\n継続日数 ➡ 何日間連続で継続できているか\n" +
                         "復活回数 ➡ １度休んだとしても何度そこから立ち直ったか",0f,0f,-3f)
 
-
             // コーチマークを作成
             Spotlight.with(activity)
                 // コーチマーク表示される時の背景の色
@@ -246,7 +246,6 @@ class TutorialCoachMarkActivity(context:Context) {
         }
 
     }
-
     //フレンド　リストの
     fun CoachMark5(activity: Activity,context: Context){
         if(!Tuto4){
@@ -271,7 +270,7 @@ class TutorialCoachMarkActivity(context:Context) {
                 .setPoint(targetX,targetY)//ハイライトの位置
                 .setShape(Circle(0f))//ハイライトの大きさ
                 .setTitle("フレンドリクエストを送る")
-                .setDescription("右上の検索アイコンから、友人へリクエストを送ることもできます。")
+                .setDescription("右上の検索アイコン🔍から、友人へリクエストを送ることもできます。")
                 .setOverlayPoint(2f,500f )//文字列の位置
                 .build()
 
@@ -298,7 +297,9 @@ class TutorialCoachMarkActivity(context:Context) {
                 .start()
         }
 
+
     }
+
 
 
 
@@ -361,4 +362,12 @@ class TutorialCoachMarkActivity(context:Context) {
         return PointF(targetX,targetY)
     }
 
+    fun reset(){
+        //g.putBoolean("Tuto0", false)
+        g.putBoolean("Tuto1", false)
+        g.putBoolean("Tuto2", false)
+        g.putBoolean("Tuto3", false)
+        g.putBoolean("Tuto4", false)
+        g.commit()
+    }
 }
