@@ -43,6 +43,7 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
     private lateinit var viewFinder: TextureView
     private lateinit var captureButton: ImageButton
     private lateinit var switchButton:ImageButton
+    private lateinit var backButton:ImageButton
     private lateinit var backView: ConstraintLayout
     private lateinit var videoCapture: VideoCapture
     private lateinit var mAuth: FirebaseAuth
@@ -61,8 +62,6 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_camera_x)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        title = "フレンドリスト"
         //画面をオンのままにしておく
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
@@ -70,6 +69,7 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
         captureButton = findViewById(R.id.capture_button1)
         backView = findViewById(R.id.backview)
         switchButton = findViewById(R.id.switch_button)
+        backButton = findViewById(R.id.back_button)
         mAuth = FirebaseAuth.getInstance()
 
 
@@ -171,6 +171,10 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
             } catch (exc: Exception) {
                 Log.e("TAG", "カメラの切り替えに失敗")
             }
+        }
+
+        backButton.setOnClickListener{
+            finish()
         }
         
         //コーチマーク
@@ -300,16 +304,5 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
         )
     }
 
-    //戻るボタンを押すと今いるviewを削除する
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when(item!!.itemId){
-            android.R.id.home->{
-                finish()
-            }
-            R.id.action_search -> {
-                startActivity(Intent(this, FriendSearchActivity::class.java))
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
+
 }
