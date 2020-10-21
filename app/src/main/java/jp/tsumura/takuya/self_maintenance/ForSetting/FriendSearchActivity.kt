@@ -11,6 +11,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.SearchView
 import android.widget.Toast
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import jp.tsumura.takuya.self_maintenance.R
@@ -23,6 +24,8 @@ class FriendSearchActivity : AppCompatActivity() {
     private lateinit var name :String
     private lateinit var mAuth: FirebaseAuth
     private lateinit var db :FirebaseFirestore
+    private lateinit var firebaseAnalytics: FirebaseAnalytics
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +35,7 @@ class FriendSearchActivity : AppCompatActivity() {
         //uid =""val list = mutableListOf<String>(name,uid)
         mAuth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this)
         request.setOnClickListener{
             val user = mAuth.currentUser
             if(user!=null){
@@ -41,6 +45,11 @@ class FriendSearchActivity : AppCompatActivity() {
                     .addOnSuccessListener {
                         Toast.makeText(this,"リクエストを送りました", Toast.LENGTH_LONG).show()
                         finish()
+                        //友人にリクエストを送ったのか、イベントログを記録する。他の人へオススメしたという指標になる
+                        val bundle:Bundle = Bundle()
+                        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "request");
+                        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "request");
+                        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_ITEM,bundle)
                     }
                     .addOnFailureListener { Toast.makeText(this,"リクエスト送信に失敗しました", Toast.LENGTH_LONG).show() }//e -> Log.e("TAG", "ドキュメントの作成・上書きエラー", e)
             }

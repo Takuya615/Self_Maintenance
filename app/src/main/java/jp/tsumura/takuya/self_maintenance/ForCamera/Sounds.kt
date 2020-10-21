@@ -51,7 +51,7 @@ class Sounds(context: Context){
 
     fun playSound(soundID:Int) {
         soundPool?.let{
-            it.play(soundID, 1.0f, 1.0f, 1, 3, 1.0f)
+            it.play(soundID, 1.0f, 1.0f, 1, 0, 1.0f)
             println("サウンド再生")
         }
     }
