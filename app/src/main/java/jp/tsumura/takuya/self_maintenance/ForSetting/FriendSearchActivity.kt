@@ -2,20 +2,23 @@ package jp.tsumura.takuya.self_maintenance.ForSetting
 
 import android.app.SearchManager
 import android.content.Context
-import android.content.Intent
+
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
+
 import android.view.MenuItem
 import android.view.View
 import android.widget.SearchView
 import android.widget.Toast
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
+
 import jp.tsumura.takuya.self_maintenance.R
 import kotlinx.android.synthetic.main.activity_friend_search.*
-import kotlinx.android.synthetic.main.activity_goal_setting.*
+
 
 class FriendSearchActivity : AppCompatActivity() {
 
@@ -23,6 +26,7 @@ class FriendSearchActivity : AppCompatActivity() {
     private lateinit var name :String
     private lateinit var mAuth: FirebaseAuth
     private lateinit var db :FirebaseFirestore
+    private lateinit var firebaseAnalytics: FirebaseAnalytics
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +36,7 @@ class FriendSearchActivity : AppCompatActivity() {
         //uid =""val list = mutableListOf<String>(name,uid)
         mAuth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this)
         request.setOnClickListener{
             val user = mAuth.currentUser
             if(user!=null){
@@ -41,8 +46,14 @@ class FriendSearchActivity : AppCompatActivity() {
                     .addOnSuccessListener {
                         Toast.makeText(this,"リクエストを送りました", Toast.LENGTH_LONG).show()
                         finish()
+                        val bundle:Bundle = Bundle()
+                        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "request");
+                        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "request");
+                        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_ITEM,bundle)
                     }
                     .addOnFailureListener { Toast.makeText(this,"リクエスト送信に失敗しました", Toast.LENGTH_LONG).show() }//e -> Log.e("TAG", "ドキュメントの作成・上書きエラー", e)
+            }else{
+                Toast.makeText(this,"ログインしてください",Toast.LENGTH_LONG).show()
             }
         }
 

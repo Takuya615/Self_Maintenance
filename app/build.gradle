@@ -69,5 +69,4 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore:21.2.1'
     implementation 'com.google.firebase:firebase-database-ktx:19.3.1'
 
-
 }
