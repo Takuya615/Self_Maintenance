@@ -13,6 +13,8 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import jp.tsumura.takuya.self_maintenance.ForCamera.Score
 import jp.tsumura.takuya.self_maintenance.forGallery.FriendListActivity
 import jp.tsumura.takuya.self_maintenance.forGallery.VideoListActivity
 
@@ -68,7 +70,21 @@ class FirstFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val prefs = requireActivity().getSharedPreferences("preferences_key_sample", Context.MODE_PRIVATE)
-        val totalday =prefs.getInt("totalday",0)//総日数
+
+        var totalday = 0//prefs.getInt("totalday",0)総日数
+        val user = mAuth.currentUser
+        val db = FirebaseFirestore.getInstance()
+
+        if(user !=null ){
+            val docRef = db.collection("Scores").document(user.uid)
+            docRef.get().addOnSuccessListener { documentSnapshot ->
+                val score = documentSnapshot.toObject(Score::class.java)
+                if (score != null) {
+                    totalday = score.totalD
+                }
+            }
+        }
+
         val growthimage =view.findViewById<ImageView>(R.id.growth_image)
 
         Log.e("TAG","総日数は$totalday 日")

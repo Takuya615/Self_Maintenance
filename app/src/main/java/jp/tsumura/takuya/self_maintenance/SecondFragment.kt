@@ -11,6 +11,9 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import androidx.navigation.fragment.findNavController
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import jp.tsumura.takuya.self_maintenance.ForCamera.Score
 import kotlinx.android.synthetic.*
 import kotlinx.android.synthetic.main.fragment_second.*
 
@@ -20,6 +23,8 @@ import kotlinx.android.synthetic.main.fragment_second.*
 class SecondFragment : Fragment() {
     private lateinit var prefs : SharedPreferences
 
+    val user = FirebaseAuth.getInstance().currentUser
+    val db = FirebaseFirestore.getInstance()
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
@@ -34,28 +39,43 @@ class SecondFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         prefs = requireActivity().getSharedPreferences("preferences_key_sample", Context.MODE_PRIVATE)
 
-        val ncd = prefs.getInt("continue",0)//連続日数
-        val MAX : Int = prefs.getInt("preferences_key_MAX",0)//最長連続日数
-        val revival = prefs.getInt("recover",0)//復活回数
-        val totalday =prefs.getInt("totalday",0)//総日数
-        val TT = prefs.getInt("totaltime",0)//総時間
+        if(user!=null) {
+            val docRef = db.collection("Scores").document(user.uid)
+            docRef.get().addOnSuccessListener { documentSnapshot ->
+                val score = documentSnapshot.toObject(Score::class.java)
+                if (documentSnapshot.data != null && score != null) {
+                    val ncd = score.continuous//prefs.getInt("continue",0)連続日数
+                    val revival = score.recover//復活回数
+                    val totalday = score.totalD//総日数
+                    val TT = score.totalT//総時間
+                    val MAX : Int = prefs.getInt("preferences_key_MAX",0)//最長連続日数
 
-        val ncdtext =view.findViewById<TextView>(R.id.textView2_1)
-        val MAXtext =view.findViewById<TextView>(R.id.textView2_2)
-        val revtext = view.findViewById<TextView>(R.id.textView2_3)
-        val tDtext =view.findViewById<TextView>(R.id.textView2_4)
-        val tTtext =view.findViewById<TextView>(R.id.textView2_5)
+                    val ncdtext =view.findViewById<TextView>(R.id.textView2_1)
+                    val MAXtext =view.findViewById<TextView>(R.id.textView2_2)
+                    val revtext = view.findViewById<TextView>(R.id.textView2_3)
+                    val tDtext =view.findViewById<TextView>(R.id.textView2_4)
+                    val tTtext =view.findViewById<TextView>(R.id.textView2_5)
 
-        //Log.e("TAG","復活回数$revival")
-        
-        ncdtext.text = "$ncd 日"
-        MAXtext.text = "$MAX 日"
-        revtext.text = "$revival 回"
-        tDtext.text = "$totalday 日"
-        val seconds =TT%60;
-        val minite =(TT/60)%60;
-        val totaltime="$minite"+"分"+"$seconds"+"秒"
-        tTtext.text = totaltime
+                    //Log.e("TAG","復活回数$revival")
+
+                    ncdtext.text = "$ncd 日"
+                    MAXtext.text = "$MAX 日"
+                    revtext.text = "$revival 回"
+                    tDtext.text = "$totalday 日"
+                    val seconds =TT%60;
+                    val minite =(TT/60)%60;
+                    val totaltime="$minite"+"分"+"$seconds"+"秒"
+                    tTtext.text = totaltime
+
+
+                }
+            }
+        }
+
+
+
+
+
 
 
     }

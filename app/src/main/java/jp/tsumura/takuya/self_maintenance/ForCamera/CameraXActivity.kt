@@ -25,6 +25,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import jp.tsumura.takuya.self_maintenance.ForSetting.FriendSearchActivity
@@ -263,8 +264,20 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
         val prefs = getSharedPreferences("preferences_key_sample", Context.MODE_PRIVATE)
         val taskSec: Int = prefs.getInt(getString(R.string.preferences_key_smalltime), 0)//習慣の初期値
         Log.e("TAG", "タスク所要時間の初期値は$taskSec")
+        var totalday : Int = prefs.getInt("totalday", 0)//総日数の値を取得
 
-        val totalday : Int = prefs.getInt("totalday", 0)//総日数の値を取得
+        val user = FirebaseAuth.getInstance().currentUser
+        val db = FirebaseFirestore.getInstance()
+        if(user!=null){
+            val docRef = db.collection("Scores").document(user.uid)
+            docRef.get().addOnSuccessListener { documentSnapshot ->
+                val score = documentSnapshot.toObject(Score::class.java)
+                if (score != null) {
+                    totalday = score.totalD
+                }
+            }
+        }
+
         val times =totalday/2 //総日数が、2日更新されるごとに、強度を上げる場合。（totalday=1なら、1/2で、times=0となる）
 
         if(times!=0 ) {//　　　割り算の演算子は整数までしか計算しないので、少数点以下は無視して出力される。

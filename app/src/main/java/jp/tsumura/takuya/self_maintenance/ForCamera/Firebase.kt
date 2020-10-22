@@ -15,12 +15,11 @@ import java.util.*
 import kotlin.collections.HashMap
 
 class Firebase {
-
-//fire RealtimeDatabase
-    fun WriteToStore(fileName:String){
-
     val user = FirebaseAuth.getInstance().currentUser
     val db = FirebaseFirestore.getInstance()
+
+
+    fun WriteToStore(fileName:String){
     if(user!=null){
         val docRef = db.collection(user.uid)
         val date= Calendar.getInstance().getTime()
@@ -38,5 +37,7 @@ class Firebase {
             .addOnFailureListener { e -> Log.e("TAG", "保存失敗", e) }
     }
     }
+
+
 
 }
