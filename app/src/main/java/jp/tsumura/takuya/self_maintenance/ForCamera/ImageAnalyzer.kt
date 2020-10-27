@@ -6,6 +6,8 @@ package jp.tsumura.takuya.self_maintenance.ForCamera
 とりあえず保留。
  */
 /*
+import android.content.Context
+import android.net.Uri
 import android.util.Log
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
@@ -15,7 +17,7 @@ import com.google.mlkit.vision.pose.Pose
 import com.google.mlkit.vision.pose.PoseDetection
 import com.google.mlkit.vision.pose.defaults.PoseDetectorOptions
 
-private class ImageAnalyzer : ImageAnalysis.Analyzer {
+class ImageAnalyzer  {//: ImageAnalysis.Analyzer
 
     //ポーズ検出のインスタンス
     val options = PoseDetectorOptions.Builder()
@@ -23,7 +25,24 @@ private class ImageAnalyzer : ImageAnalysis.Analyzer {
         .build()
     val poseDetector = PoseDetection.getClient(options)
 
-    override fun analyze(imageProxy: ImageProxy,rotationDegrees:Int) {
+    fun FromUri(context: Context,uri: Uri){
+        val image = InputImage.fromFilePath(context, uri)
+        poseDetector.process(image)
+            .addOnSuccessListener { results ->
+                // Task completed successfully
+                // ...
+                Log.e("TAG","resultの結果は$results")
+            }
+            .addOnFailureListener { e ->
+                // Task failed with an exception
+                // ...
+                Log.e("TAG","resultの取得に失敗")
+            }
+    }
+
+
+
+    override fun analyze(imageProxy: ImageProxy,rotationDegrees:Int) {//
         val mediaImage = imageProxy.image
         if (mediaImage != null) {
             val image = InputImage.fromMediaImage(mediaImage, rotationDegrees)//imageProxy.imageInfo.rotationDegrees
@@ -45,7 +64,8 @@ private class ImageAnalyzer : ImageAnalysis.Analyzer {
 
         }
     }
+
 }
 
- */
+*/
 

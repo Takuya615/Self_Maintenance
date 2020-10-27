@@ -24,16 +24,22 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.GoogleApiAvailability
+import com.google.common.io.ByteStreams.toByteArray
+import com.google.common.io.Files.toByteArray
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import com.google.mlkit.vision.common.InputImage
 import jp.tsumura.takuya.self_maintenance.ForSetting.FriendSearchActivity
 
 import jp.tsumura.takuya.self_maintenance.ForStart.TutorialCoachMarkActivity
 import jp.tsumura.takuya.self_maintenance.R
 import kotlinx.android.synthetic.main.activity_camera_x.*
 import java.io.File
+import java.nio.ByteBuffer
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -106,11 +112,12 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
 
                     videoCapture.startRecording(file, object : VideoCapture.OnVideoSavedListener {
                         override fun onVideoSaved(file: File?) {
+                            val path = System.currentTimeMillis()
                             val user = mAuth.currentUser
                             if (user != null) {//ログインしてたら、画像の保存と、URLが取得できる
                                 val storage = Firebase.storage
                                 val storageRef = storage.reference
-                                val photoRef = storageRef.child("${user.uid}/${System.currentTimeMillis()}.mp4")
+                                val photoRef = storageRef.child("${user.uid}/$path.mp4")
                                 val movieUri = Uri.fromFile(file)
                                 val uploadTask = photoRef.putFile(movieUri)
                                 // Register observers to listen for when the download is done or if it fails
@@ -128,7 +135,7 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
                                 }.addOnCompleteListener { task ->
                                     if (task.isSuccessful) {
                                         val downloadUri:Uri? = task.result
-                                        Firebase().WriteToStore(downloadUri.toString())//Uriと日付を保存する
+                                        Firebase().WriteToStore(downloadUri.toString(),path)//Uriと日付を保存する
                                         Log.e("TAG", "URLの取得成功")
                                     } else {
                                         Log.e("TAG", "URLの取得に失敗")
@@ -154,6 +161,7 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
                     sound.play(MediaActionSound.STOP_VIDEO_RECORDING)//シャッター音
                     Log.e(tag, "録画停止")
                     CameraDialog().showDialog(this, mTimerSec)
+
                 }
             }
             false
@@ -235,6 +243,7 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
             //setTargetAspectRatio(screenAspectRatio)
             setTargetRotation(viewFinder.display.rotation)
         }.build()
+
         val preview = AutoFitPreviewBuilder.build(previewConfig, viewFinder)//
 // Build the viewfinder use case
         //val preview = Preview(previewConfig)
@@ -256,7 +265,7 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
 
 
 // Bind use cases to lifecycle
-        CameraX.bindToLifecycle(this, preview, videoCapture)
+        CameraX.bindToLifecycle(this, preview, videoCapture)//,imageAnalyzer
     }
 
     //ここからタイマー用　　
@@ -300,7 +309,12 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
                     if (mTimerSec >= taskSec && taskSec != 0) {
                         backView.setBackgroundColor(Color.GREEN)
                         captureButton.setBackgroundColor(Color.GREEN)
-                        Sounds.getInstance(context).playSound(Sounds.SOUND_DRUMROLL)
+                        var ag = false
+                        if(!ag){
+                            ag = true
+                            Sounds.getInstance(context).playSound(Sounds.SOUND_DRUMROLL)
+                        }
+
                     }
                 }
             }
@@ -316,6 +330,5 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
             Manifest.permission.RECORD_AUDIO
         )
     }
-
 
 }

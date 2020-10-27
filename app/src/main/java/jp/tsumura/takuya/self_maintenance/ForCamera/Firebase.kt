@@ -18,8 +18,7 @@ class Firebase {
     val user = FirebaseAuth.getInstance().currentUser
     val db = FirebaseFirestore.getInstance()
 
-
-    fun WriteToStore(fileName:String){
+    fun WriteToStore(fileName:String,path:Long){
     if(user!=null){
         val docRef = db.collection(user.uid)
         val date= Calendar.getInstance().getTime()
@@ -29,7 +28,8 @@ class Firebase {
             "friend" to false,
             "uri" to fileName,
             "date" to StrDate,
-            "like" to 0
+            "like" to 0,
+            "path" to path
         )
 
         docRef.document(StrDate).set(data)

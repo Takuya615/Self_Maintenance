@@ -2,6 +2,7 @@ package jp.tsumura.takuya.self_maintenance
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -11,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.core.app.ActivityCompat.recreate
 import androidx.core.content.ContextCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -23,14 +25,42 @@ import jp.tsumura.takuya.self_maintenance.forGallery.VideoListActivity
  */
 class FirstFragment : Fragment() {
 
+    private lateinit var prefs : SharedPreferences
     private lateinit var mAuth: FirebaseAuth
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mAuth = FirebaseAuth.getInstance()
-        val prefs = requireActivity().getSharedPreferences("preferences_key_sample", Context.MODE_PRIVATE)
+        prefs = requireActivity().getSharedPreferences("preferences_key_sample", Context.MODE_PRIVATE)
         val taskSec: Int = prefs.getInt(getString(R.string.preferences_key_smalltime),0)
         Log.e("TAG","タスク所要時間が$taskSec")
+
+        /*
+        val user = mAuth.currentUser
+        val db = FirebaseFirestore.getInstance()
+        //prefs.getInt("totalday",0)総日数
+        if(user !=null ){
+            val docRef = db.collection("Scores").document(user.uid)
+            docRef.get()
+                .addOnSuccessListener { documentSnapshot ->
+                    val score = documentSnapshot.toObject(Score::class.java)
+                    if (score != null) {
+                        totalday = score.totalD.toString()
+                        Log.e("TAG","totalday の値は${score.totalD}")
+
+                    }else{
+                        Log.e("TAG","Scoreがnullだった")
+
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    Log.d("TAG", "Totaldayの取得失敗", exception)
+
+                }
+        }
+
+         */
     }
 
     override fun onCreateView(
@@ -38,56 +68,17 @@ class FirstFragment : Fragment() {
             savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-
         val view = inflater.inflate(R.layout.fragment_first, container, false)
-        val button = view.findViewById<Button>(R.id.galleryButton)
-        button.setOnClickListener {
-            val user = mAuth.currentUser
-            if(user !=null ){
-                
-                val intent= Intent(requireActivity(), VideoListActivity::class.java)
-                startActivity(intent)
-            }else{
-                Toast.makeText(requireActivity(),"ログインしてください",Toast.LENGTH_LONG).show()
-            }
-
-        }
-        val button2 = view.findViewById<Button>(R.id.friendButton)
-        button2.setOnClickListener{
-            val user = mAuth.currentUser
-            if(user !=null ){
-                val intent= Intent(requireActivity(), FriendListActivity::class.java)
-                startActivity(intent)
-            }else{
-                Toast.makeText(requireActivity(),"ログインしてください",Toast.LENGTH_LONG).show()
-            }
-
-        }
-
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val prefs = requireActivity().getSharedPreferences("preferences_key_sample", Context.MODE_PRIVATE)
-
-        var totalday = 0//prefs.getInt("totalday",0)総日数
-        val user = mAuth.currentUser
-        val db = FirebaseFirestore.getInstance()
-
-        if(user !=null ){
-            val docRef = db.collection("Scores").document(user.uid)
-            docRef.get().addOnSuccessListener { documentSnapshot ->
-                val score = documentSnapshot.toObject(Score::class.java)
-                if (score != null) {
-                    totalday = score.totalD
-                }
-            }
-        }
+        val totalday = prefs.getInt("totalday",0)
 
         val growthimage =view.findViewById<ImageView>(R.id.growth_image)
-
         Log.e("TAG","総日数は$totalday 日")
+
         if(1<=totalday && totalday<3){
             growthimage?.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.tree_seichou02))
         }

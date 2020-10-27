@@ -12,23 +12,66 @@ import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
-import androidx.core.app.AppLaunchChecker
 import androidx.fragment.app.*
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.auth.FirebaseAuth
 import io.realm.Realm
 import jp.tsumura.takuya.self_maintenance.ForCamera.CameraXActivity
 import jp.tsumura.takuya.self_maintenance.ForSetting.AccountSettingActivity
-import jp.tsumura.takuya.self_maintenance.ForSetting.FriendSearchActivity
 import jp.tsumura.takuya.self_maintenance.ForSetting.LoginActivity
 import jp.tsumura.takuya.self_maintenance.ForStart.TutorialActivity
-import jp.tsumura.takuya.self_maintenance.ForStart.TutorialActivity.Companion.showForcibly
-import jp.tsumura.takuya.self_maintenance.ForStart.TutorialActivity.Companion.showIfNeeded
 import jp.tsumura.takuya.self_maintenance.ForStart.TutorialCoachMarkActivity
+import jp.tsumura.takuya.self_maintenance.forGallery.FriendListActivity
+import jp.tsumura.takuya.self_maintenance.forGallery.VideoListActivity
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 
 class MainActivity : AppCompatActivity() {
     private lateinit var pager : ViewPager2
+
+    private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
+
+        when (item.itemId) {
+            R.id.navi_myvideo -> {
+                val user = FirebaseAuth.getInstance().currentUser
+                if(user !=null ){
+                    val intent= Intent(this, VideoListActivity::class.java)
+                    startActivity(intent)
+                }else{
+                    Toast.makeText(this,"ログインしてください",Toast.LENGTH_SHORT).show()
+                }
+                //return@OnNavigationItemSelectedListener true
+            }
+            R.id.navi_friend -> {
+                val user = FirebaseAuth.getInstance().currentUser
+                if(user !=null ){
+                    val intent= Intent(this, FriendListActivity::class.java)
+                    startActivity(intent)
+                }else{
+                    Toast.makeText(this,"ログインしてください",Toast.LENGTH_SHORT).show()
+                }
+                //return@OnNavigationItemSelectedListener true
+            }
+            R.id.navi_medal -> {
+                val intent= Intent(this, AchievementActivity::class.java)
+                startActivity(intent)
+                //return@OnNavigationItemSelectedListener true
+            }
+            R.id.navi_tech -> {
+                Toast.makeText(this,"ただいま工事中",Toast.LENGTH_SHORT).show()
+                /*
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.frameLayout, FirstFragment())
+                    .commit()
+
+                 */
+                //return@OnNavigationItemSelectedListener true
+            }
+        }
+        false
+    }
 
 
     inner class FragmentsPagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
@@ -51,6 +94,15 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
         Realm.init(this)
+
+        //ボトムナビゲーション
+        bottom_navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
+        /*
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.frameLayout, FirstFragment())
+            .commit()
+         */
+
 
         progressbar.visibility = android.widget.ProgressBar.INVISIBLE
         //showIfNeeded(this, savedInstanceState)//全画面のチュートリアル(ウォークスルー)

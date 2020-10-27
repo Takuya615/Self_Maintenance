@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navi_myvideo"
+        android:icon="@drawable/ic_playlist"
+        android:title="マイビデオ"/>
+    <item
+        android:id="@+id/navi_friend"
+        android:icon="@drawable/ic_person"
+        android:title="フレンド"/>
+    <item
+        android:id="@+id/navi_medal"
+        android:icon="@drawable/ic_medal"
+        android:title="実績"/>
+    <item
+        android:id="@+id/navi_tech"
+        android:icon="@drawable/ic_help"
+        android:title=""/>
+
+</menu>

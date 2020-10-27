@@ -7,6 +7,8 @@
     android:layout_height="match_parent"
     tools:context=".FirstFragment">
 
+
+
     <ImageView
         android:id="@+id/growth_image"
         android:layout_width="match_parent"
@@ -14,29 +16,7 @@
 
         android:src="@drawable/tree_seichou01"
         />
-    <Button
-        android:id="@+id/galleryButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="動画リスト"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.15"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.93" />
 
-    <Button
-        android:id="@+id/friendButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="フレンド"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.6"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.93" />
 
     <ImageView
         android:id="@+id/to_right"
@@ -50,5 +30,7 @@
         app:layout_constraintVertical_bias="0.5"
         android:src="@drawable/ic_arrow_to_right"
         />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

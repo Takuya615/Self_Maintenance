@@ -18,7 +18,8 @@
         android:roundIcon="@drawable/tree_seichou02"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ForSetting.AccountSettingActivity"></activity>
+        <activity android:name=".AchievementActivity"></activity>
+        <activity android:name=".ForSetting.AccountSettingActivity" />
         <activity android:name=".forGallery.FriendListActivity" />
         <activity android:name=".ForSetting.FriendSearchActivity">
             <intent-filter>
@@ -31,7 +32,6 @@
         </activity>
         <activity android:name=".ForSetting.LoginActivity" />
         <activity android:name=".forGallery.VideoListActivity" />
-        <activity android:name=".forGallery.UriListActivity" />
         <activity
             android:name=".ForStart.TutorialActivity"
             android:theme="@style/WelcomeScreenTheme" />
@@ -44,7 +44,8 @@
             android:name="com.google.android.actions"
             android:resource="@anim/slide_from_left" />
 
-        <activity android:name=".ForSetting.GoalSettingActivity" />
+        <activity android:name=".ForSetting.GoalSettingActivity"
+            android:windowSoftInputMode="adjustPan"/>
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"

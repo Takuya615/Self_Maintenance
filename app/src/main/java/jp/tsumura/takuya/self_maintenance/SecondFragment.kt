@@ -52,7 +52,7 @@ class SecondFragment : Fragment() {
 
                     val ncdtext =view.findViewById<TextView>(R.id.textView2_1)
                     val MAXtext =view.findViewById<TextView>(R.id.textView2_2)
-                    val revtext = view.findViewById<TextView>(R.id.textView2_3)
+                    val revtext =view.findViewById<TextView>(R.id.textView2_3)
                     val tDtext =view.findViewById<TextView>(R.id.textView2_4)
                     val tTtext =view.findViewById<TextView>(R.id.textView2_5)
 
@@ -71,12 +71,6 @@ class SecondFragment : Fragment() {
                 }
             }
         }
-
-
-
-
-
-
 
     }
 }

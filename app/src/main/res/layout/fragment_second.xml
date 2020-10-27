@@ -6,6 +6,8 @@
     android:layout_height="match_parent"
     tools:context=".SecondFragment">
 
+
+
     <TextView
         android:id="@+id/textView1_1"
         android:layout_width="wrap_content"
@@ -22,7 +24,7 @@
         android:id="@+id/textView2_1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="３６５日"
+        android:text="- - - 日"
         android:textSize="40dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -44,7 +46,7 @@
         android:id="@+id/textView2_2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="３６５日"
+        android:text="- - - 日"
         android:textSize="40dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -67,7 +69,7 @@
         android:id="@+id/textView2_3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="１０回"
+        android:text="- - - 回"
         android:textSize="40dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -90,7 +92,7 @@
         android:id="@+id/textView2_4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="３６５日"
+        android:text="- - - 日"
         android:textSize="40dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -112,7 +114,7 @@
         android:id="@+id/textView2_5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="1200分"
+        android:text="- - - 分"
         android:textSize="40dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

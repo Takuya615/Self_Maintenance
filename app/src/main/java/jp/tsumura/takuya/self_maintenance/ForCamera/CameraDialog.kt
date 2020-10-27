@@ -54,7 +54,7 @@ class CameraDialog(){
                         //save.putInt("continue", newCon)
                         //val recover: Int = prefs.getInt("recover",0)
                         //val total: Int = prefs.getInt("totalday",0)
-                    }else if(different < 2){
+                    }else if(different >= 2){
                         newCon = 0//継続リセット
                         newRec = recover + 1//復活数
                         newtot = totalD + 1//総日数
@@ -85,7 +85,7 @@ class CameraDialog(){
                     val newnum=totalT + mTimerSec//総活動時間
                     //save.putInt("totaltime" , newnum)
 
-
+                    save.putInt("totalday", newtot)//総日数だけプレファレンスにも保存
 
                     val data = Score(newCon,newRec,newtot,newnum)
                     docRef.set(data)
@@ -93,6 +93,7 @@ class CameraDialog(){
                     //val docRef = db.collection("Scores").document(user.uid)
                     val data = Score(0,0,1,mTimerSec)
                     docRef.set(data)
+                    save.putInt("totalday", 1)
                 }
 
                 save.putString("TEST",today)//設定日の更新
