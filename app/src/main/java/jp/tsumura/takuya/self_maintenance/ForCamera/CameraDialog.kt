@@ -1,17 +1,31 @@
 package jp.tsumura.takuya.self_maintenance.ForCamera
 
+
+
+
+//このコードは消さずにおいておくこと。　　テストプレーしてもらう時に使える
+
+
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.util.Log
+import android.view.LayoutInflater
+import android.widget.ArrayAdapter
+import android.widget.GridView
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.GridLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import jp.tsumura.takuya.self_maintenance.MainActivity
 import jp.tsumura.takuya.self_maintenance.R
 import jp.tsumura.takuya.self_maintenance.forGallery.VideoListActivity
+import kotlinx.android.synthetic.main.activity_achievement.*
+import kotlinx.android.synthetic.main.activity_friend_list.*
+import kotlinx.android.synthetic.main.dialog_camera.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -21,7 +35,7 @@ class CameraDialog(){
 
 
     //ダイアログ
-    fun showDialog(mContext: Context,mTimerSec:Int){
+    fun showDialog(mContext: Context,mTimerSec:Int,activity:Activity){
 
         val prefs = mContext.getSharedPreferences( "preferences_key_sample",Context.MODE_PRIVATE)
         val save : SharedPreferences.Editor = prefs.edit()
@@ -87,6 +101,7 @@ class CameraDialog(){
 
                     save.putInt("totalday", newtot)//総日数だけプレファレンスにも保存
 
+                    Log.e("TAG","連続$newCon、復活$newRec、総日$newtot")
                     val data = Score(newCon,newRec,newtot,newnum)
                     docRef.set(data)
                 }else{
@@ -99,6 +114,16 @@ class CameraDialog(){
                 save.putString("TEST",today)//設定日の更新
                 save.apply()
                 //ダイアログに記録を表示
+                /*
+                val countries = arrayOf
+                val adapter = ArrayAdapter(mContext, android.R.layout.simple_list_item_1, countries)
+                val iv = GridView(mContext)
+                iv.numColumns(3)
+                iv.adapter=adapter
+
+                 */
+
+                // アダプターとレイアウトマネージャーをセット
                 val list = arrayOf("継続日数　　$newCon","復活回数　　$newRec")
                 val alertDialogBuilder = AlertDialog.Builder(mContext)
                 //alertDialogBuilder.setTitle("活動の記録")
@@ -110,10 +135,13 @@ class CameraDialog(){
                     val intent = Intent(mContext,MainActivity::class.java)
                     mContext.startActivity(intent)
                 }
+                /*
                 alertDialogBuilder.setNegativeButton("動画リスト"){dialog, which ->
                     val intent = Intent(mContext, VideoListActivity::class.java)
                     mContext.startActivity(intent)
                 }
+
+                 */
                 // AlertDialogを作成して表示する
                 val alertDialog = alertDialogBuilder.create()
                 alertDialog.show()
@@ -149,3 +177,4 @@ class CameraDialog(){
 
 
 }
+

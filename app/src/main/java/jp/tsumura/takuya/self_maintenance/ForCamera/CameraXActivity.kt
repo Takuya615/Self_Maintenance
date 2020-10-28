@@ -23,6 +23,8 @@ import androidx.camera.core.*
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.LifecycleOwner
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
@@ -160,8 +162,10 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
                     videoCapture.stopRecording()
                     sound.play(MediaActionSound.STOP_VIDEO_RECORDING)//シャッター音
                     Log.e(tag, "録画停止")
-                    CameraDialog().showDialog(this, mTimerSec)
-
+                    CameraDialog().showDialog(this, mTimerSec,this)
+                    //CameraDialogFragment().show(supportFragmentManager,"sample")
+                    mTimerSec=0
+                    timer.text = "00:00"
                 }
             }
             false
@@ -306,15 +310,12 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
                 val minite = (mTimerSec / 60) % 60;
                 mHandler.post {
                     timer.text = String.format("%02d:%02d", minite, seconds)
+                    if(mTimerSec==taskSec){
+                        Sounds.getInstance(context).playSound(Sounds.SOUND_DRUMROLL)
+                    }
                     if (mTimerSec >= taskSec && taskSec != 0) {
                         backView.setBackgroundColor(Color.GREEN)
                         captureButton.setBackgroundColor(Color.GREEN)
-                        var ag = false
-                        if(!ag){
-                            ag = true
-                            Sounds.getInstance(context).playSound(Sounds.SOUND_DRUMROLL)
-                        }
-
                     }
                 }
             }

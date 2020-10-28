@@ -75,6 +75,9 @@ class GoalSettingActivity : AppCompatActivity(){
         help.setOnClickListener(){
             SettingDialog().showDialog(this)
         }
+        help2.setOnClickListener(){
+            SettingDialog().showDialog2(this)
+        }
 
         Handler().postDelayed({
             val Coach = TutorialCoachMarkActivity(this)

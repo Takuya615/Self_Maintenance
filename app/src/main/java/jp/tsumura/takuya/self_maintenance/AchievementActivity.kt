@@ -30,8 +30,15 @@ class AchievementActivity : AppCompatActivity() {
         title="実績"
 
 
-        titleList = mutableListOf("総日数1日達成","総日数2日達成","総日数5日達成","総日数7達成","総日数10達成","総日数15達成")
-        maxList = mutableListOf(1,2,5,7,10,15)
+        titleList = mutableListOf("総日数1日達成","総日数2日達成","総日数5日達成","総日数7日達成","総日数10日達成","総日数15日達成",
+            "総日数20日達成","総日数25日達成","総日数30日達成","継続日数1日達成","継続日数2日達成","継続日数5日達成","継続日数7日達成",
+            "継続日数10日達成","継続日数15日達成","継続日数20日達成","継続日数25日達成","継続日数30日達成","復活回数1回達成",
+            "復活回数2回達成","復活回数3回達成","復活回数4回達成","復活回数5回達成","復活回数6回達成","復活回数7回達成","復活回数8回達成",
+            "復活回数9回達成",
+        )
+        maxList = mutableListOf(1,2,5,7,10,15,20,25,30,
+            1,2,5,7,10,15,20,25,30,
+        1,2,3,4,5,6,7,8,9)
         //progressList = mutableListOf(0,0,0,0,0)
         hideButton = mutableListOf()
         mAuth = FirebaseAuth.getInstance()
@@ -43,10 +50,11 @@ class AchievementActivity : AppCompatActivity() {
             docRef.get().addOnSuccessListener { documentSnapshot ->
                 val score = documentSnapshot.toObject(Score::class.java)
                 if (score != null) {
-                    val t = score.totalD
+                    val t = score.totalD//総
+                    val c = score.continuous//継続
+                    val r = score.recover//復活
                     Log.d("TAG", "あたい　t は$t　です")
-
-                    progressList = mutableListOf(t,t,t,t,t,t)
+                    progressList = mutableListOf(t,t,t,t,t,t,t,t,t,c,c,c,c,c,c,c,c,c,r,r,r,r,r,r,r,r,r)
                     for(i in 0..maxList.size-1){
                         if(maxList[i]<=progressList[i]){
                             hideButton.add(false)
@@ -54,7 +62,7 @@ class AchievementActivity : AppCompatActivity() {
                             hideButton.add(true)
                         }
                     }
-                    Log.e("tag","hideListはこうなった$hideButton")
+                    //Log.e("tag","hideListはこうなった$hideButton")
 
                     adapter = AchievementAdapter(titleList,maxList,progressList,hideButton)
                     val layoutManager = LinearLayoutManager(this)

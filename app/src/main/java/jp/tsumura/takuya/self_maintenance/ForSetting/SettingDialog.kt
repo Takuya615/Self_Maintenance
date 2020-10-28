@@ -25,6 +25,23 @@ class SettingDialog{
         val alertDialog = alertDialogBuilder.create()
         alertDialog.show()
     }
+    //スモールステップ説明用ダイアログ2
+    fun showDialog2(mContext:Context){
+        val iv = ImageView(mContext)
+        iv.setImageResource(R.drawable.rabbits)
+        //ダイアログに記録を表示
+        val alertDialogBuilder = AlertDialog.Builder(mContext)
+        alertDialogBuilder.setTitle("二兎を追う者一兎をも得ず")
+        alertDialogBuilder.setMessage(R.string.Tutorial2)
+        alertDialogBuilder.setView(iv)
+        // 肯定ボタンに表示される文字列、押したときのリスナーを設定する
+        alertDialogBuilder.setPositiveButton("閉じる"){dialog, which ->
+            Log.e("TAG","スモールステップの説明を閉じる")
+        }
+        // AlertDialogを作成して表示する
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
+    }
 
     //実績解除のお知らせ用
     fun showDialogForMedal(mContext:Context){
