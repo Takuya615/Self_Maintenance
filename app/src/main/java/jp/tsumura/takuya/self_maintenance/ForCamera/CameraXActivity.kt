@@ -26,6 +26,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.LifecycleOwner
+import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.common.io.ByteStreams.toByteArray
@@ -40,6 +41,7 @@ import jp.tsumura.takuya.self_maintenance.ForSetting.FriendSearchActivity
 import jp.tsumura.takuya.self_maintenance.ForStart.TutorialCoachMarkActivity
 import jp.tsumura.takuya.self_maintenance.R
 import kotlinx.android.synthetic.main.activity_camera_x.*
+import kotlinx.android.synthetic.main.dialog_camera.view.*
 import java.io.File
 import java.nio.ByteBuffer
 import java.text.SimpleDateFormat
@@ -162,8 +164,10 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
                     videoCapture.stopRecording()
                     sound.play(MediaActionSound.STOP_VIDEO_RECORDING)//シャッター音
                     Log.e(tag, "録画停止")
-                    CameraDialog().showDialog(this, mTimerSec,this)
-                    //CameraDialogFragment().show(supportFragmentManager,"sample")
+
+                    //CameraDialog().showDialog(this, mTimerSec,this)
+
+                    CameraDialogFragment(mTimerSec).show(supportFragmentManager,"sample")
                     mTimerSec=0
                     timer.text = "00:00"
                 }

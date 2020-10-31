@@ -12,21 +12,30 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.GridView
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import jp.tsumura.takuya.self_maintenance.MainActivity
 import jp.tsumura.takuya.self_maintenance.R
+import jp.tsumura.takuya.self_maintenance.forGallery.FriendListAdapter
 import jp.tsumura.takuya.self_maintenance.forGallery.VideoListActivity
 import kotlinx.android.synthetic.main.activity_achievement.*
 import kotlinx.android.synthetic.main.activity_friend_list.*
+import kotlinx.android.synthetic.main.activity_friend_list.view.*
 import kotlinx.android.synthetic.main.dialog_camera.*
+import kotlinx.android.synthetic.main.dialog_camera.view.*
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 import java.util.*
 
 class CameraDialog(){
@@ -37,17 +46,30 @@ class CameraDialog(){
     //ダイアログ
     fun showDialog(mContext: Context,mTimerSec:Int,activity:Activity){
 
+
+/*
+        val fromday : String? = prefs.getString("TEST","1993/06/15")//前回利用した日
+        val date =Calendar.getInstance().getTime()
+        val dateFormatOnlyDay = SimpleDateFormat("yyyy/MM/dd")
+        val today =dateFormatOnlyDay.format(date).toString()
+        val different = dateDiff(today,fromday)
+
+ */
+
+
         val prefs = mContext.getSharedPreferences( "preferences_key_sample",Context.MODE_PRIVATE)
         val save : SharedPreferences.Editor = prefs.edit()
         var newCon:Int = 0
         var newRec:Int = 0
         var newtot:Int = 0
 
-        val fromday : String? = prefs.getString("TEST","1993/06/15")//前回利用した日
-        val date =Calendar.getInstance().getTime()
-        val dateFormatOnlyDay = SimpleDateFormat("yyyy/MM/dd")
-        val today =dateFormatOnlyDay.format(date).toString()
-        val different = dateDiff(today,fromday)
+        val setday : String? = prefs.getString("setDate","2020-10-28")//前回利用した日
+        val now = LocalDate.now() //2019-07-28T15:31:59.754
+        val day1 = LocalDate.parse(setday)//2019-08-28T10:15:30.123
+        val different = ChronoUnit.DAYS.between(day1, now).toInt() // diff: 30
+        Log.e("TAG","今日は$now 設定日は$day1 dayDiffは${different}")
+
+
 
         if(user!=null){
             val docRef = db.collection("Scores").document(user.uid)
@@ -111,18 +133,10 @@ class CameraDialog(){
                     save.putInt("totalday", 1)
                 }
 
-                save.putString("TEST",today)//設定日の更新
+                //save.putString("TEST",today)//設定日の更新
+                save.putString("setDate",now.toString())
                 save.apply()
                 //ダイアログに記録を表示
-                /*
-                val countries = arrayOf
-                val adapter = ArrayAdapter(mContext, android.R.layout.simple_list_item_1, countries)
-                val iv = GridView(mContext)
-                iv.numColumns(3)
-                iv.adapter=adapter
-
-                 */
-
                 // アダプターとレイアウトマネージャーをセット
                 val list = arrayOf("継続日数　　$newCon","復活回数　　$newRec")
                 val alertDialogBuilder = AlertDialog.Builder(mContext)
@@ -158,7 +172,7 @@ class CameraDialog(){
             alertDialog.show()
         }
     }
-
+/*
     //差が０ー＞クリア済み、１－＞継続日数と総日数、2以上ー＞復帰回数と総日数（サボった日数更新する）
     fun dateDiff(dateToStr:String,dateFromStr:String?):Int{
         val sdf = SimpleDateFormat("yyyy/MM/dd")
@@ -167,12 +181,14 @@ class CameraDialog(){
         dateFrom = sdf.parse(dateFromStr)
         dateTo = sdf.parse(dateToStr)
 
-        val To = dateTo.time
-        val From = dateFrom.time
+        val To = dateTo.time//今日20201030
+        val From = dateFrom.time//設定日20201029
         val dayDiff = (To - From)
-        Log.e("TAG","dayDiffは${dayDiff}")
+        Log.e("TAG","今日は$To 設定日は$From dayDiffは${dayDiff}")
         return dayDiff.toInt()
     }
+
+ */
 
 
 

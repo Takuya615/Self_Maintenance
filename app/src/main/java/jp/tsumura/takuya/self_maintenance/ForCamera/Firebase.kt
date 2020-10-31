@@ -1,6 +1,7 @@
 package jp.tsumura.takuya.self_maintenance.ForCamera
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Environment
 import android.util.Log
@@ -11,7 +12,10 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import java.io.File
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 class Firebase {
@@ -37,6 +41,9 @@ class Firebase {
             .addOnFailureListener { e -> Log.e("TAG", "保存失敗", e) }
     }
     }
+
+
+
 
 
 

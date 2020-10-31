@@ -10,8 +10,11 @@ import kotlinx.android.synthetic.main.achivement_list_item.view.*
 
 
 class AchievementAdapter(private val customList: MutableList<String>,
+                         //private val customList_2: MutableList<String>,
                          private val customList2: MutableList<Int>,
+                         //private val customList2_2: MutableList<Int>,
                          private val customList3: MutableList<Int>,
+                         //private val customList3_2: MutableList<Int>,
                          private val customList4: MutableList<Boolean>) : RecyclerView.Adapter<AchievementAdapter.CustomViewHolder>() {
 
     //リスナー
@@ -33,7 +36,7 @@ class AchievementAdapter(private val customList: MutableList<String>,
 
     // recyclerViewのコンテンツのサイズ
     override fun getItemCount(): Int {
-        return customList.size
+        return customList4.size
     }
 
     // ViewHolderに表示する画像とテキストを挿入
@@ -41,6 +44,9 @@ class AchievementAdapter(private val customList: MutableList<String>,
         holder.view.mission.text = customList[position]
         holder.view.progressBar2.max = customList2[position]//それぞれのmaxの値を設定
         holder.view.progressBar2.progress = customList3[position]
+        //holder.view.mission.text = customList_2[position]
+        //holder.view.progressBar2.max = customList2_2[position]//それぞれのmaxの値を設定
+        //holder.view.progressBar2.progress = customList3_2[position]
         holder.view.get_button.isInvisible = customList4[position]//１００％->false->獲得ボタンがでる
 
 
