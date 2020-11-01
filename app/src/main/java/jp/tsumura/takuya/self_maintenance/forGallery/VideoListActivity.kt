@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.isInvisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
@@ -21,6 +22,7 @@ import com.google.firebase.storage.ktx.storage
 import jp.tsumura.takuya.self_maintenance.ForCamera.CameraXActivity
 import jp.tsumura.takuya.self_maintenance.R
 import kotlinx.android.synthetic.main.activity_friend_list.*
+import kotlinx.android.synthetic.main.video_list_item.*
 import java.util.jar.Manifest
 
 
@@ -113,6 +115,7 @@ class VideoListActivity: AppCompatActivity() {
                         //Toast.makeText(applicationContext, "${clickedText}がタップされました", Toast.LENGTH_LONG).show()
                     }
                     R.id.itemdeleate -> {
+                        
                         coll.document(clickedText)
                             .delete()
                             .addOnSuccessListener {
