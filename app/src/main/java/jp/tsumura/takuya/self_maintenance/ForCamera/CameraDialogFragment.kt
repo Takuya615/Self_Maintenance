@@ -92,28 +92,19 @@ class CameraDialogFragment(mTimerSec: Int): DialogFragment() {
                         newRec = recover//復活数
                         newtot = totalD + 1//総日数
                         Log.e("TAG", "連続日数更新！")
-                        //val Continue : Int = prefs.getInt("continue",0)
-                        //save.putInt("continue", newCon)
-                        //val recover: Int = prefs.getInt("recover",0)
-                        //val total: Int = prefs.getInt("totalday",0)
+
                     }else if(different >= 2){
                         newCon = 0//継続リセット
                         newRec = recover + 1//復活数
                         newtot = totalD + 1//総日数
                         Log.e("TAG", "復帰！")
 
-                        //save.putInt("continue", newCon)
-                        //val recover : Int = prefs.getInt("recover",-1)
-                        //save.putInt("recover", newRec)
-                        //val total: Int = prefs.getInt("totalday",0)
-                        //save.putInt("totalday", newtot)
                     }else if(different==0){
                         newCon = continuous//継続日数
                         newRec = recover//復活数
                         newtot = totalD//総日数
                         Log.e("TAG", "デイリー達成済み")
-                        //val Continue : Int = prefs.getInt("continue",0)
-                        //val recover: Int = prefs.getInt("recover",0)
+
                     }
 
                     //継続日数の最長値を保存する
@@ -133,7 +124,7 @@ class CameraDialogFragment(mTimerSec: Int): DialogFragment() {
                     val data = Score(newCon,newRec,newtot,newnum)
                     docRef.set(data)
                 }else{
-                    //val docRef = db.collection("Scores").document(user.uid)
+
                     val data = Score(0,0,1,time)
                     docRef.set(data)
                     save.putInt("totalday", 1)
@@ -142,42 +133,31 @@ class CameraDialogFragment(mTimerSec: Int): DialogFragment() {
                 save.putString("setDate",now.toString())
                 save.apply()
 
-                customView.text.text ="継続日数　　$newCon"
-                customView.text2.text ="復活回数　　$newRec"
+                customView.text.text ="継続日数　　$newCon 日"
+                customView.text2.text ="復活回数　　$newRec　回"
 
-
-                val titT = mutableListOf("総日数1日達成","総日数2日達成","総日数5日達成","総日数7日達成","総日数10日達成","総日数15日達成",
-                "総日数20日達成","総日数25日達成","総日数30日達成"
-            )
-                val titC = mutableListOf("継続日数1日達成","継続日数2日達成","継続日数5日達成","継続日数7日達成",
-                    "継続日数10日達成","継続日数15日達成","継続日数20日達成","継続日数25日達成","継続日数30日達成"
-                )
-                val titR = mutableListOf("復活回数1回達成",
-                    "復活回数2回達成","復活回数3回達成","復活回数4回達成","復活回数5回達成","復活回数6回達成","復活回数7回達成","復活回数8回達成",
-                    "復活回数9回達成",
-                )
                 val maxT = mutableListOf(1,2,5,7,10,15,20,25,30)//総日数
-                val maxC = mutableListOf(1,2,5,7,10,15,20,25,30)
+                val maxC = mutableListOf(1,2,5,7,10,15,20,25,30)//継続
                 val maxR = mutableListOf(1,2,3,4,5,6,7,8,9)//復活
                 val result = mutableListOf<String>()
                 for(i in maxT){
                     if(i == newtot){
-                        result.add(titT[i])
+                        result.add("総日数 ${maxT[i]}日")
                     }
                 }
                 for(i in maxC){
                     if(i == newCon){
-                        result.add(titC[i])
+                        result.add("継続日数 ${maxC[i]}日")
                     }
                 }
                 for(i in maxR){
                     if(i == newRec){
-                        result.add(titR[i])
+                        result.add("復活数　${maxR[i]}日")
                     }
                 }
 
-                //makeResultList(resultList)
-                customView.cameraDialogRecyclerView.layoutManager = GridLayoutManager(requireContext(), 4)
+
+                customView.cameraDialogRecyclerView.layoutManager = GridLayoutManager(requireContext(), 3)
                 customView.cameraDialogRecyclerView.adapter = CameraDialogAdapter(result)
                 customView.cameraDialogRecyclerView.setHasFixedSize(true)
 

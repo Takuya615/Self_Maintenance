@@ -36,7 +36,7 @@ class AchievementAdapter(private val customList: MutableList<String>,
 
     // recyclerViewのコンテンツのサイズ
     override fun getItemCount(): Int {
-        return customList4.size
+        return customList.size
     }
 
     // ViewHolderに表示する画像とテキストを挿入

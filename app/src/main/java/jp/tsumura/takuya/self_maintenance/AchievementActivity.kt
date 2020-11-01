@@ -32,21 +32,13 @@ class AchievementActivity : AppCompatActivity() {
         title="実績"
 
 
-        titleList = mutableListOf("総日数1日達成","総日数2日達成","総日数5日達成","総日数7日達成","総日数10日達成","総日数15日達成",
-            "総日数20日達成","総日数25日達成","総日数30日達成","継続日数1日達成","継続日数2日達成","継続日数5日達成","継続日数7日達成",
-            "継続日数10日達成","継続日数15日達成","継続日数20日達成","継続日数25日達成","継続日数30日達成"
-        )
-        val titleListR = mutableListOf("復活回数1回達成",
-            "復活回数2回達成","復活回数3回達成","復活回数4回達成","復活回数5回達成","復活回数6回達成","復活回数7回達成","復活回数8回達成",
-            "復活回数9回達成",
-        )
-        maxList = mutableListOf(1,2,5,7,10,15,20,25,30,//総日数
-            1,2,5,7,10,15,20,25,30//継続
-        )//復活
+        titleList = mutableListOf()
+        progressList = mutableListOf()
+        hideButton = mutableListOf()
+        maxList = mutableListOf(1,2,5,7,10,15,20,25,30)//総日数
+        val maxListC = mutableListOf(1,2,5,7,10,15,20,25,30)//継続
         val maxListR = mutableListOf(1,2,3,4,5,6,7,8,9)//復活
 
-        //progressList = mutableListOf(0,0,0,0,0)
-        hideButton = mutableListOf()
         mAuth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
         val user = mAuth.currentUser
@@ -59,26 +51,32 @@ class AchievementActivity : AppCompatActivity() {
                     val t = score.totalD//総
                     val c = score.continuous//継続
                     val r = score.recover//復活
-                    Log.d("TAG", "あたい　t は$t　です")
-                    progressList = mutableListOf(t,t,t,t,t,t,t,t,t,c,c,c,c,c,c,c,c,c)
-                    val progressListR = mutableListOf(r,r,r,r,r,r,r,r,r)
 
-                    titleListR.forEach{
-                        titleList.add(it)
+                    //titleリストの作成
+                    for(i in 0..maxList.size-1){
+                        Log.e("TAG","list内の値は$i")
+                        titleList.add("総日数 ${maxList[i]}日           $t/${maxList[i]}")
+                        progressList.add(t)
+                        if(maxList[i]<=t){ hideButton.add(false) }
+                        else{ hideButton.add(true)}
                     }
-                    maxListR.forEach{
-                        maxList.add(it)
-                    }
-                    progressListR.forEach{
-                        progressList.add(it)
+                    for(i in 0..maxListC.size-1) {
+                        titleList.add("継続 ${maxListC[i]}日　           $c/${maxListC[i]}")
+                        progressList.add(c)
+                        if(maxListC[i]<=c){ hideButton.add(false) }
+                        else{ hideButton.add(true)}
                     }
                     for(i in 0..maxList.size-1){
-                        if(maxList[i]<=progressList[i]){
-                            hideButton.add(false)
-                        }else{
-                            hideButton.add(true)
-                        }
+                        titleList.add("復活 ${maxListR[i]}回　           $r/${maxListR[i]}")
+                        progressList.add(r)
+                        if(maxListR[i]<=r){ hideButton.add(false) }
+                        else{ hideButton.add(true)}
                     }
+
+                    //それぞれのパラメータを1つのmaxListにまとめる
+                    maxListC.forEach{ maxList.add(it) }
+                    maxListR.forEach{ maxList.add(it) }
+
 
                     adapter = AchievementAdapter(titleList,maxList,progressList,hideButton)
                     val layoutManager = LinearLayoutManager(this)

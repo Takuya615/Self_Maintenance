@@ -77,7 +77,7 @@ class TutorialCoachMarkActivity(context:Context) {
             g.commit()
 
             val target = activity.findViewById<FloatingActionButton>(R.id.fab)
-            val Target = sreateCircleUI(target,activity,"ビデオカメラ","ココからカメラへ移動しましょう",0f,0f,-2f)
+            val Target = sreateCircleUI(target,activity,"目標を立てましょう","ココから目標を立て、カメラへ移動します",0f,0f,-2f)
 
             // コーチマークを作成
             Spotlight.with(activity)
