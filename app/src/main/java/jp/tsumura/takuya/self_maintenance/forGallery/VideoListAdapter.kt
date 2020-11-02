@@ -3,6 +3,7 @@ package jp.tsumura.takuya.self_maintenance.forGallery
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isInvisible
 import androidx.recyclerview.widget.RecyclerView
 import jp.tsumura.takuya.self_maintenance.R
 import kotlinx.android.synthetic.main.friend_list_item.view.*
@@ -11,7 +12,9 @@ import kotlinx.android.synthetic.main.friend_list_item.view.itemdeleate
 import kotlinx.android.synthetic.main.video_list_item.view.*
 
 class VideoListAdapter(private val customList: MutableList<String>,
-                       private val customList2: MutableList<String>) : RecyclerView.Adapter<VideoListAdapter.CustomViewHolder>() {
+                       private val customList2: MutableList<String>,
+                       private val isfriend: Boolean
+                       ) : RecyclerView.Adapter<VideoListAdapter.CustomViewHolder>() {
 
 
     //リスナー
@@ -41,6 +44,7 @@ class VideoListAdapter(private val customList: MutableList<String>,
     override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
         holder.view.itemTextView.text = customList[position]
         holder.view.itemLike.text = customList2[position]
+        holder.view.itemdeleate.isInvisible=isfriend
 
         holder.view.itemTextView.setOnClickListener {
             listener.onItemClickListener(it, position, customList[position])

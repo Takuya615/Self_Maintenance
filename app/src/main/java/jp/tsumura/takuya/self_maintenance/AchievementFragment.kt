@@ -1,22 +1,20 @@
 package jp.tsumura.takuya.self_maintenance
 
-import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.MenuItem
+import android.view.LayoutInflater
 import android.view.View
-import android.widget.Toast
+import android.view.ViewGroup
+import android.widget.ImageView
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.tabs.TabLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import jp.tsumura.takuya.self_maintenance.ForCamera.Score
-import jp.tsumura.takuya.self_maintenance.ForSetting.SettingDialog
 import kotlinx.android.synthetic.main.activity_achievement.*
-import org.json.JSONArray
 
-class AchievementActivity : AppCompatActivity() {
+class AchievementFragment : Fragment(){
 
     private lateinit var adapter : AchievementAdapter
     private lateinit var titleList:MutableList<String>
@@ -26,13 +24,17 @@ class AchievementActivity : AppCompatActivity() {
     private lateinit var mAuth: FirebaseAuth
     private lateinit var db : FirebaseFirestore
 
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        // Inflate the layout for this fragment
+        val view = inflater.inflate(R.layout.fragment_achievement, container, false)
+        return view
+    }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_achievement)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        title="実績"
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         titleList = mutableListOf()
         progressList = mutableListOf()
@@ -81,7 +83,7 @@ class AchievementActivity : AppCompatActivity() {
 
 
                     adapter = AchievementAdapter(titleList,maxList,progressList,hideButton)
-                    val layoutManager = LinearLayoutManager(this)
+                    val layoutManager = LinearLayoutManager(requireContext())
                     // アダプターとレイアウトマネージャーをセット
                     achieveRecyclerView.layoutManager = layoutManager//simpleRecyclerView
                     achieveRecyclerView.adapter = adapter
@@ -106,17 +108,6 @@ class AchievementActivity : AppCompatActivity() {
                 }
             }
         }
-    }
 
-
-
-    //戻るボタンを押すと今いるviewを削除する
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when(item!!.itemId){
-            android.R.id.home -> {
-                finish()
-            }
-        }
-        return super.onOptionsItemSelected(item)
     }
 }

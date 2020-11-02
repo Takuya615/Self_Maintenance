@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity() {
                 //return@OnNavigationItemSelectedListener true
             }
             R.id.navi_medal -> {
-                val intent= Intent(this, AchievementActivity::class.java)
+                val intent= Intent(this, MedalsTabActivity::class.java)
                 startActivity(intent)
                 //return@OnNavigationItemSelectedListener true
             }
@@ -79,7 +79,7 @@ class MainActivity : AppCompatActivity() {
         override fun createFragment(position: Int): Fragment {
             when (position) {
                 0 -> return FirstFragment();
-                1 -> return SecondFragment()
+                //1 -> return SecondFragment()
                 //2 -> return URIlistFragment()
                 else -> return FirstFragment()
 

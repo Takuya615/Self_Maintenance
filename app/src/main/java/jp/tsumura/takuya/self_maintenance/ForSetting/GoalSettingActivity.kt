@@ -69,7 +69,7 @@ class GoalSettingActivity : AppCompatActivity(){
         setbutton.setOnClickListener(){
             val intent = Intent(this, CameraXActivity::class.java)
             startActivity(intent)
-
+            finish()
         }
         //val SetButton=findViewById<Button>(R.id.setbutton)
         help.setOnClickListener(){

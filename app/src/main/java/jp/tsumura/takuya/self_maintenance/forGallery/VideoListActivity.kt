@@ -38,6 +38,7 @@ class VideoListActivity: AppCompatActivity() {
     private lateinit var coll :CollectionReference
     private lateinit var userId:String
     private lateinit var UriString:String
+    var isfriend:Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,9 +69,11 @@ class VideoListActivity: AppCompatActivity() {
         if(friendUid == null){
             coll =db.collection(user!!.uid)
             userId = user.uid
+            isfriend = false
         }else{
             coll =db.collection(friendUid)
             userId = friendUid
+            isfriend = true
         }
 
         coll.whereEqualTo("friend", false).get()//.orderBy("date", Query.Direction.DESCENDING)
@@ -93,7 +96,7 @@ class VideoListActivity: AppCompatActivity() {
                 Log.w("TAG", "Error getting documents: ", exception)
             }
 
-        adapter = VideoListAdapter(mdateList, mlikeList)
+        adapter = VideoListAdapter(mdateList, mlikeList,isfriend)
         val layoutManager = LinearLayoutManager(this)
 
         // アダプターとレイアウトマネージャーをセット

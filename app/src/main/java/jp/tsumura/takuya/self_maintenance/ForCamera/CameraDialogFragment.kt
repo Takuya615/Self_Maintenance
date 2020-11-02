@@ -42,8 +42,9 @@ class CameraDialogFragment(mTimerSec: Int): DialogFragment() {
         //builder.setItems(list){ dialog, which -> Log.e("TAG", "${list[which]} が選択されました") }
         // 肯定ボタンに表示される文字列、押したときのリスナーを設定する
         builder.setPositiveButton("メイン画面"){ dialog, which ->
-            val intent = Intent(requireContext(), MainActivity::class.java)
-            requireContext().startActivity(intent)
+            requireActivity().finish()
+            //val intent = Intent(requireContext(), MainActivity::class.java)
+            //requireContext().startActivity(intent)
         }
         builder.setView(customView)
 
