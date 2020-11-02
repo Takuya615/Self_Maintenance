@@ -12,6 +12,7 @@ import android.view.MenuItem
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
+import androidx.core.view.isInvisible
 import com.google.firebase.auth.FirebaseAuth
 
 import com.google.firebase.firestore.FirebaseFirestore
@@ -75,9 +76,11 @@ class GoalSettingActivity : AppCompatActivity(){
         help.setOnClickListener(){
             SettingDialog().showDialog(this)
         }
-        help2.setOnClickListener(){
+        /*
+        help2..setOnClickListener(){
             SettingDialog().showDialog2(this)
         }
+        */
 
         Handler().postDelayed({
             val Coach = TutorialCoachMarkActivity(this)
@@ -133,20 +136,33 @@ class GoalSettingActivity : AppCompatActivity(){
             if(goaltimeA.isNotEmpty()){
                 val goaltime = goaltimeA.toInt()
                 //val totalday : Int = prefs.getInt("totalday", 0)総日数の値を取得
-                val times =totalday/2
                 val Cal =goaltime *60 *1/100//　　　　　　　初期値は１％からスタート
                 e.putInt(getString(R.string.preferences_key_smalltime), Cal)
                 e.apply()
-                var Caltimes = Cal
-                if(times!=0){ Caltimes = Cal*times }
-                val seconds =Caltimes%60;
-                val minite =(Caltimes/60)%60;
-                if(Caltimes < 60){
-                    textView6.text = "今日は　$seconds　秒間（${times+1} %）やりましょう"
+
+
+                var times =0//総日数が、2日更新されるごとに、強度を上げる場合。（totalday=1なら、1/2で、times=0となる）
+                if(totalday>65){
+                    val ab = 11
+                    val bc = (totalday-66)/2
+                    times =ab+bc
                 }else{
-                    textView6.text = "今日は$minite 分 $seconds 秒間（${times+1} %）やりましょう"
+                    times=totalday/6
                 }
-                Log.e("TAG","1日に行う秒数（タスク時間）は $Caltimes")
+                if(times!=0 ) {//　　　割り算の演算子は整数までしか計算しないので、少数点以下は無視して出力される。
+                    val A = Cal * times
+                    Cal + A
+                    Log.e("TAG", "現在のタスク所要時間は$Cal")
+                }
+
+                val seconds =Cal%60;
+                val minite =(Cal/60)%60;
+                if(Cal < 60){
+                    textView6.text = "今日は　$seconds　秒間\n（${times+1} %）やりましょう"
+                }else{
+                    textView6.text = "今日は$minite 分 $seconds 秒間\n（${times+1} %）やりましょう"
+                }
+                Log.e("TAG","1日に行う秒数（タスク時間）は $Cal")
 
             }else{
                 //数字が設定されなければ、値0に戻る。

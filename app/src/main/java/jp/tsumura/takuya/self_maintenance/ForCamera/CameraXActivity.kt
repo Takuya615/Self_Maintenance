@@ -295,12 +295,21 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
             }
         }
 
-        val times =totalday/2 //総日数が、2日更新されるごとに、強度を上げる場合。（totalday=1なら、1/2で、times=0となる）
+        var times =0 //総日数が、2日更新されるごとに、強度を上げる場合。（totalday=1なら、1/2で、times=0となる）
+        if(totalday>65){
+            val ab = 11
+            val bc = (totalday-66)/2
+            times =ab+bc
+        }else{
+            times=totalday/6
+        }
 
         if(times!=0 ) {//　　　割り算の演算子は整数までしか計算しないので、少数点以下は無視して出力される。
             val A = taskSec * times
             taskSec + A
             Log.e("TAG", "現在のタスク所要時間は$taskSec")
+        }else{
+            Toast.makeText(this,"時間設定がされていません",Toast.LENGTH_LONG).show()
         }
 
         // タイマーの作成

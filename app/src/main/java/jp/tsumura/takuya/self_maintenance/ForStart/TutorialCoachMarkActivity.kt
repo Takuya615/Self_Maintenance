@@ -130,10 +130,10 @@ class TutorialCoachMarkActivity(context:Context) {
             val Target4 = sreateUI(target4,activity,"設定後、ここをタップ","",0f,0f,-1f)
             val target5 = activity.findViewById<TextView>(R.id.textView6)
             val Target5 = sreateUI(target5,activity,"今日のミッション",
-                "あなたの今日のミッションが表示されます\nこのミッションをクリアするたびに、あなたのレベルが上がっていきます",0f,0f,-2f)
+                "このミッションをクリアするたび、あなたのレベルが上がっていきます",0f,0f,-2f)
             val target6 = activity.findViewById<Button>(R.id.setbutton)
-            val Target6 = sreateUI(target6,activity,"始めてみましょう",
-                "最後に、ここをタップしてください",0f,0f,-3f)
+            val Target6 = sreateUI(target6,activity,"最後に",
+                "最後に、ここをタップ",0f,0f,-3f)
 
 
             // コーチマークを作成
@@ -173,8 +173,8 @@ class TutorialCoachMarkActivity(context:Context) {
             //コーチマークの実装    //引数（ボタン、アクティビティ、タイトル、本文、光X、光Y、文字列Y）
             val target5 = activity.findViewById<TextView>(R.id.textView6)
             val Target5 = sreateUI(target5,activity,"今日のミッション",
-                "あなたの今日のミッションが表示されます\n毎日続けていくと、少しずつこの時間が長くなり、" +
-                        "最終的に目標の時間までムリなく続けられるようになります。",250f,0f,-2f)
+                "毎日続けていくと、少しずつこの時間が長くなり、" +
+                        "約100日後、目標の時間までムリなく続けられるようになります。",250f,0f,-2f)
             val target6 = activity.findViewById<Button>(R.id.setbutton)
             val Target6 = sreateUI(target6,activity,"始めてみましょう",
                 "さっそく今日のミッション達成のため、自撮りしてみましょう！\nこの設定でよければ、ここをタップしてください",0f,0f,-3f)
