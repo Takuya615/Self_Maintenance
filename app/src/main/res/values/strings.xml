@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">セルフ メンテナンス</string>
+    <string name="app_name">SelfMaintenance</string>
     <string name="action_settings">Settings</string>
     <string name="preferences_key_sample">Camera2Activity_sample</string>
     <string name="preferences_key">Camera2Activity_1</string>

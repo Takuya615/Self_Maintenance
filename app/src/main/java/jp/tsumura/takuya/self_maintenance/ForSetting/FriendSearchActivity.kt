@@ -31,6 +31,7 @@ class FriendSearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_friend_search)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        title = "フレンド検索"
         request.visibility = View.INVISIBLE//         request=ボタンのid
         //uid =""val list = mutableListOf<String>(name,uid)
         mAuth = FirebaseAuth.getInstance()

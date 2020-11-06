@@ -145,6 +145,7 @@ class FriendListActivity : AppCompatActivity() {
                             mnameList.remove(mnameList[position])
                             muidList.remove(muidList[position])
                             adapter.notifyItemRemoved(position)
+                            adapter.notifyItemRangeChanged(position, mnameList.size)
 
                         }
                     }

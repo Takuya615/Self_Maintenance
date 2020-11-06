@@ -55,8 +55,11 @@ class MainActivity : AppCompatActivity() {
                 //return@OnNavigationItemSelectedListener true
             }
             R.id.navi_medal -> {
+                Toast.makeText(this,"ただいま工事中",Toast.LENGTH_SHORT).show()
+                /*
                 val intent= Intent(this, MedalsTabActivity::class.java)
                 startActivity(intent)
+                   */
                 //return@OnNavigationItemSelectedListener true
             }
             R.id.navi_tech -> {

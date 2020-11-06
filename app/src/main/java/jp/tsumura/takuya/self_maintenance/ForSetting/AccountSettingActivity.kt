@@ -21,6 +21,7 @@ class AccountSettingActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_account_setting)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        title = "アカウント設定"
 
         mAuth = FirebaseAuth.getInstance()
         val user = mAuth.currentUser

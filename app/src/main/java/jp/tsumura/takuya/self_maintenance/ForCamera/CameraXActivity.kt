@@ -103,6 +103,7 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
                 if(flag){
                     flag = false
                     switchButton.visibility = View.INVISIBLE
+                    backButton.visibility = View.INVISIBLE
                     captureButton.setImageResource(R.drawable.ic_stop)
                     captureButton.setBackgroundColor(Color.WHITE)
                     backView.setBackgroundColor(Color.WHITE)
@@ -160,14 +161,15 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
                     })
                 }else if(flag==false){
                     flag = true
+                    backButton.visibility = View.VISIBLE
                     mTimer!!.cancel()
                     videoCapture.stopRecording()
                     sound.play(MediaActionSound.STOP_VIDEO_RECORDING)//シャッター音
                     Log.e(tag, "録画停止")
 
-                    //CameraDialog().showDialog(this, mTimerSec,this)
+                    CameraDialog().showDialog(this, mTimerSec,this)
 
-                    CameraDialogFragment(mTimerSec).show(supportFragmentManager,"sample")
+                    //CameraDialogFragment(mTimerSec).show(supportFragmentManager,"sample")
                     mTimerSec=0
                     timer.text = "00:00"
                 }
@@ -289,50 +291,47 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
             val docRef = db.collection("Scores").document(user.uid)
             docRef.get().addOnSuccessListener { documentSnapshot ->
                 val score = documentSnapshot.toObject(Score::class.java)
-                if (score != null) {
-                    totalday = score.totalD
+
+                if(score == null){ totalday = 0
+                }else{ totalday = score.totalD + score.DoNot }
+
+                var times =0 //総日数が、2日更新されるごとに、強度を上げる場合。（totalday=1なら、1/2で、times=0となる）
+                if(totalday>49){
+                    val ab = 10
+                    val bc = (totalday-50)/2
+                    times =ab+bc
+                }else{
+                    times=totalday/5
+
                 }
-            }
-        }
-
-        var times =0 //総日数が、2日更新されるごとに、強度を上げる場合。（totalday=1なら、1/2で、times=0となる）
-        if(totalday>49){
-            val ab = 10
-            val bc = (totalday-50)/2
-            times =ab+bc
-        }else{
-            times=totalday/5
-        }
-
-        if(times!=0 ) {//　　　割り算の演算子は整数までしか計算しないので、少数点以下は無視して出力される。
-            val A = taskSec * times
-            taskSec + A
-            Log.e("TAG", "現在のタスク所要時間は$taskSec")
-        }else{
-            Toast.makeText(this,"時間設定がされていません",Toast.LENGTH_LONG).show()
-        }
-
-        // タイマーの作成
-        mTimer = Timer()
-
-        // タイマーの始動
-        mTimer!!.schedule(object : TimerTask() {
-            override fun run() {
-                mTimerSec += 1
-                val seconds = mTimerSec % 60;
-                val minite = (mTimerSec / 60) % 60;
-                mHandler.post {
-                    timer.text = String.format("%02d:%02d", minite, seconds)
-                    if(mTimerSec==taskSec){
-                        Sounds.getInstance(context).playSound(Sounds.SOUND_DRUMROLL)
-                    }
-                    if (mTimerSec >= taskSec && taskSec != 0) {
-                        backView.setBackgroundColor(Color.GREEN)
-                        captureButton.setBackgroundColor(Color.GREEN)
-                    }
+                if(times!=0 ) {//　　　割り算の演算子は整数までしか計算しないので、少数点以下は無視して出力される。
+                    val A = taskSec * times
+                    taskSec + A
+                    Log.e("TAG", "現在のタスク所要時間は$taskSec")
                 }
+
+                mTimer = Timer()
+                mTimer!!.schedule(object : TimerTask() {
+                    override fun run() {
+                        mTimerSec += 1
+                        val seconds = mTimerSec % 60;
+                        val minite = (mTimerSec / 60) % 60;
+                        mHandler.post {
+                            timer.text = String.format("%02d:%02d", minite, seconds)
+                            if(mTimerSec==taskSec){
+                                Sounds.getInstance(context).playSound(Sounds.SOUND_DRUMROLL)
+                            }
+                            if (mTimerSec >= taskSec && taskSec != 0) {
+                                backView.setBackgroundColor(Color.GREEN)
+                                captureButton.setBackgroundColor(Color.GREEN)
+                            }
+                        }
+                    }
+                }, 1000, 1000)
+
             }
-        }, 1000, 1000)
+
+        }else{ Toast.makeText(this,"ログインすれば時間を記録できます",Toast.LENGTH_LONG).show() }
     }
 
     companion object{

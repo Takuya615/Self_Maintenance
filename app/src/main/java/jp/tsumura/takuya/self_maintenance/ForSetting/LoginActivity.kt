@@ -56,7 +56,7 @@ class LoginActivity : AppCompatActivity() {
         if(user!=null){
             val setName :String? = Realm().UidToName(user.uid)//同じUidのアカウント名を返す
             if(setName!!.isEmpty()){
-                nameText.text = Editable.Factory.getInstance().newEditable("アカウント名がリセットされています。\n「アカウント設定」画面から、名前を再設定してください")
+                nameText.text = Editable.Factory.getInstance().newEditable("アカウント設定から名前を再設定してください")
                 //Toast.makeText(this,"",Toast.LENGTH_LONG).show()
             }else{
                 nameText.text = Editable.Factory.getInstance().newEditable(setName)

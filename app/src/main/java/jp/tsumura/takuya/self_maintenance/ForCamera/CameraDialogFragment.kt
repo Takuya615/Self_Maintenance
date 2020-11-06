@@ -87,6 +87,7 @@ class CameraDialogFragment(mTimerSec: Int): DialogFragment() {
                     val recover = score.recover
                     val totalD = score.totalD
                     val totalT = score.totalT
+                    var DoNot= score.DoNot
 
                     if(different == 1){
                         newCon = continuous + 1//継続日数
@@ -98,6 +99,7 @@ class CameraDialogFragment(mTimerSec: Int): DialogFragment() {
                         newCon = 0//継続リセット
                         newRec = recover + 1//復活数
                         newtot = totalD + 1//総日数
+                        DoNot = DoNot + different-1
                         Log.e("TAG", "復帰！")
 
                     }else if(different==0){
@@ -122,11 +124,11 @@ class CameraDialogFragment(mTimerSec: Int): DialogFragment() {
                     save.putInt("totalday", newtot)//総日数だけプレファレンスにも保存
 
                     Log.e("TAG","連続$newCon、復活$newRec、総日$newtot")
-                    val data = Score(newCon,newRec,newtot,newnum)
+                    val data = Score(newCon,newRec,newtot,newnum,DoNot)
                     docRef.set(data)
                 }else{
 
-                    val data = Score(0,0,1,time)
+                    val data = Score(0,0,1,time,0)
                     docRef.set(data)
                     save.putInt("totalday", 1)
                 }

@@ -119,25 +119,14 @@ class VideoListActivity: AppCompatActivity() {
                     }
                     R.id.itemdeleate -> {
                         
-                        coll.document(clickedText)
-                            .delete()
+                        coll.document(mdateList[position]).delete()
                             .addOnSuccessListener {
-                                Log.e(
-                                    "TAG",
-                                    "DocumentSnapshot successfully deleted!"
-                                )
+                                Log.e("TAG", "DocumentSnapshot successfully deleted!")
                             }
                             .addOnFailureListener { e ->
-                                Log.w(
-                                    "TAG",
-                                    "Error deleting document",
-                                    e
-                                )
+                                Log.w("TAG", "Error deleting document", e)
                             }
-                        Toast.makeText(
-                            applicationContext,
-                            "${clickedText}を削除しました",
-                            Toast.LENGTH_LONG
+                        Toast.makeText(applicationContext, "${clickedText}を削除しました", Toast.LENGTH_LONG
                         ).show()
 
                         val aaa = mpathList[position]
@@ -154,6 +143,9 @@ class VideoListActivity: AppCompatActivity() {
                         mdateList.remove(mdateList[position])
                         muriList.remove(muriList[position])
                         adapter.notifyItemRemoved(position)
+                        adapter.notifyItemRangeChanged(position, mdateList.size)
+                        //adapter.notifyDataSetChanged()
+
                     }
                 }
             }
