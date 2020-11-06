@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Self_Maintenance</string>
+    <string name="app_name">セルフ メンテナンス</string>
     <string name="action_settings">Settings</string>
     <string name="preferences_key_sample">Camera2Activity_sample</string>
     <string name="preferences_key">Camera2Activity_1</string>
@@ -39,8 +39,8 @@
         こうすることで、心的負担を減らし、より継続しやすくなることがわかっています
     </string>
     <string name="Tutorial2">
-        習慣作りには、最低でも「６６日」はかかるといわれています。\n
+        最小で週４回を６週間以上続ければ、より習慣になりやすいといわれています\n
         この間は最小限の負担で行い、クセがついてから本格的に時間を伸ばしていきます\n
-        また、より確実に続けられるよう、設定できる習慣は１つまでとします。
+        まずは５０日間、続けることを目標にしましょう。
     </string>
 </resources>

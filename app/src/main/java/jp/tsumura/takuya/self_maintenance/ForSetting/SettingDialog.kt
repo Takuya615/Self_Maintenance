@@ -14,7 +14,7 @@ class SettingDialog{
         iv.setImageResource(R.drawable.chart)
         //ダイアログに記録を表示
         val alertDialogBuilder = AlertDialog.Builder(mContext)
-        alertDialogBuilder.setTitle("スモールステップについて")
+        alertDialogBuilder.setTitle("少しずつ時間が伸びていきます")
         alertDialogBuilder.setMessage(R.string.Tutorial2)
         alertDialogBuilder.setView(iv)
         // 肯定ボタンに表示される文字列、押したときのリスナーを設定する

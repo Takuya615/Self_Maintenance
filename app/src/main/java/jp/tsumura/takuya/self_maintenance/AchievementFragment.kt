@@ -58,20 +58,19 @@ class AchievementFragment : Fragment(){
 
                     //titleリストの作成
                     for(i in 0..maxList.size-1){
-                        Log.e("TAG","list内の値は$i")
-                        titleList.add("総日数 ${maxList[i]}日           $t/${maxList[i]}")
+                        titleList.add("総日数 ${maxList[i]}日           ${calculate(t,maxList[i])}")
                         progressList.add(t)
                         if(maxList[i]<=t){ hideButton.add(false) }
                         else{ hideButton.add(true)}
                     }
                     for(i in 0..maxListC.size-1) {
-                        titleList.add("継続 ${maxListC[i]}日　           $c/${maxListC[i]}")
+                        titleList.add("継続 ${maxListC[i]}日　           ${calculate(c,maxListC[i])}")
                         progressList.add(c)
                         if(maxListC[i]<=c){ hideButton.add(false) }
                         else{ hideButton.add(true)}
                     }
-                    for(i in 0..maxList.size-1){
-                        titleList.add("復活 ${maxListR[i]}回　           $r/${maxListR[i]}")
+                    for(i in 0..maxListR.size-1){
+                        titleList.add("復活 ${maxListR[i]}回　           ${calculate(r,maxListR[i])}")
                         progressList.add(r)
                         if(maxListR[i]<=r){ hideButton.add(false) }
                         else{ hideButton.add(true)}
@@ -109,5 +108,13 @@ class AchievementFragment : Fragment(){
             }
         }
 
+    }
+    fun calculate(score:Int,max:Int):String{
+        val a = score.toDouble()/max.toDouble()*100
+        var result = a.toInt()
+        if(result>100){
+            result=100
+        }
+        return "$result%"
     }
 }

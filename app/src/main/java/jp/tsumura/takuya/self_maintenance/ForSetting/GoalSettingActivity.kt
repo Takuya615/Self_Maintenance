@@ -55,6 +55,7 @@ class GoalSettingActivity : AppCompatActivity(){
             }.addOnFailureListener { e -> Log.e("TAG", "データ取得に失敗", e) }
         }
 
+
         //設定ボタンを押したら、その時書いてある値をそのまま保存する。
         //val Button=findViewById<Button>(R.id.button)
         button.setOnClickListener(){
@@ -142,12 +143,12 @@ class GoalSettingActivity : AppCompatActivity(){
 
 
                 var times =0//総日数が、2日更新されるごとに、強度を上げる場合。（totalday=1なら、1/2で、times=0となる）
-                if(totalday>65){
-                    val ab = 11
-                    val bc = (totalday-66)/2
+                if(totalday>49){
+                    val ab = 10
+                    val bc = (totalday-50)/2
                     times =ab+bc
                 }else{
-                    times=totalday/6
+                    times=totalday/5
                 }
                 if(times!=0 ) {//　　　割り算の演算子は整数までしか計算しないので、少数点以下は無視して出力される。
                     val A = Cal * times
