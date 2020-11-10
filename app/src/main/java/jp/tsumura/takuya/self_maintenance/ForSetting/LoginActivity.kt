@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.text.Editable
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -36,6 +35,7 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        title="ログイン画面"
 
         TutorialActivity.showIfNeeded(this,savedInstanceState)//チューとリアル
 
@@ -49,23 +49,6 @@ class LoginActivity : AppCompatActivity() {
         db = FirebaseFirestore.getInstance()
         // FirebaseAuthのオブジェクトを取得する
         mAuth = FirebaseAuth.getInstance()
-
-
-        //メールとアカウント名を記録する
-        val user = mAuth.currentUser
-        if(user!=null){
-            val setName :String? = Realm().UidToName(user.uid)//同じUidのアカウント名を返す
-            if(setName!!.isEmpty()){
-                nameText.text = Editable.Factory.getInstance().newEditable("アカウント設定から名前を再設定してください")
-                //Toast.makeText(this,"",Toast.LENGTH_LONG).show()
-            }else{
-                nameText.text = Editable.Factory.getInstance().newEditable(setName)
-            }
-            Log.e("TAG", "ログインしています")
-        }else{
-            Log.e("TAG", "まだログインしていません")
-        }
-
 
         // アカウント作成処理のリスナー
         mCreateAccountListener = OnCompleteListener { task ->
@@ -92,12 +75,6 @@ class LoginActivity : AppCompatActivity() {
                 if (mIsCreateAccount) {
                     Toast.makeText(this,"アカウントが作成されました",Toast.LENGTH_LONG).show()
 
-                    Handler().postDelayed({
-                        val name = nameText.text.toString()// アカウント作成の時はアカウント名とUidをRealmに保存する
-                        val AcUid = user!!.uid
-                        Realm().addPerson(name,AcUid)
-                    }, 1000)
-
                 } else {
                     Toast.makeText(this,"ログインしました",Toast.LENGTH_LONG).show()
                 }
@@ -115,7 +92,14 @@ class LoginActivity : AppCompatActivity() {
         }
 
         // UIの準備
-        title = "ログイン"
+        val user = mAuth.currentUser
+        if(user!=null){
+            val a = mRealm().UidToName(user.uid)
+            if(a.isNotEmpty()){
+                title = "${a}さんでログイン中"
+            }
+        }
+
 
         createButton.setOnClickListener { v ->
             // キーボードが出てたら閉じる
@@ -124,16 +108,11 @@ class LoginActivity : AppCompatActivity() {
 
             val email = emailText.text.toString()
             val password = passwordText.text.toString()
-            val name = nameText.text.toString()
 
-            if (email.length != 0 && password.length >= 6&& name.length != 0) {
-                if(Realm().SearchSameName(name)){
-                    // ログイン時に表示名とUidを保存するようにフラグを立てる
-                    mIsCreateAccount = true
-                    createAccount(email, password)
-                }else{
-                    Snackbar.make(v, "このアカウント名はすでに使われています", Snackbar.LENGTH_LONG).show()
-                }
+            if (email.length != 0 && password.length >= 6) {
+                // ログイン時に表示名とUidを保存するようにフラグを立てる
+                mIsCreateAccount = true
+                createAccount(email, password)
 
             } else {
                 // エラーを表示する
@@ -148,12 +127,10 @@ class LoginActivity : AppCompatActivity() {
 
             val email = emailText.text.toString()
             val password = passwordText.text.toString()
-            val name=nameText.text.toString()
 
             if (email.length != 0 && password.length >= 6 ) {
                 // フラグを落としておく
                 mIsCreateAccount = false
-
                 login(email, password)
             } else {
                 // エラーを表示する

@@ -33,14 +33,14 @@
     <string name="delete_button_alt">Delete</string>
     <string name="delete_dialog">Delete current photo?</string>
     <string name="delete_title">Confirm</string>
-    <string name="Tutorial">
-        最初は簡単なミッションから初めます。
-        日を重ねるごとに難しさを上げていきます。
-        こうすることで、心的負担を減らし、より継続しやすくなることがわかっています
-    </string>
-    <string name="Tutorial2">
+
+    <string name="Tutorial1">
         最小で週４回を６週間以上続ければ、より習慣になりやすいといわれています\n
         この間は最小限の負担で行い、クセがついてから本格的に時間を伸ばしていきます\n
         まずは５０日間、続けることを目標にしましょう。
     </string>
+    <string name="Tutorial2">
+        信頼できる友人や家族に、
+    </string>
+
 </resources>

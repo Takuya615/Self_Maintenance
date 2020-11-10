@@ -3,27 +3,17 @@ package jp.tsumura.takuya.self_maintenance.ForCamera
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import androidx.core.app.ActivityCompat.recreate
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import jp.tsumura.takuya.self_maintenance.MainActivity
 import jp.tsumura.takuya.self_maintenance.R
 import kotlinx.android.synthetic.main.dialog_camera.view.*
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import org.json.JSONArray
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
@@ -75,7 +65,6 @@ class CameraDialogFragment(mTimerSec: Int): DialogFragment() {
         val now = LocalDate.now() //2019-07-28T15:31:59.754
         val day1 = LocalDate.parse(setday)//2019-08-28T10:15:30.123
         val different = ChronoUnit.DAYS.between(day1, now).toInt() // diff: 30
-        Log.e("TAG","今日は$now 設定日は$day1 dayDiffは${different}")
 
 
         if(user!=null){
@@ -93,20 +82,17 @@ class CameraDialogFragment(mTimerSec: Int): DialogFragment() {
                         newCon = continuous + 1//継続日数
                         newRec = recover//復活数
                         newtot = totalD + 1//総日数
-                        Log.e("TAG", "連続日数更新！")
 
                     }else if(different >= 2){
                         newCon = 0//継続リセット
                         newRec = recover + 1//復活数
                         newtot = totalD + 1//総日数
                         DoNot = DoNot + different-1
-                        Log.e("TAG", "復帰！")
 
                     }else if(different==0){
                         newCon = continuous//継続日数
                         newRec = recover//復活数
                         newtot = totalD//総日数
-                        Log.e("TAG", "デイリー達成済み")
 
                     }
 
@@ -123,7 +109,6 @@ class CameraDialogFragment(mTimerSec: Int): DialogFragment() {
 
                     save.putInt("totalday", newtot)//総日数だけプレファレンスにも保存
 
-                    Log.e("TAG","連続$newCon、復活$newRec、総日$newtot")
                     val data = Score(newCon,newRec,newtot,newnum,DoNot)
                     docRef.set(data)
                 }else{

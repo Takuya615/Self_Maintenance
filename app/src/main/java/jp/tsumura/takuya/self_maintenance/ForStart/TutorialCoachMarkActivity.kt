@@ -20,7 +20,7 @@ import com.takusemba.spotlight.shape.RoundedRectangle
 import com.takusemba.spotlight.target.SimpleTarget
 import jp.tsumura.takuya.self_maintenance.ForSetting.GoalSettingActivity
 import jp.tsumura.takuya.self_maintenance.R
-import kotlinx.android.synthetic.main.content_main.*
+
 
 
 class TutorialCoachMarkActivity(context:Context) {
@@ -97,7 +97,6 @@ class TutorialCoachMarkActivity(context:Context) {
                     //Toast.makeText(context, "spotlight is started", Toast.LENGTH_SHORT).show()
                 }
                 override fun onEnded() {
-                    activity.progressbar.visibility = android.widget.ProgressBar.VISIBLE
                     val intent= Intent(context, GoalSettingActivity::class.java)
                     activity.startActivity(intent)
                     activity.recreate()
@@ -256,7 +255,7 @@ class TutorialCoachMarkActivity(context:Context) {
             val firstTarget = SimpleTarget.Builder(activity)
                 .setShape(Circle(0f))//ハイライトの大きさ
                 .setTitle("友達の動画をチェック")
-                .setDescription("友人からの承認リクエストを受け取れば、このリスト内に追加されます。\n相手の撮影した動画がチェックでき、いいね！を送ることもできます。")
+                .setDescription("他アカウントからのリクエストを受け取れば、ここに表示されます。\nフレンドの撮影した習慣をチェックでき、いいね！を送ることもできます。")
                 .setOverlayPoint(2f,500f )//文字列の位置
                 .build()
 
@@ -269,8 +268,8 @@ class TutorialCoachMarkActivity(context:Context) {
             val secondTarget = SimpleTarget.Builder(activity)
                 .setPoint(targetX,targetY)//ハイライトの位置
                 .setShape(Circle(0f))//ハイライトの大きさ
-                .setTitle("フレンドリクエストを送る")
-                .setDescription("右上の検索アイコン🔍から、友人へリクエストを送ることもできます。")
+                .setTitle("リクエストを送る")
+                .setDescription("右上の検索アイコン🔍から、リクエストを送ることもできます。")
                 .setOverlayPoint(2f,500f )//文字列の位置
                 .build()
 
@@ -296,9 +295,42 @@ class TutorialCoachMarkActivity(context:Context) {
                 })
                 .start()
         }
+    }
 
+    //アカウント登録画面
+    fun CoachMark6(activity: Activity,context: Context){
+        if(!Tuto4){
+
+            val target7 = activity.findViewById<EditText>(R.id.accountName)
+            val Target = sreateUI(target7,activity,"フレンド登録",
+                "信頼できる友人や家族に、あなたの習慣化を応援してもらいましょう" +
+                        "\nまずはあなたのアカウント名をアプリに登録してください。",0f,0f,2f)
+
+            // コーチマークを作成
+            Spotlight.with(activity)
+                // コーチマーク表示される時の背景の色
+                .setOverlayColor(R.color.colorCoachMark)
+                // 表示する時間
+                .setDuration(1000L)
+                // 表示するスピード
+                .setAnimation(DecelerateInterpolator(1f))
+                // 注目されたいところ（複数指定も可能）
+                .setTargets(Target)
+                // 注目されたいところ以外をタップする時に閉じられるかどうか
+                .setClosedOnTouchedOutside(true)
+                // コーチマーク表示される時になんかする
+                .setOnSpotlightStateListener(object : OnSpotlightStateChangedListener {
+                    override fun onStarted() {
+                    }
+                    override fun onEnded() {
+                    }
+                })
+                .start()
+        }
 
     }
+
+
 
 
 
@@ -353,14 +385,6 @@ class TutorialCoachMarkActivity(context:Context) {
         return firstTarget
     }
 
-    fun getLocationPoint(target: View):PointF {
-        val targetLocation = IntArray(2)
-        target.getLocationInWindow(targetLocation)
-        val targetX = targetLocation[0] + target.width/2f //+ 700f//1000f
-        val targetY = targetLocation[1] + target.height/2f //+ 150f//150f
-
-        return PointF(targetX,targetY)
-    }
 
     fun reset(){
         //g.putBoolean("Tuto0", false)

@@ -3,7 +3,6 @@ package jp.tsumura.takuya.self_maintenance.ForCamera
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.SurfaceTexture
@@ -12,38 +11,25 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.util.DisplayMetrics
-import android.util.Log
 import android.util.Size
 import android.view.*
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
-
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.LifecycleOwner
-import androidx.recyclerview.widget.GridLayoutManager
-import com.google.android.gms.common.ConnectionResult
-import com.google.android.gms.common.GoogleApiAvailability
-import com.google.common.io.ByteStreams.toByteArray
-import com.google.common.io.Files.toByteArray
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
-import com.google.mlkit.vision.common.InputImage
-import jp.tsumura.takuya.self_maintenance.ForSetting.FriendSearchActivity
-
 import jp.tsumura.takuya.self_maintenance.ForStart.TutorialCoachMarkActivity
 import jp.tsumura.takuya.self_maintenance.R
 import kotlinx.android.synthetic.main.activity_camera_x.*
-import kotlinx.android.synthetic.main.dialog_camera.view.*
 import java.io.File
-import java.nio.ByteBuffer
+
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -58,15 +44,13 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
     private lateinit var backView: ConstraintLayout
     private lateinit var videoCapture: VideoCapture
     private lateinit var mAuth: FirebaseAuth
-    //private lateinit var sound:Sounds
+
 
     private var mTimer: Timer? = null
     private var mTimerSec:Int = 0
+    private var taskSec:Int = 0
+    private var totalday : Int = 0
     private var mHandler = Handler()
-    private val mFormat = StringBuilder()
-    private val formatter = Formatter(mFormat, Locale.getDefault())
-    private var dataformat = SimpleDateFormat("mm:SS", Locale.JAPAN)
-
     private var lensFacing = CameraX.LensFacing.FRONT
 
 
@@ -83,6 +67,7 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
         backButton = findViewById(R.id.back_button)
         mAuth = FirebaseAuth.getInstance()
 
+        captureButton.visibility = View.INVISIBLE
 
         // Request camera permissions
         if (allPermissionsGranted()) {
@@ -94,6 +79,41 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
                 this, CameraXActivity.REQUIRED_PERMISSIONS, CameraXActivity.REQUEST_CODE_PERMISSIONS
             )
         }
+
+
+        val prefs = getSharedPreferences("preferences_key_sample", Context.MODE_PRIVATE)
+        taskSec = prefs.getInt(getString(R.string.preferences_key_smalltime), 0)//習慣の初期値
+        val user = FirebaseAuth.getInstance().currentUser
+        val db = FirebaseFirestore.getInstance()
+        if(user!=null){
+
+            val docRef = db.collection("Scores").document(user.uid)
+            docRef.get().addOnSuccessListener { documentSnapshot ->
+                val score = documentSnapshot.toObject(Score::class.java)
+
+                if(score != null){ totalday = score.totalD + score.DoNot }
+                var times =0 //総日数が、2日更新されるごとに、強度を上げる場合。（totalday=1なら、1/2で、times=0となる）
+                if(totalday>49){
+                    val ab = 10
+                    val bc = (totalday-50)/2
+                    times =ab+bc
+                }else{
+                    times=totalday/5
+
+                }
+                if(times!=0 ) {//　　　割り算の演算子は整数までしか計算しないので、少数点以下は無視して出力される。
+                    val A = taskSec * times
+                    taskSec = taskSec + A
+                }
+                captureButton.visibility = View.VISIBLE
+                progress.visibility = android.widget.ProgressBar.INVISIBLE
+            }
+
+        }else{ Toast.makeText(this,"ログインすれば時間を記録できます",Toast.LENGTH_LONG).show()
+            captureButton.visibility = View.VISIBLE
+            progress.visibility = android.widget.ProgressBar.INVISIBLE
+        }
+
 
         //撮影開始ボタン、2度目のクリックで停止後、すぐにFirebaseへ保存される。
         var flag = true
@@ -127,9 +147,9 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
                                 val uploadTask = photoRef.putFile(movieUri)
                                 // Register observers to listen for when the download is done or if it fails
                                 uploadTask.addOnFailureListener {
-                                    Log.e("TAG", "ストレージへ保存失敗")
+                                    //Log.e("TAG", "ストレージへ保存失敗")
                                 }.addOnSuccessListener {
-                                    Log.e("TAG", "ストレージへ保存成功")
+                                    //Log.e("TAG", "ストレージへ保存成功")
                                 }.continueWithTask { task ->
                                     if (!task.isSuccessful) {
                                         task.exception?.let {
@@ -141,9 +161,6 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
                                     if (task.isSuccessful) {
                                         val downloadUri:Uri? = task.result
                                         Firebase().WriteToStore(downloadUri.toString(),path)//Uriと日付を保存する
-                                        Log.e("TAG", "URLの取得成功")
-                                    } else {
-                                        Log.e("TAG", "URLの取得に失敗")
                                     }
                                 }
 
@@ -151,13 +168,7 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
 
                         }
 
-                        override fun onError(
-                            useCaseError: VideoCapture.UseCaseError?,
-                            message: String?,
-                            cause: Throwable?
-                        ) {
-                            Log.e(tag, "Video Error: $message")
-                        }
+                        override fun onError(useCaseError: VideoCapture.UseCaseError?,message: String?, cause: Throwable?) { }
                     })
                 }else if(flag==false){
                     flag = true
@@ -165,7 +176,6 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
                     mTimer!!.cancel()
                     videoCapture.stopRecording()
                     sound.play(MediaActionSound.STOP_VIDEO_RECORDING)//シャッター音
-                    Log.e(tag, "録画停止")
 
                     CameraDialog().showDialog(this, mTimerSec,this)
 
@@ -183,13 +193,8 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
             } else {
                 CameraX.LensFacing.FRONT
             }
-            try {
-                // Only bind use cases if we can query a camera with this orientation
-                CameraX.getCameraWithLensFacing(lensFacing)
-                startCamera()
-            } catch (exc: Exception) {
-                Log.e("TAG", "カメラの切り替えに失敗")
-            }
+            CameraX.getCameraWithLensFacing(lensFacing)
+            startCamera()
         }
 
         backButton.setOnClickListener{
@@ -280,58 +285,24 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
 
     //ここからタイマー用　　
     private fun TimeRecorder(context:Context){
-        val prefs = getSharedPreferences("preferences_key_sample", Context.MODE_PRIVATE)
-        val taskSec: Int = prefs.getInt(getString(R.string.preferences_key_smalltime), 0)//習慣の初期値
-        Log.e("TAG", "タスク所要時間の初期値は$taskSec")
-        var totalday : Int = prefs.getInt("totalday", 0)//総日数の値を取得
-
-        val user = FirebaseAuth.getInstance().currentUser
-        val db = FirebaseFirestore.getInstance()
-        if(user!=null){
-            val docRef = db.collection("Scores").document(user.uid)
-            docRef.get().addOnSuccessListener { documentSnapshot ->
-                val score = documentSnapshot.toObject(Score::class.java)
-
-                if(score == null){ totalday = 0
-                }else{ totalday = score.totalD + score.DoNot }
-
-                var times =0 //総日数が、2日更新されるごとに、強度を上げる場合。（totalday=1なら、1/2で、times=0となる）
-                if(totalday>49){
-                    val ab = 10
-                    val bc = (totalday-50)/2
-                    times =ab+bc
-                }else{
-                    times=totalday/5
-
-                }
-                if(times!=0 ) {//　　　割り算の演算子は整数までしか計算しないので、少数点以下は無視して出力される。
-                    val A = taskSec * times
-                    taskSec + A
-                    Log.e("TAG", "現在のタスク所要時間は$taskSec")
-                }
-
-                mTimer = Timer()
-                mTimer!!.schedule(object : TimerTask() {
-                    override fun run() {
-                        mTimerSec += 1
-                        val seconds = mTimerSec % 60;
-                        val minite = (mTimerSec / 60) % 60;
-                        mHandler.post {
-                            timer.text = String.format("%02d:%02d", minite, seconds)
-                            if(mTimerSec==taskSec){
-                                Sounds.getInstance(context).playSound(Sounds.SOUND_DRUMROLL)
-                            }
-                            if (mTimerSec >= taskSec && taskSec != 0) {
-                                backView.setBackgroundColor(Color.GREEN)
-                                captureButton.setBackgroundColor(Color.GREEN)
-                            }
-                        }
+        mTimer = Timer()
+        mTimer!!.schedule(object : TimerTask() {
+            override fun run() {
+                mTimerSec += 1
+                val seconds = mTimerSec % 60;
+                val minite = (mTimerSec / 60) % 60;
+                mHandler.post {
+                    timer.text = String.format("%02d:%02d", minite, seconds)
+                    if(mTimerSec==taskSec){
+                        Sounds.getInstance(context).playSound(Sounds.SOUND_DRUMROLL)
                     }
-                }, 1000, 1000)
-
+                    if (mTimerSec >= taskSec && taskSec != 0) {
+                        backView.setBackgroundColor(Color.GREEN)
+                        captureButton.setBackgroundColor(Color.GREEN)
+                    }
+                }
             }
-
-        }else{ Toast.makeText(this,"ログインすれば時間を記録できます",Toast.LENGTH_LONG).show() }
+        }, 1000, 1000)
     }
 
     companion object{

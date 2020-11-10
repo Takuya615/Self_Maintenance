@@ -5,8 +5,6 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.SearchView
@@ -40,7 +38,6 @@ class FriendSearchActivity : AppCompatActivity() {
         request.setOnClickListener{
             val user = mAuth.currentUser
             if(user!=null){
-                Log.e("TAG","コレクションのUidは$uid")
                 val docRef = db.collection(uid).document("friendRequest")
                 docRef.set(hashMapOf("friendUid" to user.uid))
                     .addOnSuccessListener {
@@ -65,7 +62,7 @@ class FriendSearchActivity : AppCompatActivity() {
 
         searchView?.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                val ans = Realm().SearchName(query)
+                val ans = mRealm().SearchName(query)
                 if(ans.AcUid.isEmpty()){
                     answer.text=ans.Name
                     request.visibility = View.INVISIBLE

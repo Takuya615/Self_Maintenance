@@ -5,15 +5,10 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
-    <uses-feature android:name="android.hardware.camera" />
-
-    <uses-permission android:name="android.hardware.camera.autofocus" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/tree_seichou02"
         android:label="@string/app_name"
         android:roundIcon="@drawable/tree_seichou02"
         android:supportsRtl="true"
@@ -40,11 +35,6 @@
             android:name=".ForCamera.CameraXActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".forGallery.GalleryActivity" />
-
-        <meta-data
-            android:name="com.google.android.actions"
-            android:resource="@anim/slide_from_left" />
-
         <activity
             android:name=".ForSetting.GoalSettingActivity"
             android:windowSoftInputMode="adjustPan" />

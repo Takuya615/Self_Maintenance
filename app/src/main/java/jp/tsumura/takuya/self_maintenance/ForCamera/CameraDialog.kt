@@ -10,33 +10,14 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.widget.ArrayAdapter
-import android.widget.GridView
-import android.widget.ImageView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import jp.tsumura.takuya.self_maintenance.MainActivity
-import jp.tsumura.takuya.self_maintenance.R
-import jp.tsumura.takuya.self_maintenance.forGallery.FriendListAdapter
-import jp.tsumura.takuya.self_maintenance.forGallery.VideoListActivity
-import kotlinx.android.synthetic.main.activity_achievement.*
-import kotlinx.android.synthetic.main.activity_friend_list.*
-import kotlinx.android.synthetic.main.activity_friend_list.view.*
-import kotlinx.android.synthetic.main.dialog_camera.*
-import kotlinx.android.synthetic.main.dialog_camera.view.*
-import java.text.SimpleDateFormat
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
-import java.util.*
+
 
 class CameraDialog(){
     val user = FirebaseAuth.getInstance().currentUser
@@ -67,8 +48,6 @@ class CameraDialog(){
         val now = LocalDate.now() //2019-07-28T15:31:59.754
         val day1 = LocalDate.parse(setday)//2019-08-28T10:15:30.123
         val different = ChronoUnit.DAYS.between(day1, now).toInt() // diff: 30
-        Log.e("TAG","今日は$now 設定日は$day1 dayDiffは${different}")
-
 
 
         if(user!=null){
@@ -86,7 +65,6 @@ class CameraDialog(){
                         newCon = continuous + 1//継続日数
                         newRec = recover//復活数
                         newtot = totalD + 1//総日数
-                        Log.e("TAG", "連続日数更新！")
                         //val Continue : Int = prefs.getInt("continue",0)
                         //save.putInt("continue", newCon)
                         //val recover: Int = prefs.getInt("recover",0)
@@ -96,7 +74,6 @@ class CameraDialog(){
                         newRec = recover + 1//復活数
                         newtot = totalD + 1//総日数
                         DoNot = DoNot + different-1
-                        Log.e("TAG", "復帰！")
 
                         //save.putInt("continue", newCon)
                         //val recover : Int = prefs.getInt("recover",-1)
@@ -107,7 +84,6 @@ class CameraDialog(){
                         newCon = continuous//継続日数
                         newRec = recover//復活数
                         newtot = totalD//総日数
-                        Log.e("TAG", "デイリー達成済み")
                         //val Continue : Int = prefs.getInt("continue",0)
                         //val recover: Int = prefs.getInt("recover",0)
                     }
@@ -125,7 +101,6 @@ class CameraDialog(){
 
                     save.putInt("totalday", newtot)//総日数だけプレファレンスにも保存
 
-                    Log.e("TAG","連続$newCon、復活$newRec、総日$newtot")
                     val data = Score(newCon,newRec,newtot,newnum,DoNot)
                     docRef.set(data)
                 }else{
@@ -143,9 +118,7 @@ class CameraDialog(){
                 val list = arrayOf("継続日数　　$newCon","復活回数　　$newRec")
                 val alertDialogBuilder = AlertDialog.Builder(mContext)
                 //alertDialogBuilder.setTitle("活動の記録")
-                alertDialogBuilder.setItems(list){ dialog, which ->
-                    Log.e("TAG", "${list[which]} が選択されました")
-                }
+                alertDialogBuilder.setItems(list){ dialog, which ->                }
                 // 肯定ボタンに表示される文字列、押したときのリスナーを設定する
                 alertDialogBuilder.setPositiveButton("メイン画面"){dialog, which ->
                     val intent = Intent(mContext,MainActivity::class.java)

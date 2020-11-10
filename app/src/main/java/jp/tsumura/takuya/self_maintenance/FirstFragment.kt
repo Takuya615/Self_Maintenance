@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -15,10 +14,6 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat.recreate
 import androidx.core.content.ContextCompat
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import jp.tsumura.takuya.self_maintenance.ForCamera.Score
-import jp.tsumura.takuya.self_maintenance.forGallery.FriendListActivity
-import jp.tsumura.takuya.self_maintenance.forGallery.VideoListActivity
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
@@ -34,7 +29,6 @@ class FirstFragment : Fragment() {
         mAuth = FirebaseAuth.getInstance()
         prefs = requireActivity().getSharedPreferences("preferences_key_sample", Context.MODE_PRIVATE)
         val taskSec: Int = prefs.getInt(getString(R.string.preferences_key_smalltime),0)
-        Log.e("TAG","タスク所要時間が$taskSec")
 
         /*
         val user = mAuth.currentUser
@@ -77,7 +71,6 @@ class FirstFragment : Fragment() {
         val totalday = prefs.getInt("totalday",0)
 
         val growthimage =view.findViewById<ImageView>(R.id.growth_image)
-        Log.e("TAG","総日数は$totalday 日")
 
         if(1<=totalday && totalday<3){
             growthimage?.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.tree_seichou02))

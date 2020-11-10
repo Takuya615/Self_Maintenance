@@ -2,10 +2,9 @@ package jp.tsumura.takuya.self_maintenance.ForSetting
 
 import android.widget.EditText
 import io.realm.Realm
-import jp.tsumura.takuya.self_maintenance.R
 
 
-class Realm {
+class mRealm {
 
     val person:Person = Person()
     val realm = Realm.getDefaultInstance()
@@ -60,7 +59,6 @@ class Realm {
         val taskRealmResults = realm.where(Person::class.java).findAll()
         for (i in taskRealmResults) {
             if(i.AcUid == SearchedUid){
-
                 return i.Name
             }
         }
@@ -82,5 +80,15 @@ class Realm {
         }
         realm.close()
         return true
+    }
+
+    fun update(id:String, name:String){
+        if(!realm.isInTransaction){
+            realm.beginTransaction()
+        }
+        var book = realm.where(Person::class.java).equalTo("AcUid",id).findFirst()
+        book!!.Name = name
+        //realm.executeTransaction {        }
+        realm.close()
     }
 }

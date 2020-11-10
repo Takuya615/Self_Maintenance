@@ -6,90 +6,89 @@ import jp.tsumura.takuya.self_maintenance.ForSetting.GoalSettingActivity
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
-import androidx.fragment.app.*
-import androidx.viewpager2.adapter.FragmentStateAdapter
-import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import io.realm.Realm
 import jp.tsumura.takuya.self_maintenance.ForCamera.CameraXActivity
 import jp.tsumura.takuya.self_maintenance.ForSetting.AccountSettingActivity
 import jp.tsumura.takuya.self_maintenance.ForSetting.LoginActivity
+import jp.tsumura.takuya.self_maintenance.ForSetting.mRealm
 import jp.tsumura.takuya.self_maintenance.ForStart.TutorialActivity
 import jp.tsumura.takuya.self_maintenance.ForStart.TutorialCoachMarkActivity
-import jp.tsumura.takuya.self_maintenance.forGallery.FriendListActivity
+import jp.tsumura.takuya.self_maintenance.forGallery.FriendListFragment
 import jp.tsumura.takuya.self_maintenance.forGallery.VideoListActivity
+import jp.tsumura.takuya.self_maintenance.forGallery.VideoListFragment
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.content_main.*
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var pager : ViewPager2
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
+        val user = FirebaseAuth.getInstance().currentUser
 
         when (item.itemId) {
+            R.id.navi_tech -> {
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.frameLayout, FirstFragment())
+                    .commit()
+                title = "ホーム"
+                //Toast.makeText(this,"ただいま工事中",Toast.LENGTH_SHORT).show()
+                /*
+                 */
+                return@OnNavigationItemSelectedListener true
+            }
             R.id.navi_myvideo -> {
-                val user = FirebaseAuth.getInstance().currentUser
                 if(user !=null ){
-                    val intent= Intent(this, VideoListActivity::class.java)
-                    startActivity(intent)
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.frameLayout, VideoListFragment())
+                        .commit()
+                    title="あなたの動画リスト"
+                    //val intent= Intent(this, VideoListActivity::class.java)
+                    //startActivity(intent)
                 }else{
                     Toast.makeText(this,"ログインしてください",Toast.LENGTH_SHORT).show()
                 }
-                //return@OnNavigationItemSelectedListener true
+                return@OnNavigationItemSelectedListener true
             }
             R.id.navi_friend -> {
-                val user = FirebaseAuth.getInstance().currentUser
                 if(user !=null ){
-                    val intent= Intent(this, FriendListActivity::class.java)
-                    startActivity(intent)
+                    val a = mRealm().UidToName(user.uid)
+                    if(a.isEmpty()){
+                        val intent= Intent(this, AccountSettingActivity::class.java)
+                        startActivity(intent)
+                    }else{
+                        supportFragmentManager.beginTransaction()
+                            .replace(R.id.frameLayout, FriendListFragment())
+                            .commit()
+                        title = "フレンドリスト"
+                        //val intent= Intent(this, FriendListActivity::class.java)
+                        //startActivity(intent)
+                    }
+
                 }else{
                     Toast.makeText(this,"ログインしてください",Toast.LENGTH_SHORT).show()
                 }
-                //return@OnNavigationItemSelectedListener true
+                return@OnNavigationItemSelectedListener true
             }
             R.id.navi_medal -> {
-                Toast.makeText(this,"ただいま工事中",Toast.LENGTH_SHORT).show()
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.frameLayout, SecondFragment())
+                    .commit()
+                title="実績"
+                //Toast.makeText(this,"ただいま工事中",Toast.LENGTH_SHORT).show()
                 /*
                 val intent= Intent(this, MedalsTabActivity::class.java)
                 startActivity(intent)
                    */
-                //return@OnNavigationItemSelectedListener true
+                return@OnNavigationItemSelectedListener true
             }
-            R.id.navi_tech -> {
-                Toast.makeText(this,"ただいま工事中",Toast.LENGTH_SHORT).show()
-                /*
-                supportFragmentManager.beginTransaction()
-                    .replace(R.id.frameLayout, FirstFragment())
-                    .commit()
 
-                 */
-                //return@OnNavigationItemSelectedListener true
-            }
         }
         false
-    }
-
-
-    inner class FragmentsPagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
-        override fun getItemCount(): Int = 2
-        override fun createFragment(position: Int): Fragment {
-            when (position) {
-                0 -> return FirstFragment();
-                //1 -> return SecondFragment()
-                //2 -> return URIlistFragment()
-                else -> return FirstFragment()
-
-            }
-        }
-        //override fun getItemPosition(obj: Any)
-        //        : Int = POSITION_NONE
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -100,19 +99,10 @@ class MainActivity : AppCompatActivity() {
 
         //ボトムナビゲーション
         bottom_navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
-        /*
         supportFragmentManager.beginTransaction()
             .replace(R.id.frameLayout, FirstFragment())
             .commit()
-         */
 
-
-        progressbar.visibility = android.widget.ProgressBar.INVISIBLE
-        //showIfNeeded(this, savedInstanceState)//全画面のチュートリアル(ウォークスルー)
-
-        pager = findViewById(R.id.pager1)
-        val adapter =FragmentsPagerAdapter(this)
-        pager.adapter = adapter
 
         findViewById<FloatingActionButton>(R.id.fab).setOnClickListener { view ->
             //progressbar.visibility = android.widget.ProgressBar.VISIBLE
@@ -159,7 +149,7 @@ class MainActivity : AppCompatActivity() {
                 TutorialActivity.showForcibly(this)//チューとリアル
             }
             //R.id.action_search -> { startActivity(Intent(this, FriendSearchActivity::class.java)) }
-            else ->Log.e("TAG","設定画面でなにかを押しました")
+            //else ->Log.e("TAG","設定画面でなにかを押しました")
         }
         return super.onOptionsItemSelected(item)
     }

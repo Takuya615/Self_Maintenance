@@ -5,7 +5,6 @@ import android.content.Intent
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.view.WindowManager
 import android.widget.Button
@@ -15,7 +14,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.FirebaseFirestore
-
 import jp.tsumura.takuya.self_maintenance.MainActivity
 import jp.tsumura.takuya.self_maintenance.R
 import kotlinx.android.synthetic.main.activity_gallery.*
@@ -71,7 +69,6 @@ class GalleryActivity : AppCompatActivity() {
         val value = intent.getStringExtra("selectedName")
         val friendUid = intent.getStringExtra("friendUid")
         val documentName = intent.getStringExtra("date")
-        Log.e("TAG", "ギャラリで指定されたURIは$value")
         val convertedUri = Uri.parse(value)
         try {
             videoView.setVideoURI(convertedUri)
@@ -87,27 +84,17 @@ class GalleryActivity : AppCompatActivity() {
                         val coll = db.collection(friendUid).document(documentName)
                         coll.get().addOnSuccessListener { document ->
                             like = document["like"].toString().toInt()
-                            Log.e("TAG", "like  の値は　$like")
-
                         }
                         val liked = like +1
                        coll.update("like",liked)
-                           .addOnSuccessListener { Log.e("TAG", "likeの保存成功") }
-                           .addOnFailureListener { e -> Log.e("TAG", "likeの保存失敗", e) }
-
-                        Log.e("TAG", "documentName$documentName")
                     }
-                    alertDialogBuilder.setNegativeButton("skip"){ dialog, which ->
-                        Log.e("TAG", "閉じる")
-                    }
+                    alertDialogBuilder.setNegativeButton("skip"){ dialog, which ->                    }
                     // AlertDialogを作成して表示する
                     val alertDialog = alertDialogBuilder.create()
                     alertDialog.show()
                 }
             }
-        }catch (e: Exception){
-            Log.e("TAG", "URIから動画の取り出しに失敗")
-        }
+        }catch (e: Exception){        }
         //取得したfileNameで、Storageから、そのURIを取得
         /*
         val storageRef = Firebase.storage.reference
@@ -146,48 +133,6 @@ class GalleryActivity : AppCompatActivity() {
             finish()
         }
 
-        //ポーズ検出のインスタンス
-/*
-        try {
-            val options = PoseDetectorOptions.Builder()
-                .setDetectorMode(PoseDetectorOptions.STREAM_MODE)
-                .build()
-            val poseDetector = PoseDetection.getClient(options)
-            val uri = myUri(convertedUri)
-            val image : InputImage= InputImage.fromFilePath(this,uri)
-            // result:Task<Pose> =
-            poseDetector.process(image)
-                .addOnSuccessListener { results ->
-                    Log.e("TAG","成功結果は、、、$results")
-                    // Task completed successfully
-                    // ...
-                }
-                .addOnFailureListener { e ->
-                    Log.e("TAG","分析に失敗")
-                    // Task failed with an exception
-                    // ...
-                }
-
-        } catch (e: Exception) {
-            e.printStackTrace()
-            Log.e("TAG","分析に失敗なぜじゃー")
-        }
-
- */
-
-
-    }
-
-    fun myUri(originalUri:Uri):Uri{
-        var returnedUri:Uri = originalUri
-        if (originalUri.getScheme() == null){
-            returnedUri = Uri.fromFile(File(originalUri.getPath()));
-            // or you can just do -->
-            // returnedUri = Uri.parse("file://"+camUri.getPath());
-        }else{
-            returnedUri = originalUri;
-        }
-        return returnedUri
     }
 
 

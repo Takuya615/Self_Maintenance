@@ -7,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.text.InputType
-import android.util.Log
 import android.view.MenuItem
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
@@ -53,7 +52,7 @@ class GoalSettingActivity : AppCompatActivity(){
 
                 TimeCal()
 
-            }.addOnFailureListener { e -> Log.e("TAG", "データ取得に失敗", e) }
+            }.addOnFailureListener { }
         }
 
 
@@ -74,15 +73,10 @@ class GoalSettingActivity : AppCompatActivity(){
             startActivity(intent)
             finish()
         }
-        //val SetButton=findViewById<Button>(R.id.setbutton)
         help.setOnClickListener(){
             SettingDialog().showDialog(this)
         }
-        /*
-        help2..setOnClickListener(){
-            SettingDialog().showDialog2(this)
-        }
-        */
+
 
         Handler().postDelayed({
             val Coach = TutorialCoachMarkActivity(this)
@@ -107,21 +101,12 @@ class GoalSettingActivity : AppCompatActivity(){
             goaltime,
 
         )
-        if(user==null){
-            Toast.makeText(this,"ログインすればデータを保存できます",Toast.LENGTH_LONG).show()
-        }else{
-            goals.document(user.uid).set(goal)
-                .addOnSuccessListener { Log.e("TAG", "ドキュメント作成・上書き成功") }
-                .addOnFailureListener { e -> Log.e("TAG", "ドキュメントの作成・上書きエラー", e) }
-
-            //スコアの初期化をする。更新画面を押すと、スコアの値がすべてリセットとされるしくみ
-            //val docRef = db.collection("Scores").document(user.uid)
-            //val data = Score(0,0,0,0)
-            //docRef.set(data)
+        if(user==null){ Toast.makeText(this,"ログインすればデータを保存できます",Toast.LENGTH_LONG).show()
+        }else{ goals.document(user.uid).set(goal)
         }
 
     }
-    //
+
     fun TimeCal(){
         val goaltimeA =Edittext3.text.toString()//.toInt()
         val e : SharedPreferences.Editor = prefs.edit()
@@ -130,48 +115,48 @@ class GoalSettingActivity : AppCompatActivity(){
             val docRef = db.collection("Scores").document(user.uid)
             docRef.get().addOnSuccessListener { documentSnapshot ->
                 val score = documentSnapshot.toObject(Score::class.java)
+                var totalday = 0
                 if (score != null) {
-                    val totalday = score.totalD + score.DoNot
-                    if(goaltimeA.isNotEmpty()){
-                        val goaltime = goaltimeA.toInt()
-                        //val totalday : Int = prefs.getInt("totalday", 0)総日数の値を取得
-                        val Cal =goaltime *60 *1/100//　　　　　　　初期値は１％からスタート
-                        e.putInt(getString(R.string.preferences_key_smalltime), Cal)
-                        e.apply()
-
-
-                        var times =0//総日数が、2日更新されるごとに、強度を上げる場合。（totalday=1なら、1/2で、times=0となる）
-                        if(totalday>49){
-                            val ab = 10
-                            val bc = (totalday-50)/2
-                            times =ab+bc
-                        }else{
-                            times=totalday/5
-                        }
-                        if(times!=0 ) {//　　　割り算の演算子は整数までしか計算しないので、少数点以下は無視して出力される。
-                            val A = Cal * times
-                            Cal + A
-                            Log.e("TAG", "現在のタスク所要時間は$Cal")
-                        }
-
-                        val seconds =Cal%60;
-                        val minite =(Cal/60)%60;
-                        if(Cal < 60){
-                            textView6.text = "今日は　$seconds　秒間\n（${times+1} %）やりましょう"
-                        }else{
-                            textView6.text = "今日は$minite 分 $seconds 秒間\n（${times+1} %）やりましょう"
-                        }
-                        Log.e("TAG","1日に行う秒数（タスク時間）は $Cal")
-
-                    }else{
-                        //数字が設定されなければ、値0に戻る。
-                        val Empty = 0
-                        e.putInt(getString(R.string.preferences_key_smalltime), Empty)
-                        e.commit()
-                    }
+                    totalday = score.totalD + score.DoNot
                 }
-            }
+                if(goaltimeA.isNotEmpty()){
+                    val goaltime = goaltimeA.toInt()
+                    //val totalday : Int = prefs.getInt("totalday", 0)総日数の値を取得
+                    val Cal =goaltime *60 *1/100//　　　　　　　初期値は１％からスタート
+                    e.putInt(getString(R.string.preferences_key_smalltime), Cal)
+                    e.apply()
 
+
+                    var times =0//総日数が、2日更新されるごとに、強度を上げる場合。（totalday=1なら、1/2で、times=0となる）
+                    if(totalday>49){
+                        val ab = 10
+                        val bc = (totalday-50)/2
+                        times =ab+bc
+                    }else{
+                        times=totalday/5
+                    }
+                    if(times!=0 ) {//　　　割り算の演算子は整数までしか計算しないので、少数点以下は無視して出力される。
+                        val A = Cal * times
+                        Cal + A
+                    }
+
+                    val seconds =Cal%60;
+                    val minite =(Cal/60)%60;
+                    if(Cal < 60){
+                        textView6.text = "今日は　$seconds　秒間\n（${times+1} %）やりましょう"
+                    }else{
+                        textView6.text = "今日は$minite 分 $seconds 秒間\n（${times+1} %）やりましょう"
+                    }
+
+                }else{
+                    //数字が設定されなければ、値0に戻る。
+                    val Empty = 0
+                    e.putInt(getString(R.string.preferences_key_smalltime), Empty)
+                    e.commit()
+                    textView6.text = "今日は　０　秒間\n（ ０%）やりましょう"
+                }
+
+            }
 
         }
     }

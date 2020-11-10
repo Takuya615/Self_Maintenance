@@ -1,30 +1,24 @@
 package jp.tsumura.takuya.self_maintenance.forGallery
-/*
+
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
-
+import android.view.*
+import android.widget.Toolbar
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import jp.tsumura.takuya.self_maintenance.ForSetting.FriendSearchActivity
-import jp.tsumura.takuya.self_maintenance.ForSetting.Goal
 import jp.tsumura.takuya.self_maintenance.ForSetting.mRealm
 import jp.tsumura.takuya.self_maintenance.ForStart.TutorialCoachMarkActivity
+import jp.tsumura.takuya.self_maintenance.MainActivity
 import jp.tsumura.takuya.self_maintenance.R
-import kotlinx.android.synthetic.main.activity_camera_x.*
 import kotlinx.android.synthetic.main.activity_friend_list.*
-import kotlinx.android.synthetic.main.activity_goal_setting.*
+import kotlinx.android.synthetic.main.activity_main.*
 
-class FriendListActivity : AppCompatActivity() {
+class FriendListFragment: Fragment() {
 
-    //private lateinit var friendsadapter : ArrayAdapter<String>
     private lateinit var adapter : FriendListAdapter
     private lateinit var layoutManager: LinearLayoutManager
     private lateinit var mnameList:MutableList<String>
@@ -32,15 +26,26 @@ class FriendListActivity : AppCompatActivity() {
     private lateinit var mAuth: FirebaseAuth
     private lateinit var db : FirebaseFirestore
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_friend_list)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        setHasOptionsMenu(true)
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        // Inflate the layout for this fragment
+        val view = inflater.inflate(R.layout.activity_friend_list, container, false)
+        return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         //コーチマーク
-        val Coach = TutorialCoachMarkActivity(this)
-        Coach.CoachMark5(this,this)
+        val Coach = TutorialCoachMarkActivity(requireContext())
+        Coach.CoachMark5(requireActivity(),requireContext())
 
         muidList = mutableListOf<String>()
         mnameList = mutableListOf<String>()
@@ -50,7 +55,6 @@ class FriendListActivity : AppCompatActivity() {
         val user = mAuth.currentUser
 
         if(user!=null){
-            title = "${mRealm().UidToName(user.uid)}さんのフレンドリスト"
             val docRef = db.collection(user.uid).document("friendRequest")//whereEqualTo("request",true)
             docRef.get().addOnSuccessListener { document ->
                 if(document.data != null){
@@ -58,7 +62,7 @@ class FriendListActivity : AppCompatActivity() {
                     if(friendUid !=null){
                         val requestName = mRealm().UidToName(friendUid.toString())
                         //ダイアログ
-                        val alertDialogBuilder = AlertDialog.Builder(this)
+                        val alertDialogBuilder = AlertDialog.Builder(requireContext())
                         alertDialogBuilder.apply {
                             setTitle("$requestName　さんからフレンドリクエストが届いてます")
                             setMessage("フレンドになると、その人の日々のミッションを応援してあげることができます\n\nリクエストを承認しますか？")
@@ -103,10 +107,10 @@ class FriendListActivity : AppCompatActivity() {
 
                     }
                 }
-                //.addOnFailureListener { exception -> Log.w("TAG", "Error getting documents: ", exception) }
+            //.addOnFailureListener { exception -> Log.w("TAG", "Error getting documents: ", exception) }
 
             adapter = FriendListAdapter(mnameList)
-            layoutManager = LinearLayoutManager(this)
+            layoutManager = LinearLayoutManager(requireContext())
             // アダプターとレイアウトマネージャーをセット
             simpleRecyclerView.layoutManager = layoutManager
             simpleRecyclerView.adapter = adapter
@@ -119,7 +123,7 @@ class FriendListActivity : AppCompatActivity() {
                         R.id.itemTextView -> {
                             val friendName = mnameList[position]
                             val friendUid = muidList[position]
-                            val intent = Intent(this@FriendListActivity, VideoListActivity::class.java)
+                            val intent = Intent(requireContext(), VideoListActivity::class.java)
                             intent.putExtra("friendName",friendName)
                             intent.putExtra("friendUid",friendUid)
                             startActivity(intent)
@@ -141,46 +145,26 @@ class FriendListActivity : AppCompatActivity() {
 
         }
 
-/*
-        val itemLayoutId = R.layout.fragment_urilist_item
-        val textViewId = R.id.label
-        friendsadapter = ArrayAdapter(this,itemLayoutId,textViewId,mnameList)
-        val listview = findViewById<ListView>(R.id.list2)
-        listview.adapter = friendsadapter
-        friendsadapter.notifyDataSetChanged()
-
-        listview.setOnItemClickListener { parent, view, position, id ->
-            Toast.makeText(this, mnameList[position], Toast.LENGTH_SHORT).show()
-            //ユーザーIdを送り、そのユーザーの動画リストへ遷移する
-            val value = muidList[position]
-            val intent = Intent(this, GalleryActivity::class.java)
-            intent.putExtra("selectedName",value)
-            startActivity(intent)
-
-        }
-
- */
     }
 
     //メニューバーのレイアウトを設定する
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu,inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
         // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_friend_list, menu)
-        return true
+        inflater.inflate(R.menu.menu_friend_list, menu)
+
     }
-    //戻るボタンを押すと今いるviewを削除する
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when(item!!.itemId){
-            android.R.id.home->{
-                finish()
-            }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Handle item selection
+        return when (item.itemId) {
             R.id.action_search -> {
-
-                startActivity(Intent(this, FriendSearchActivity::class.java))
+                startActivity(Intent(requireContext(), FriendSearchActivity::class.java))
+                true
             }
-        }
-        return super.onOptionsItemSelected(item)
-    }
-}
 
- */
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+}

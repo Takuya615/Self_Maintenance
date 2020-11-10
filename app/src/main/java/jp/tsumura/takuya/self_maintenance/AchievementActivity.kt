@@ -3,10 +3,8 @@ package jp.tsumura.takuya.self_maintenance
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
-import android.view.View
-import android.widget.Toast
+
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.auth.FirebaseAuth
@@ -56,7 +54,6 @@ class AchievementActivity : AppCompatActivity() {
 
                     //titleリストの作成
                     for(i in 0..maxList.size-1){
-                        Log.e("TAG","list内の値は$i")
                         titleList.add("総日数 ${maxList[i]}日           $t/${maxList[i]}")
                         progressList.add(t)
                         if(maxList[i]<=t){ hideButton.add(false) }

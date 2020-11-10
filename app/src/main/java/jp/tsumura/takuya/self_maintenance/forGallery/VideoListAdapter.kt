@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import androidx.core.view.isInvisible
 import androidx.recyclerview.widget.RecyclerView
 import jp.tsumura.takuya.self_maintenance.R
-import kotlinx.android.synthetic.main.friend_list_item.view.*
 import kotlinx.android.synthetic.main.friend_list_item.view.itemTextView
 import kotlinx.android.synthetic.main.friend_list_item.view.itemdeleate
 import kotlinx.android.synthetic.main.video_list_item.view.*
