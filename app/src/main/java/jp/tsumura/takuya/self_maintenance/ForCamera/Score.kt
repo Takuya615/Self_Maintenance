@@ -5,5 +5,6 @@ class Score (
              val recover:Int = 0,
              val totalD:Int = 0,
              val totalT:Int = 0,
-             val DoNot:Int = 0
+             val DoNot:Int = 0,
+             val totalPoint:Int = 0
 )

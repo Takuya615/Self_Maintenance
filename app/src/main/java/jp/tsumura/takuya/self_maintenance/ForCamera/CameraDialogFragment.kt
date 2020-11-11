@@ -5,6 +5,7 @@ import android.app.Dialog
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +15,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import jp.tsumura.takuya.self_maintenance.R
 import kotlinx.android.synthetic.main.dialog_camera.view.*
+import java.lang.Math.sqrt
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
@@ -57,11 +59,15 @@ class CameraDialogFragment(mTimerSec: Int): DialogFragment() {
         var newCon:Int = 0//連続
         var newRec:Int = 0//復活
         var newtot:Int = 0//総日数
-
-        val prefs = requireContext().getSharedPreferences( "preferences_key_sample",Context.MODE_PRIVATE)
+        var point = 0.0//スコア
+        var newTotP=0//総スコア
+        val prefs = requireContext().getSharedPreferences(
+            "preferences_key_sample",
+            Context.MODE_PRIVATE
+        )
         val save : SharedPreferences.Editor = prefs.edit()
 
-        val setday : String? = prefs.getString("setDate","2020-10-28")//前回利用した日
+        val setday : String? = prefs.getString("setDate", "2020-10-28")//前回利用した日
         val now = LocalDate.now() //2019-07-28T15:31:59.754
         val day1 = LocalDate.parse(setday)//2019-08-28T10:15:30.123
         val different = ChronoUnit.DAYS.between(day1, now).toInt() // diff: 30
@@ -71,12 +77,14 @@ class CameraDialogFragment(mTimerSec: Int): DialogFragment() {
             val docRef = db.collection("Scores").document(user.uid)
             docRef.get().addOnSuccessListener { documentSnapshot ->
                 val score = documentSnapshot.toObject(Score::class.java)
+
                 if(documentSnapshot.data != null&&score!=null){
                     val continuous = score.continuous
                     val recover = score.recover
                     val totalD = score.totalD
                     val totalT = score.totalT
                     var DoNot= score.DoNot
+                    val totalPoint = score.totalPoint
 
                     if(different == 1){
                         newCon = continuous + 1//継続日数
@@ -97,36 +105,45 @@ class CameraDialogFragment(mTimerSec: Int): DialogFragment() {
                     }
 
                     //継続日数の最長値を保存する
-                    val MAX : Int = prefs.getInt("preferences_key_MAX",0)
+                    val MAX : Int = prefs.getInt("preferences_key_MAX", 0)
                     if(MAX < newCon){
                         val updatedMAX = newCon
                         save.putInt("preferences_key_MAX", updatedMAX)
                     }
 
-                    //val totaltime : Int = prefs.getInt("totaltime",0)
-                    val newnum=totalT + time//総活動時間
-                    //save.putInt("totaltime" , newnum)
+                    //経験値の算出
+                    val listRandam = arrayOf(1.5, 1.25, 1.0, 0.5, 0.25)//スコアのランダム要素
+                    val ran = listRandam.random()
+                    point=100*newtot*ran//その日のスコア値
+                    newTotP = totalPoint + point.toInt()
 
+                    val newnum=totalT + time//総活動時間
                     save.putInt("totalday", newtot)//総日数だけプレファレンスにも保存
 
-                    val data = Score(newCon,newRec,newtot,newnum,DoNot)
+                    val data = Score(newCon, newRec, newtot, newnum, DoNot, newTotP)
                     docRef.set(data)
                 }else{
 
-                    val data = Score(0,0,1,time,0)
+                    val data = Score(0, 0, 1, time, 0, 100)
                     docRef.set(data)
                     save.putInt("totalday", 1)
                 }
                 //save.putString("TEST",today)//設定日の更新
-                save.putString("setDate",now.toString())
+                save.putString("setDate", now.toString())
                 save.apply()
 
+                val level =calculate(newTotP,450,-450,100)
+
+                customView.revel.text = "          Lv. $level"
                 customView.text.text ="継続日数　　$newCon 日"
                 customView.text2.text ="復活回数　　$newRec　回"
+                customView.score.text = "スコア $point"
 
-                val maxT = mutableListOf(1,2,5,7,10,15,20,25,30)//総日数
-                val maxC = mutableListOf(1,2,5,7,10,15,20,25,30)//継続
-                val maxR = mutableListOf(1,2,3,4,5,6,7,8,9)//復活
+
+                //ココからメダルの表示
+                val maxT = mutableListOf(1, 2, 5, 7, 10, 15, 20, 25, 30)//総日数
+                val maxC = mutableListOf(1, 2, 5, 7, 10, 15, 20, 25, 30)//継続
+                val maxR = mutableListOf(1, 2, 3, 4, 5, 6, 7, 8, 9)//復活
                 val result = mutableListOf<String>()
                 for(i in maxT){
                     if(i == newtot){
@@ -145,18 +162,28 @@ class CameraDialogFragment(mTimerSec: Int): DialogFragment() {
                 }
 
 
-                customView.cameraDialogRecyclerView.layoutManager = GridLayoutManager(requireContext(), 3)
+                customView.cameraDialogRecyclerView.layoutManager = GridLayoutManager(
+                    requireContext(),
+                    3
+                )
                 customView.cameraDialogRecyclerView.adapter = CameraDialogAdapter(result)
                 customView.cameraDialogRecyclerView.setHasFixedSize(true)
 
             }
         }else{
+            customView.revel.text = ""
             customView.text.text = "エラー"
             customView.text2.text ="ログインすればスコアを確認できます"
+            customView.score.text = ""
         }
 
     }
 
+    fun calculate(y:Int,a:Int,b:Int,c:Int):Int{
+        //二次関数の解の公式
+        val x = (-(b) + sqrt((b*b - 4 * a * (c - y)).toDouble())) / (2 * a)
+        return x.toInt()
+    }
 }
 
 

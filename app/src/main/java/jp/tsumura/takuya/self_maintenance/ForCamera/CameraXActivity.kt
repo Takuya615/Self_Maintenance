@@ -177,9 +177,9 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
                     videoCapture.stopRecording()
                     sound.play(MediaActionSound.STOP_VIDEO_RECORDING)//シャッター音
 
-                    CameraDialog().showDialog(this, mTimerSec,this)
+                    //CameraDialog().showDialog(this, mTimerSec,this)
 
-                    //CameraDialogFragment(mTimerSec).show(supportFragmentManager,"sample")
+                    CameraDialogFragment(mTimerSec).show(supportFragmentManager,"sample")
                     mTimerSec=0
                     timer.text = "00:00"
                 }
