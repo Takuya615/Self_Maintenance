@@ -8,124 +8,15 @@
 
 
 
-    <TextView
-        android:id="@+id/textView1_1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="現在の継続日数"
-        android:textSize="20dp"
-        app:layout_constraintStart_toStartOf="parent"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/secondFragmentRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.2"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintVertical_bias="0.07" />
-    <TextView
-        android:id="@+id/textView2_1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="- - - 日"
-        android:textSize="40dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.65"
-        app:layout_constraintTop_toBottomOf="@id/textView1_1"
-        />
-
-    <TextView
-        android:id="@+id/textView1_2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="これまでの最長継続日数"
-        android:textSize="20dp"
-        app:layout_constraintStart_toStartOf="@+id/textView1_1"
-        app:layout_constraintTop_toTopOf="@+id/textView1_1"
-        app:layout_constraintBottom_toBottomOf="@+id/textView1_3"
-        app:layout_constraintVertical_bias="0.5" />
-    <TextView
-        android:id="@+id/textView2_2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="- - - 日"
-        android:textSize="40dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.65"
-        app:layout_constraintTop_toBottomOf="@id/textView1_2"
-         />
-
-    <TextView
-        android:id="@+id/textView1_3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="復活成功回数"
-        android:textSize="20dp"
-        app:layout_constraintStart_toStartOf="@+id/textView1_1"
-
-        app:layout_constraintTop_toTopOf="@+id/textView1_1"
-        app:layout_constraintBottom_toBottomOf="@id/textView1_5"
-        app:layout_constraintVertical_bias="0.5"/>
-    <TextView
-        android:id="@+id/textView2_3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="- - - 回"
-        android:textSize="40dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.65"
-        app:layout_constraintTop_toBottomOf= "@id/textView1_3"
-         />
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
 
-    <TextView
-        android:id="@+id/textView1_4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="総活動日数"
-        android:textSize="20dp"
-        app:layout_constraintStart_toStartOf="@+id/textView1_1"
-        app:layout_constraintTop_toTopOf="@+id/textView1_3"
-        app:layout_constraintBottom_toBottomOf="@+id/textView1_5"
-        app:layout_constraintVertical_bias="0.5" />
-    <TextView
-        android:id="@+id/textView2_4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="- - - 日"
-        android:textSize="40dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.65"
-        app:layout_constraintTop_toBottomOf= "@id/textView1_4"
-        />
-
-    <TextView
-        android:id="@+id/textView1_5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="総活動時間"
-        android:textSize="20dp"
-        app:layout_constraintStart_toStartOf="@+id/textView1_1"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintVertical_bias="0.8" />
-    <TextView
-        android:id="@+id/textView2_5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="- - - 分"
-        android:textSize="40dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.65"
-        app:layout_constraintTop_toBottomOf= "@id/textView1_5"
-        />
-
-
-    <androidx.constraintlayout.widget.Barrier
-        android:id="@+id/barrier"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:barrierDirection="left" />
 </androidx.constraintlayout.widget.ConstraintLayout>

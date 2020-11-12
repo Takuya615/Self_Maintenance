@@ -7,20 +7,54 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
-import androidx.navigation.fragment.findNavController
+
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import jp.tsumura.takuya.self_maintenance.ForCamera.Score
-import kotlinx.android.synthetic.*
-import kotlinx.android.synthetic.main.fragment_second.*
 
-/**
- * A simple [Fragment] subclass as the second destination in the navigation.
- */
+import kotlinx.android.synthetic.main.fragment_second.*
+import kotlinx.android.synthetic.main.fragment_second_list_item.view.*
+
+
 class SecondFragment : Fragment() {
+
+
+    class SecondFragmentAdapter(private val customList: MutableList<String>,
+                                private val customList2: MutableList<String>) : RecyclerView.Adapter<SecondFragmentAdapter.CustomViewHolder>() {
+
+        // ViewHolderクラス(別ファイルに書いてもOK)
+        class CustomViewHolder(val view: View): RecyclerView.ViewHolder(view) {
+            val sampleImg = view.content2
+            val sampleTxt = view.record
+        }
+
+        // getItemCount onCreateViewHolder onBindViewHolderを実装
+        // 上記のViewHolderクラスを使ってViewHolderを作成
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomViewHolder {
+            val layoutInflater = LayoutInflater.from(parent.context)
+            val item = layoutInflater.inflate(R.layout.fragment_second_list_item, parent, false)
+            return CustomViewHolder(item)
+        }
+
+        // recyclerViewのコンテンツのサイズ
+        override fun getItemCount(): Int {
+            return customList.size
+        }
+
+        // ViewHolderに表示する画像とテキストを挿入
+        override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
+            holder.view.content2.text = customList[position]
+            holder.view.record.text = customList2[position]
+
+        }
+    }
+
+
+
+
+
     private lateinit var prefs : SharedPreferences
 
     val user = FirebaseAuth.getInstance().currentUser
@@ -48,25 +82,30 @@ class SecondFragment : Fragment() {
                     val revival = score.recover//復活回数
                     val totalday = score.totalD//総日数
                     val TT = score.totalT//総時間
+                    val totalPoint = score.totalPoint
                     val MAX : Int = prefs.getInt("preferences_key_MAX",0)//最長連続日数
 
-                    val ncdtext =view.findViewById<TextView>(R.id.textView2_1)
-                    val MAXtext =view.findViewById<TextView>(R.id.textView2_2)
-                    val revtext =view.findViewById<TextView>(R.id.textView2_3)
-                    val tDtext =view.findViewById<TextView>(R.id.textView2_4)
-                    val tTtext =view.findViewById<TextView>(R.id.textView2_5)
+                    val list1 = mutableListOf<String>("継続日数","これまでの最長継続日数","復活回数","総活動日数","総活動時間","総経験値")
+                    val list2 = mutableListOf<String>()
 
-                    //Log.e("TAG","復活回数$revival")
+                    list2.add("$ncd 日")
+                    list2.add("$MAX 日")
+                    list2.add("$revival 回")
+                    list2.add("$totalday 日")
 
-                    ncdtext.text = "$ncd 日"
-                    MAXtext.text = "$MAX 日"
-                    revtext.text = "$revival 回"
-                    tDtext.text = "$totalday 日"
                     val seconds =TT%60;
                     val minite =(TT/60)%60;
                     val totaltime="$minite"+"分"+"$seconds"+"秒"
-                    tTtext.text = totaltime
+                    list2.add(totaltime)
+                    list2.add("$totalPoint")
 
+
+                    val adapter = SecondFragmentAdapter(list1,list2)
+                    val layoutManager = LinearLayoutManager(requireContext())
+                    // アダプターとレイアウトマネージャーをセット
+                    secondFragmentRecyclerView.layoutManager = layoutManager
+                    secondFragmentRecyclerView.adapter = adapter
+                    secondFragmentRecyclerView.setHasFixedSize(true)
 
                 }
             }

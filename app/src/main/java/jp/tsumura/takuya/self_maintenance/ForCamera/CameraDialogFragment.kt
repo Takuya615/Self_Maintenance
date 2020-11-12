@@ -86,21 +86,27 @@ class CameraDialogFragment(mTimerSec: Int): DialogFragment() {
                     var DoNot= score.DoNot
                     val totalPoint = score.totalPoint
 
+                    val listRandam = arrayOf(1.5, 1.25, 1.0, 0.75, 0.5)//スコアのランダム要素
+                    val ran = listRandam.random()
+
                     if(different == 1){
                         newCon = continuous + 1//継続日数
                         newRec = recover//復活数
                         newtot = totalD + 1//総日数
+                        point=100*newtot*ran//その日のスコア値
 
                     }else if(different >= 2){
                         newCon = 0//継続リセット
                         newRec = recover + 1//復活数
                         newtot = totalD + 1//総日数
                         DoNot = DoNot + different-1
+                        point=100*newtot*ran//その日のスコア値
 
                     }else if(different==0){
                         newCon = continuous//継続日数
                         newRec = recover//復活数
                         newtot = totalD//総日数
+
 
                     }
 
@@ -111,12 +117,13 @@ class CameraDialogFragment(mTimerSec: Int): DialogFragment() {
                         save.putInt("preferences_key_MAX", updatedMAX)
                     }
 
-                    //経験値の算出
-                    val listRandam = arrayOf(1.5, 1.25, 1.0, 0.5, 0.25)//スコアのランダム要素
-                    val ran = listRandam.random()
-                    point=100*newtot*ran//その日のスコア値
+                    //トータル経験値の算出
                     newTotP = totalPoint + point.toInt()
 
+                    Log.e("TAG","ランダムは$ran")
+                    Log.e("TAG","総日数はは$newtot")
+                    Log.e("TAG","経験値は$point")
+                    Log.e("TAG","とーたる経験値は$newTotP")
                     val newnum=totalT + time//総活動時間
                     save.putInt("totalday", newtot)//総日数だけプレファレンスにも保存
 
@@ -124,6 +131,7 @@ class CameraDialogFragment(mTimerSec: Int): DialogFragment() {
                     docRef.set(data)
                 }else{
 
+                    point=100.0
                     val data = Score(0, 0, 1, time, 0, 100)
                     docRef.set(data)
                     save.putInt("totalday", 1)
@@ -134,10 +142,10 @@ class CameraDialogFragment(mTimerSec: Int): DialogFragment() {
 
                 val level =calculate(newTotP,450,-450,100)
 
-                customView.revel.text = "          Lv. $level"
-                customView.text.text ="継続日数　　$newCon 日"
-                customView.text2.text ="復活回数　　$newRec　回"
-                customView.score.text = "スコア $point"
+                customView.revel.text = "                             Lv. $level"
+                customView.text.text ="     継続日数　  　$newCon 日"
+                customView.text2.text ="     復活回数　　 $newRec 回"
+                customView.score.text = "     経験値              ${point.toInt()}"
 
 
                 //ココからメダルの表示
