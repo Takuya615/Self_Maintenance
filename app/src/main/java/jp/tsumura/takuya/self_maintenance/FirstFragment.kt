@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +15,11 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat.recreate
 import androidx.core.content.ContextCompat
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_first.*
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
@@ -97,7 +103,37 @@ class FirstFragment : Fragment() {
             growthimage?.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.tree_seichou09))
         }
 
+        if(wanwan(prefs)){
+            wanwanImage.visibility = View.VISIBLE
+        }
 
+    }
 
+    fun wanwan(prefs : SharedPreferences):Boolean{
+        val wanwan=prefs.getString("wanwan","")
+        if(wanwan!=null&&wanwan.isNotEmpty()){
+            val setday : String? ="2020-10-28"// prefs.getString("setDate", "2020-10-28")//前回利用した日
+            val now = LocalDate.now() //2019-07-28T15:31:59.754
+            val day1 = LocalDate.parse(setday)//2019-08-28T10:15:30.123
+            val different = ChronoUnit.DAYS.between(day1, now).toInt() // diff: 30
+            if(different!=0){
+                val sdf = SimpleDateFormat("HH")
+                val sdf2 = SimpleDateFormat("mm")
+                val hour = sdf.format(System.currentTimeMillis())
+                val min = sdf2.format(System.currentTimeMillis())
+
+                Log.e("TAG","今の時間を表すと$hour:$min")
+                Log.e("TAG","wanwanは$wanwan")
+                val a = wanwan.toInt() - hour.toInt()*60 - min.toInt() + 15//設定した分時 －今の時（分表記）－今の分＋アソビ15分
+                Log.e("TAG","与えられる式は${wanwan}-${hour.toInt()*60}-${min.toInt()}")
+                Log.e("TAG","その差は$a")
+                if(0<a&&30>a){//設定が１２時なら、１１：４５～１２：１５が、使える時間
+
+                    return true
+                }
+            }
+            return false
+        }
+        return false
     }
 }

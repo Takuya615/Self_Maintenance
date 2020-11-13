@@ -6,24 +6,30 @@ import jp.tsumura.takuya.self_maintenance.ForSetting.GoalSettingActivity
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import io.realm.Realm
 import jp.tsumura.takuya.self_maintenance.ForCamera.CameraXActivity
+import jp.tsumura.takuya.self_maintenance.ForCharacter.CharacterListFragment
 import jp.tsumura.takuya.self_maintenance.ForSetting.AccountSettingActivity
 import jp.tsumura.takuya.self_maintenance.ForSetting.LoginActivity
 import jp.tsumura.takuya.self_maintenance.ForSetting.mRealm
 import jp.tsumura.takuya.self_maintenance.ForStart.TutorialActivity
 import jp.tsumura.takuya.self_maintenance.ForStart.TutorialCoachMarkActivity
 import jp.tsumura.takuya.self_maintenance.forGallery.FriendListFragment
-import jp.tsumura.takuya.self_maintenance.forGallery.VideoListActivity
 import jp.tsumura.takuya.self_maintenance.forGallery.VideoListFragment
 import kotlinx.android.synthetic.main.activity_main.*
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.temporal.ChronoUnit
+import kotlin.system.measureTimeMillis
 
 class MainActivity : AppCompatActivity() {
 
@@ -36,9 +42,6 @@ class MainActivity : AppCompatActivity() {
                     .replace(R.id.frameLayout, FirstFragment())
                     .commit()
                 title = "ホーム"
-                //Toast.makeText(this,"ただいま工事中",Toast.LENGTH_SHORT).show()
-                /*
-                 */
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navi_myvideo -> {
@@ -47,8 +50,6 @@ class MainActivity : AppCompatActivity() {
                         .replace(R.id.frameLayout, VideoListFragment())
                         .commit()
                     title="あなたの動画リスト"
-                    //val intent= Intent(this, VideoListActivity::class.java)
-                    //startActivity(intent)
                 }else{
                     Toast.makeText(this,"ログインしてください",Toast.LENGTH_SHORT).show()
                 }
@@ -76,14 +77,17 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.navi_medal -> {
                 supportFragmentManager.beginTransaction()
-                    .replace(R.id.frameLayout, SecondFragment())
+                    .replace(R.id.frameLayout, MedalsTabFragment())
                     .commit()
                 title="実績"
-                //Toast.makeText(this,"ただいま工事中",Toast.LENGTH_SHORT).show()
-                /*
-                val intent= Intent(this, MedalsTabActivity::class.java)
-                startActivity(intent)
-                   */
+                return@OnNavigationItemSelectedListener true
+            }
+            R.id.navi_char -> {
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.frameLayout, CharacterListFragment())
+                    .commit()
+                title = "スケット"
+
                 return@OnNavigationItemSelectedListener true
             }
 
@@ -110,8 +114,11 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        //初めて使う場合、ログイン画面にまず遷移する
         val prefs = getSharedPreferences( "preferences_key_sample", Context.MODE_PRIVATE)
+
+
+        //初めて使う場合、ログイン画面にまず遷移する
+
         val Tuto0 : Boolean = prefs.getBoolean("Tuto0",false)
         if(!Tuto0){
             val intent = Intent(this, LoginActivity::class.java)
