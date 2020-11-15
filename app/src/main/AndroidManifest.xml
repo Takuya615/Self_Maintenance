@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".MedalsTabActivity"></activity>
-        <activity android:name=".AchievementActivity" />
+        <activity android:name=".ForMedals.AchievementActivity" />
         <activity android:name=".ForSetting.AccountSettingActivity" />
         <activity android:name=".forGallery.FriendListActivity" />
         <activity android:name=".ForSetting.FriendSearchActivity">

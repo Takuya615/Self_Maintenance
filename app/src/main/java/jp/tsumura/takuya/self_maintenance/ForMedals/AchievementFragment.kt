@@ -1,4 +1,4 @@
-package jp.tsumura.takuya.self_maintenance
+package jp.tsumura.takuya.self_maintenance.ForMedals
 
 import android.os.Bundle
 
@@ -10,7 +10,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import jp.tsumura.takuya.self_maintenance.ForCamera.Score
-import kotlinx.android.synthetic.main.activity_achievement.*
+import jp.tsumura.takuya.self_maintenance.R
+import kotlinx.android.synthetic.main.recycler_view.*
 
 class AchievementFragment : Fragment(){
 
@@ -27,7 +28,7 @@ class AchievementFragment : Fragment(){
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_achievement, container, false)
+        val view = inflater.inflate(R.layout.recycler_view, container, false)
         return view
     }
 
@@ -82,9 +83,9 @@ class AchievementFragment : Fragment(){
                     adapter = AchievementAdapter(titleList,maxList,progressList,hideButton)
                     val layoutManager = LinearLayoutManager(requireContext())
                     // アダプターとレイアウトマネージャーをセット
-                    achieveRecyclerView.layoutManager = layoutManager//simpleRecyclerView
-                    achieveRecyclerView.adapter = adapter
-                    achieveRecyclerView.setHasFixedSize(true)
+                    recyclerView.layoutManager = layoutManager//simpleRecyclerView
+                    recyclerView.adapter = adapter
+                    recyclerView.setHasFixedSize(true)
 
 // インターフェースの実装
                     /*

@@ -1,4 +1,4 @@
-package jp.tsumura.takuya.self_maintenance
+package jp.tsumura.takuya.self_maintenance.ForMedals
 
 import android.content.Context
 import android.os.Bundle
@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import com.google.android.material.tabs.TabLayout
+import jp.tsumura.takuya.self_maintenance.R
 import kotlinx.android.synthetic.main.activity_medals_tab.*
 
 class MedalsTabFragment: Fragment() {

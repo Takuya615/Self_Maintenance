@@ -259,7 +259,7 @@ class TutorialCoachMarkActivity(context:Context) {
                 .setOverlayPoint(2f,500f )//文字列の位置
                 .build()
 
-            val target:View = activity.findViewById(R.id.friendview)
+            val target:View = activity.findViewById(R.id.recyclerView)
             val targetLocation = IntArray(2)
             target.getLocationInWindow(targetLocation)
             val targetX =1000f// targetLocation[0] + target.width.toFloat()//2f

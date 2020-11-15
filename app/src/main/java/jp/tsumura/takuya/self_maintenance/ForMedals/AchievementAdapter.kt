@@ -1,11 +1,11 @@
-package jp.tsumura.takuya.self_maintenance
+package jp.tsumura.takuya.self_maintenance.ForMedals
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isInvisible
 import androidx.recyclerview.widget.RecyclerView
-import jp.tsumura.takuya.self_maintenance.forGallery.FriendListAdapter
+import jp.tsumura.takuya.self_maintenance.R
 import kotlinx.android.synthetic.main.achivement_list_item.view.*
 
 

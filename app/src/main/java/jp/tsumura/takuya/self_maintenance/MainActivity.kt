@@ -6,18 +6,17 @@ import jp.tsumura.takuya.self_maintenance.ForSetting.GoalSettingActivity
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.Toast
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import io.realm.Realm
 import jp.tsumura.takuya.self_maintenance.ForCamera.CameraXActivity
 import jp.tsumura.takuya.self_maintenance.ForCharacter.CharacterListFragment
+import jp.tsumura.takuya.self_maintenance.ForMedals.MedalsTabFragment
 import jp.tsumura.takuya.self_maintenance.ForSetting.AccountSettingActivity
 import jp.tsumura.takuya.self_maintenance.ForSetting.LoginActivity
 import jp.tsumura.takuya.self_maintenance.ForSetting.mRealm
@@ -26,10 +25,6 @@ import jp.tsumura.takuya.self_maintenance.ForStart.TutorialCoachMarkActivity
 import jp.tsumura.takuya.self_maintenance.forGallery.FriendListFragment
 import jp.tsumura.takuya.self_maintenance.forGallery.VideoListFragment
 import kotlinx.android.synthetic.main.activity_main.*
-import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.temporal.ChronoUnit
-import kotlin.system.measureTimeMillis
 
 class MainActivity : AppCompatActivity() {
 

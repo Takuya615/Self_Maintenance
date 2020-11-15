@@ -1,5 +1,6 @@
 package jp.tsumura.takuya.self_maintenance.ForSetting
 
+import android.app.Activity
 import android.app.TimePickerDialog
 import android.content.Context
 import android.content.SharedPreferences
@@ -50,21 +51,6 @@ class SettingDialog{
     }
 
 
-    fun showTimePickerDialog(context:Context) {
-        val timePickerDialog = TimePickerDialog(
-            context,
-            TimePickerDialog.OnTimeSetListener { view, hour, minute ->
-                val prefs = context.getSharedPreferences("preferences_key_sample", Context.MODE_PRIVATE)
-                val save : SharedPreferences.Editor = prefs.edit()
-                val b=(hour*60+minute).toString()
 
-                Log.e("tag","1wanwanに入れた値は$b")
-                save.putString("wanwan", b)
-                save.apply()
-                Toast.makeText(context,"$hour 時$minute 分に設定しました",Toast.LENGTH_SHORT).show()
-            },
-            13, 0, true)
-        timePickerDialog.show()
-    }
 
 }

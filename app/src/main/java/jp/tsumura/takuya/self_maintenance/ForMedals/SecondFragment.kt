@@ -1,4 +1,4 @@
-package jp.tsumura.takuya.self_maintenance
+package jp.tsumura.takuya.self_maintenance.ForMedals
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -13,9 +13,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import jp.tsumura.takuya.self_maintenance.ForCamera.Score
-
-import kotlinx.android.synthetic.main.fragment_second.*
+import jp.tsumura.takuya.self_maintenance.R
 import kotlinx.android.synthetic.main.fragment_second_list_item.view.*
+import kotlinx.android.synthetic.main.recycler_view.*
 
 
 class SecondFragment : Fragment() {
@@ -66,7 +66,7 @@ class SecondFragment : Fragment() {
     ): View? {
 
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_second, container, false)
+        return inflater.inflate(R.layout.recycler_view, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -103,9 +103,9 @@ class SecondFragment : Fragment() {
                     val adapter = SecondFragmentAdapter(list1,list2)
                     val layoutManager = LinearLayoutManager(requireContext())
                     // アダプターとレイアウトマネージャーをセット
-                    secondFragmentRecyclerView.layoutManager = layoutManager
-                    secondFragmentRecyclerView.adapter = adapter
-                    secondFragmentRecyclerView.setHasFixedSize(true)
+                    recyclerView.layoutManager = layoutManager
+                    recyclerView.adapter = adapter
+                    recyclerView.setHasFixedSize(true)
 
                 }
             }

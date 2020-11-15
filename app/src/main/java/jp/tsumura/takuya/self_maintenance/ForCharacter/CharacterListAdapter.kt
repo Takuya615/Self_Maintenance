@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.view.isInvisible
 import androidx.recyclerview.widget.RecyclerView
 import jp.tsumura.takuya.self_maintenance.R
 import kotlinx.android.synthetic.main.fragment_character_list_item.view.*
@@ -44,6 +45,9 @@ class CharacterListAdapter (private val customList: MutableList<Int>,
         holder.view.charName.text = customList2[position]//それぞれのmaxの値を設定
         holder.view.charScript.text = customList3[position]
 
+        if(holder.view.charName.text =="？？？"){
+            holder.view.inviteButton.visibility=View.INVISIBLE
+        }
         if(customList4[position]){
             holder.view.inviteButton.text="使用中"
             holder.view.inviteButton.getResources().getColor(R.color.colorHighlight)//(R.color.colorHighlight)

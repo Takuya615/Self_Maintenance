@@ -1,18 +1,15 @@
-package jp.tsumura.takuya.self_maintenance
-
-import android.content.Context
+package jp.tsumura.takuya.self_maintenance.ForMedals
+/*
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
 
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.tabs.TabLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import jp.tsumura.takuya.self_maintenance.ForCamera.Score
-import jp.tsumura.takuya.self_maintenance.ForSetting.SettingDialog
+import jp.tsumura.takuya.self_maintenance.R
 import kotlinx.android.synthetic.main.activity_achievement.*
-import org.json.JSONArray
 
 class AchievementActivity : AppCompatActivity() {
 
@@ -117,3 +114,5 @@ class AchievementActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 }
+
+ */

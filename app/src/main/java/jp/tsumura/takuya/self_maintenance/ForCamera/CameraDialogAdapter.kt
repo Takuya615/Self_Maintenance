@@ -3,12 +3,8 @@ package jp.tsumura.takuya.self_maintenance.ForCamera
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isInvisible
 import androidx.recyclerview.widget.RecyclerView
-import jp.tsumura.takuya.self_maintenance.AchievementAdapter
 import jp.tsumura.takuya.self_maintenance.R
-import kotlinx.android.synthetic.main.achivement_list_item.view.*
-import kotlinx.android.synthetic.main.dialog_camera.view.*
 import kotlinx.android.synthetic.main.dialog_camera_list_item.view.*
 
 class CameraDialogAdapter(private val customList: MutableList<String>) : RecyclerView.Adapter<CameraDialogAdapter.CustomViewHolder>()  {

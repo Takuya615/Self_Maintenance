@@ -14,8 +14,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import jp.tsumura.takuya.self_maintenance.R
-import kotlinx.android.synthetic.main.activity_friend_list.*
-import java.util.Collections.reverse
+import kotlinx.android.synthetic.main.recycler_view.*
+
 
 class VideoListFragment: Fragment() {
 
@@ -36,7 +36,7 @@ class VideoListFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.activity_friend_list, container, false)
+        val view = inflater.inflate(R.layout.recycler_view, container, false)
         return view
     }
 
@@ -89,9 +89,9 @@ class VideoListFragment: Fragment() {
         val layoutManager = LinearLayoutManager(requireContext())
 
         // アダプターとレイアウトマネージャーをセット
-        simpleRecyclerView.layoutManager = layoutManager
-        simpleRecyclerView.adapter = adapter
-        simpleRecyclerView.setHasFixedSize(true)
+        recyclerView.layoutManager = layoutManager
+        recyclerView.adapter = adapter
+        recyclerView.setHasFixedSize(true)
 
         // インターフェースの実装
         adapter.setOnItemClickListener(object : VideoListAdapter.OnItemClickListener {

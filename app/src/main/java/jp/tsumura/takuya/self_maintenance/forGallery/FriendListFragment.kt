@@ -14,8 +14,8 @@ import jp.tsumura.takuya.self_maintenance.ForSetting.mRealm
 import jp.tsumura.takuya.self_maintenance.ForStart.TutorialCoachMarkActivity
 import jp.tsumura.takuya.self_maintenance.MainActivity
 import jp.tsumura.takuya.self_maintenance.R
-import kotlinx.android.synthetic.main.activity_friend_list.*
-import kotlinx.android.synthetic.main.activity_main.*
+
+import kotlinx.android.synthetic.main.recycler_view.*
 
 class FriendListFragment: Fragment() {
 
@@ -36,7 +36,7 @@ class FriendListFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.activity_friend_list, container, false)
+        val view = inflater.inflate(R.layout.recycler_view, container, false)
         return view
     }
 
@@ -112,9 +112,9 @@ class FriendListFragment: Fragment() {
             adapter = FriendListAdapter(mnameList)
             layoutManager = LinearLayoutManager(requireContext())
             // アダプターとレイアウトマネージャーをセット
-            simpleRecyclerView.layoutManager = layoutManager
-            simpleRecyclerView.adapter = adapter
-            simpleRecyclerView.setHasFixedSize(true)
+            recyclerView.layoutManager = layoutManager
+            recyclerView.adapter = adapter
+            recyclerView.setHasFixedSize(true)
 
             // インターフェースの実装
             adapter.setOnItemClickListener(object:FriendListAdapter.OnItemClickListener{

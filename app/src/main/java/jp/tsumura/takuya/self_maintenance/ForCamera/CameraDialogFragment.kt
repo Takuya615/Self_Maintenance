@@ -114,11 +114,26 @@ class CameraDialogFragment(mTimerSec: Int): DialogFragment() {
                         newtot = totalD//総日数
                         Log.e("TAG","デイリー済みで$point")
                     }
+
                     //ボーナス系
-                    if(FirstFragment().wanwan(prefs)){
-                        point*1.2
-                        Log.e("TAG","pointを１．２倍にして$point")
+                    if(point!=0.0){
+                        if(FirstFragment().wanwan(prefs)){
+                            point = point*1.2
+                            Log.e("TAG","pointを１．２倍にして$point")
+                        }
+                        val hanako=prefs.getString("hanako","")
+                        if(hanako!=null&&hanako.isNotEmpty()){
+                            point = point + 1000
+                            Log.e("TAG","pointを+1000して$point")
+                        }
+                        val mrq=prefs.getString("mrq","")
+                        if(mrq!=null&&mrq.isNotEmpty()){
+                            point = point + 1000
+                            Log.e("TAG","pointを+1000して$point")
+                        }
                     }
+
+
 
 
                     //継続日数の最長値を保存する
@@ -156,9 +171,26 @@ class CameraDialogFragment(mTimerSec: Int): DialogFragment() {
                 customView.text.text ="     継続日数　  　$newCon 日"
                 customView.text2.text ="     復活回数　　 $newRec 回"
                 customView.score.text = "     経験値              ${point.toInt()}"
-                if(FirstFragment().wanwan(prefs)){
-                    customView.bonus.text ="ワンワン　✕１．２倍"
+
+
+                //ボーナスの表示
+                if(point!=0.0){
+                    val builder = StringBuilder()
+                    if(FirstFragment().wanwan(prefs)){
+                        builder.append(" ワンワン　×１．２倍")
+                    }
+                    val hanako=prefs.getString("hanako","")
+                    if(hanako!=null&&hanako.isNotEmpty()){
+                        builder.append(" 花子さん　＋１０００")
+                    }
+                    val mrq=prefs.getString("mrq","")
+                    if(mrq!=null&&mrq.isNotEmpty()){
+                        builder.append(" Mr.キュー　＋１０００")
+                    }
+                    customView.bonus.text=builder.toString()
                 }
+
+
 
 
                 //ココからメダルの表示
@@ -168,17 +200,17 @@ class CameraDialogFragment(mTimerSec: Int): DialogFragment() {
                 val result = mutableListOf<String>()
                 for(i in maxT){
                     if(i == newtot){
-                        result.add("総日数 ${maxT[i]}日")
+                        result.add("総日数 $i 日")
                     }
                 }
                 for(i in maxC){
                     if(i == newCon){
-                        result.add("継続日数 ${maxC[i]}日")
+                        result.add("継続日数 $i 日")
                     }
                 }
                 for(i in maxR){
                     if(i == newRec){
-                        result.add("復活数　${maxR[i]}日")
+                        result.add("復活数　$i 回")
                     }
                 }
 
@@ -200,6 +232,7 @@ class CameraDialogFragment(mTimerSec: Int): DialogFragment() {
 
     }
 
+    //総経験値が　Y　
     fun calculate(y:Int,a:Int,b:Int,c:Int):Int{
         //二次関数の解の公式
         val x = (-(b) + sqrt((b*b - 4 * a * (c - y)).toDouble())) / (2 * a)

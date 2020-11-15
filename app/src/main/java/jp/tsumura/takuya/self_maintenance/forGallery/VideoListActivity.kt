@@ -15,7 +15,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import jp.tsumura.takuya.self_maintenance.ForCamera.CameraXActivity
 import jp.tsumura.takuya.self_maintenance.R
-import kotlinx.android.synthetic.main.activity_friend_list.*
+import kotlinx.android.synthetic.main.recycler_view.*
 
 class VideoListActivity: AppCompatActivity() {
 
@@ -33,7 +33,7 @@ class VideoListActivity: AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_friend_list)
+        setContentView(R.layout.recycler_view)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         muriList = mutableListOf<String>()
@@ -92,9 +92,9 @@ class VideoListActivity: AppCompatActivity() {
         val layoutManager = LinearLayoutManager(this)
 
         // アダプターとレイアウトマネージャーをセット
-        simpleRecyclerView.layoutManager = layoutManager
-        simpleRecyclerView.adapter = adapter
-        simpleRecyclerView.setHasFixedSize(true)
+        recyclerView.layoutManager = layoutManager
+        recyclerView.adapter = adapter
+        recyclerView.setHasFixedSize(true)
 
         // インターフェースの実装
         adapter.setOnItemClickListener(object : VideoListAdapter.OnItemClickListener {

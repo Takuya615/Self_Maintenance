@@ -1,4 +1,4 @@
-package jp.tsumura.takuya.self_maintenance
+package jp.tsumura.takuya.self_maintenance.ForMedals
 /*
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
