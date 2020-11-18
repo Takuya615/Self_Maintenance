@@ -121,16 +121,7 @@ class CameraDialogFragment(mTimerSec: Int): DialogFragment() {
                             point = point*1.2
                             Log.e("TAG","pointを１．２倍にして$point")
                         }
-                        val hanako=prefs.getString("hanako","")
-                        if(hanako!=null&&hanako.isNotEmpty()){
-                            point = point + 1000
-                            Log.e("TAG","pointを+1000して$point")
-                        }
-                        val mrq=prefs.getString("mrq","")
-                        if(mrq!=null&&mrq.isNotEmpty()){
-                            point = point + 1000
-                            Log.e("TAG","pointを+1000して$point")
-                        }
+
                     }
 
 
@@ -179,14 +170,7 @@ class CameraDialogFragment(mTimerSec: Int): DialogFragment() {
                     if(FirstFragment().wanwan(prefs)){
                         builder.append(" ワンワン　×１．２倍")
                     }
-                    val hanako=prefs.getString("hanako","")
-                    if(hanako!=null&&hanako.isNotEmpty()){
-                        builder.append(" 花子さん　＋１０００")
-                    }
-                    val mrq=prefs.getString("mrq","")
-                    if(mrq!=null&&mrq.isNotEmpty()){
-                        builder.append(" Mr.キュー　＋１０００")
-                    }
+
                     customView.bonus.text=builder.toString()
                 }
 
@@ -208,11 +192,14 @@ class CameraDialogFragment(mTimerSec: Int): DialogFragment() {
                         result.add("継続日数 $i 日")
                     }
                 }
-                for(i in maxR){
-                    if(i == newRec){
-                        result.add("復活数　$i 回")
+                if(different >= 2){//復活回数が更新されているときにのみ表示する
+                    for(i in maxR){
+                        if(i == newRec){
+                            result.add("復活数　$i 回")
+                        }
                     }
                 }
+
 
 
                 customView.cameraDialogRecyclerView.layoutManager = GridLayoutManager(
@@ -232,12 +219,15 @@ class CameraDialogFragment(mTimerSec: Int): DialogFragment() {
 
     }
 
-    //総経験値が　Y　
-    fun calculate(y:Int,a:Int,b:Int,c:Int):Int{
-        //二次関数の解の公式
-        val x = (-(b) + sqrt((b*b - 4 * a * (c - y)).toDouble())) / (2 * a)
-        return x.toInt()
+    companion object{
+        //総経験値が　Y　
+        fun calculate(y:Int,a:Int,b:Int,c:Int):Int{
+            //二次関数の解の公式
+            val x = (-(b) + sqrt((b*b - 4 * a * (c - y)).toDouble())) / (2 * a)
+            return x.toInt()
+        }
     }
+
 }
 
 

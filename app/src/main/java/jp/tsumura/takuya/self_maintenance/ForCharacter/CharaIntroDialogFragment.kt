@@ -10,27 +10,37 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.Editable
+import android.text.Layout
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat.recreate
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import jp.tsumura.takuya.self_maintenance.ForCamera.CameraDialogFragment
+import jp.tsumura.takuya.self_maintenance.ForCamera.CameraDialogFragment.Companion.calculate
+import jp.tsumura.takuya.self_maintenance.ForCamera.Score
+import jp.tsumura.takuya.self_maintenance.ForCharacter.Characters.Companion.setChara
 import jp.tsumura.takuya.self_maintenance.ForSetting.SettingDialog
 import jp.tsumura.takuya.self_maintenance.R
+import kotlinx.android.synthetic.main.activity_medals_tab.*
 import kotlinx.android.synthetic.main.dialog_chara_intro.*
 import kotlinx.android.synthetic.main.dialog_chara_intro.view.*
 import kotlinx.android.synthetic.main.fragment_character_list_item.*
 import kotlinx.android.synthetic.main.fragment_character_list_item.view.*
 
 class CharaIntroDialogFragment(position:Int) : DialogFragment() {
-    val position = position
+    val posi = position
     private lateinit var customView :View
     private lateinit var prefs :SharedPreferences
     private lateinit var save: SharedPreferences.Editor
@@ -45,44 +55,22 @@ class CharaIntroDialogFragment(position:Int) : DialogFragment() {
     fun charaSelect():AlertDialog.Builder{
         val builder = AlertDialog.Builder(requireActivity())
 
-        when(position){
-
-            0->{
-                builder.setTitle("ワンワン")
-                builder.setIcon(R.drawable.tree_seichou02)
-                builder.setMessage("あらかじめ設定した時間どおりに習慣をすると、応援にかけつけてくれます。\n経験値ボーナス　＋１．２倍")
-                builder.setPositiveButton("時間をきめる"){ dialog, which ->
-                    wanwanDialog(requireContext())
-                }
-                builder.setNegativeButton("やめる"){ dialog, which ->
-                    save.putString("wanwan", "")
-                    save.apply()
-                }
-                return builder
+        val chara = setChara(posi)
+        builder.setTitle(chara.name)
+        builder.setIcon(chara.icon)
+        builder.setMessage(chara.script)
+        if(chara.position==0){
+            builder.setPositiveButton("時間をきめる"){ dialog, which ->
+                wanwanDialog(requireContext())
             }
-            1->{
-                builder.setTitle("地縛霊の花子さん")
-                builder.setIcon(R.drawable.tree_seichou04)
-                builder.setMessage("習慣をする場所を設定してください。\n経験値ボーナス　＋１０００")
-                builder.setView(customView)
-                return builder
+            builder.setNegativeButton("やめる"){ dialog, which ->
+                save.putString(chara.prefer, "")
+                save.apply()
             }
-            2->{
-                builder.setTitle("Mr.キュー")
-                builder.setIcon(R.drawable.tree_seichou06)
-                builder.setMessage("習慣を思い出せるアイテムを部屋に飾りましょう。\n運動＞ヨガマットを敷いておく\n読書＞本を開いた状態で置いておくなど\n経験値ボーナス　＋１０００")
-                builder.setView(customView)
-                return builder
-            }
-            3->{
-                builder.setTitle("Ms.キュー")
-                builder.setIcon(R.drawable.tree_seichou07)
-                builder.setMessage("わるい習慣を未然に防げるようにアイテムを部屋に飾りましょう。\n間食を辞めるために、「空腹時はサラダをたべろ！」と張り紙をするなど\n経験値ボーナス　＋１０００")
-                builder.setView(customView)
-                return builder
-            }
-
+        }else{
+            builder.setView(customView)
         }
+
         return builder
     }
 
@@ -99,77 +87,54 @@ class CharaIntroDialogFragment(position:Int) : DialogFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        when(position){
-            1->{
-                val hanako=prefs.getString("hanako","")
-                Log.e("TAG","花子さんのテキストは今$hanako")
-                settingText.text = Editable.Factory.getInstance().newEditable(hanako)
-                val text = customView.findViewById<EditText>(R.id.settingText)//.text.toString()
-                set.setOnClickListener {
+        val chara = setChara(posi)
+        val data=prefs.getString(chara.prefer,"")
+        Log.e("TAG","テキストは今$data")
+        settingText.text = Editable.Factory.getInstance().newEditable(data)
+        var flg = true//初回利用ならフラグが立つ
+        if(data!!.isNotEmpty()){ flg = false }
+        val text = customView.findViewById<EditText>(R.id.settingText)//.text.toString()
+        set.setOnClickListener {
+            Log.e("TAG","入力したテキストは${text.text}")
+            save.putString(chara.prefer, text.text.toString())
+            save.commit()
+            val im = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            im.hideSoftInputFromWindow(it.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
 
-                    Log.e("TAG","入力したテキストは${text.text}")
-                    save.putString("hanako", text.text.toString())
-                    save.commit()
-                    val im = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                    im.hideSoftInputFromWindow(it.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
-                    Toast.makeText(requireContext(),"設定しました",Toast.LENGTH_SHORT).show()
-                    dismiss()
-                }
-                unset.setOnClickListener {
-                    save.putString("hanako", "")
-                    save.commit()
-                    Toast.makeText(requireContext(),"設定を解除しました",Toast.LENGTH_SHORT).show()
-                    dismiss()
-                }
+            if(flg) {
+                val db = FirebaseFirestore.getInstance()
+                val user = FirebaseAuth.getInstance().currentUser
+                val docRef = db.collection("Scores").document(user!!.uid)
+                docRef.get().addOnSuccessListener { documentSnapshot ->
+                    val score = documentSnapshot.toObject(Score::class.java)
+                    if (documentSnapshot.data != null && score != null) {
+                        val totalPoint = score.totalPoint
+                        val new = totalPoint + chara.point.toInt()
+                        docRef.update("totalPoint",new)
 
-            }
-            2->{
-                val mrq=prefs.getString("mrq","")
-                Log.e("TAG","mrqのテキストは今$mrq")
-                settingText.text = Editable.Factory.getInstance().newEditable(mrq)
-                val text = customView.findViewById<EditText>(R.id.settingText)//.text.toString()
-                set.setOnClickListener {
-
-                    Log.e("TAG","入力したテキストは${text.text}")
-                    save.putString("mrq", text.text.toString())
-                    save.commit()
-                    val im = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                    im.hideSoftInputFromWindow(it.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
-                    Toast.makeText(requireContext(),"設定しました",Toast.LENGTH_SHORT).show()
-                    dismiss()
+                        val Prelevel = calculate(totalPoint, 450, -450, 100)
+                        val newlevel = calculate(new, 450, -450, 100)
+                        if(Prelevel>newlevel){
+                            showLevelUp("レベルアップ！！","Lv.$newlevel\n経験値　＋${chara.point}")
+                        }else{
+                            showLevelUp("経験値獲得！！","経験値　＋${chara.point}")
+                        }
+                    }
                 }
-                unset.setOnClickListener {
-                    save.putString("mrq", "")
-                    save.commit()
-                    Toast.makeText(requireContext(),"設定を解除しました",Toast.LENGTH_SHORT).show()
-                    dismiss()
-                }
+            }else{
+                dismiss()
             }
 
-            3->{
-                val msq=prefs.getString("msq","")
-                Log.e("TAG","msqのテキストは今$msq")
-                settingText.text = Editable.Factory.getInstance().newEditable(msq)
-                val text = customView.findViewById<EditText>(R.id.settingText)//.text.toString()
-                set.setOnClickListener {
-
-                    Log.e("TAG","入力したテキストは${text.text}")
-                    save.putString("msq", text.text.toString())
-                    save.commit()
-                    val im = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                    im.hideSoftInputFromWindow(it.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
-                    Toast.makeText(requireContext(),"設定しました",Toast.LENGTH_SHORT).show()
-                    dismiss()
-                }
-                unset.setOnClickListener {
-                    save.putString("msq", "")
-                    save.commit()
-                    Toast.makeText(requireContext(),"設定を解除しました",Toast.LENGTH_SHORT).show()
-                    dismiss()
-                }
-            }
 
         }
+
+        unset.setOnClickListener {
+            save.putString(chara.prefer, "")
+            save.commit()
+            Toast.makeText(requireContext(),"設定を解除しました",Toast.LENGTH_SHORT).show()
+            dismiss()
+        }
+
 
     }
     //wanwan 用のダイアログ
@@ -186,5 +151,14 @@ class CharaIntroDialogFragment(position:Int) : DialogFragment() {
             },
             13, 0, true)
         timePickerDialog.show()
+    }
+
+    fun showLevelUp(title:String,script:String){
+        val alertDialogBuilder = androidx.appcompat.app.AlertDialog.Builder(requireContext())
+        alertDialogBuilder.setTitle(title)
+        alertDialogBuilder.setMessage(script)
+        alertDialogBuilder.setPositiveButton("閉じる"){dialog, which ->        }
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
     }
 }

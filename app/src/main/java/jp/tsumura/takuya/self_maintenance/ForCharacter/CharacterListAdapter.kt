@@ -56,6 +56,9 @@ class CharacterListAdapter (private val customList: MutableList<Int>,
         holder.view.inviteButton.setOnClickListener {
             listener.onItemClickListener(it, position, customList2[position])
         }
+        holder.view.itemSet.setOnClickListener {
+            listener.onItemClickListener(it, position, customList2[position])
+        }
 
     }
     //インターフェースの作成
