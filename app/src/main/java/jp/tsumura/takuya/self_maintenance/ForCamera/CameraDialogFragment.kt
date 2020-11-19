@@ -118,11 +118,13 @@ class CameraDialogFragment(mTimerSec: Int): DialogFragment() {
                         val updatedMAX = newCon
                         save.putInt("preferences_key_MAX", updatedMAX)
                     }
-
+                    
                     //ワンワン機能
                     val wanwanIsOn = FirstFragment().wanwan(prefs)
                     if(wanwanIsOn){
+                        Log.e("TAG", "ワンワン　×１．２倍まえの経験値は$point")
                         bonus.text = "ワンワン　×１．２倍"
+                        point = point*1.2
                     }
 
                     //トータル経験値の算出
