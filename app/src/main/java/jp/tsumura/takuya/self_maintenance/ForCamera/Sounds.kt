@@ -3,13 +3,16 @@ package jp.tsumura.takuya.self_maintenance.ForCamera
 import android.annotation.TargetApi
 import android.content.Context
 import android.media.AudioAttributes
+import android.media.AudioManager
 import android.media.SoundPool
 import android.os.Build
 import jp.tsumura.takuya.self_maintenance.R
 
-class Sounds(context: Context){
 
-    private var soundPool:SoundPool? = null
+class Sounds constructor(context: Context) {
+
+    private var soundPool: SoundPool? = null
+
 
     companion object {
 
@@ -21,15 +24,25 @@ class Sounds(context: Context){
             INSTANCE ?: Sounds(context).also {
                 INSTANCE = it
             }
+
     }
+
     init {
         createSoundPool()
         loadSoundIDs(context)
     }
 
+    private fun createSoundPool() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            createNewSoundPool()
+        } else {
+            createOldSoundPool()
+        }
+    }
+
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private fun createSoundPool() {
+    private fun createNewSoundPool() {
         val attributes = AudioAttributes.Builder().apply {
             setUsage(AudioAttributes.USAGE_GAME)
             setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
@@ -37,17 +50,24 @@ class Sounds(context: Context){
         }.build()
 
         soundPool = SoundPool.Builder().apply {
-            setMaxStreams(1)
+            setMaxStreams(2)
             setAudioAttributes(attributes)
         }.build()
+    }
+
+
+    private fun createOldSoundPool() {
+        soundPool = SoundPool(2, AudioManager.STREAM_MUSIC, 0)
     }
 
     private fun loadSoundIDs(context:Context) {
         soundPool?.let {
             println("サウンドファイルロード")
             SOUND_DRUMROLL = it.load(context, R.raw.decision8, 1)
+            SAD_TROMBONE = it.load(context, R.raw.decision8, 1)
         }
     }
+
 
     fun playSound(soundID:Int) {
         soundPool?.let{
@@ -61,6 +81,4 @@ class Sounds(context: Context){
         soundPool?.release()
         soundPool = null
     }
-
-
 }

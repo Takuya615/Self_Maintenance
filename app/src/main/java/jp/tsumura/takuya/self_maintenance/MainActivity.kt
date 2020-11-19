@@ -15,6 +15,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import io.realm.Realm
 import jp.tsumura.takuya.self_maintenance.ForCamera.CameraXActivity
+import jp.tsumura.takuya.self_maintenance.ForCamera.Sounds
 import jp.tsumura.takuya.self_maintenance.ForCharacter.CharacterListFragment
 import jp.tsumura.takuya.self_maintenance.ForMedals.MedalsTabFragment
 import jp.tsumura.takuya.self_maintenance.ForSetting.AccountSettingActivity

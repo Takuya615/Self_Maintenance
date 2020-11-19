@@ -69,6 +69,8 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
 
         captureButton.visibility = View.INVISIBLE
 
+        Sounds.getInstance(this)//音の初期化
+
         // Request camera permissions
         if (allPermissionsGranted()) {
             viewFinder.post {
@@ -294,7 +296,7 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
                 mHandler.post {
                     timer.text = String.format("%02d:%02d", minite, seconds)
                     if(mTimerSec==taskSec){
-                        Sounds.getInstance(context).playSound(Sounds.SOUND_DRUMROLL)
+                        Sounds.getInstance(this@CameraXActivity).playSound(Sounds.SOUND_DRUMROLL)
                     }
                     if (mTimerSec >= taskSec && taskSec != 0) {
                         backView.setBackgroundColor(Color.GREEN)

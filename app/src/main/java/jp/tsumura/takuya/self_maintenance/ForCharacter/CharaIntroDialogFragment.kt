@@ -27,8 +27,8 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import jp.tsumura.takuya.self_maintenance.ForCamera.CameraDialogFragment
 import jp.tsumura.takuya.self_maintenance.ForCamera.CameraDialogFragment.Companion.calculate
+
 import jp.tsumura.takuya.self_maintenance.ForCamera.Score
 import jp.tsumura.takuya.self_maintenance.ForCharacter.Characters.Companion.setChara
 import jp.tsumura.takuya.self_maintenance.ForSetting.SettingDialog

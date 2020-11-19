@@ -13,7 +13,6 @@ import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import jp.tsumura.takuya.self_maintenance.FirstFragment
 import jp.tsumura.takuya.self_maintenance.R
 import kotlinx.android.synthetic.main.dialog_camera.view.*
 import java.lang.Math.sqrt
@@ -22,14 +21,11 @@ import java.time.temporal.ChronoUnit
 
 class CameraDialogFragment(mTimerSec: Int): DialogFragment() {
     lateinit var customView :View
-
     val time = mTimerSec
-
 
 
     override fun onCreateDialog(savedInstanceState: Bundle?):Dialog {
         customView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_camera, null)
-
         //list = arrayOf<String>()
 
         //recordScore(requireContext(),time)
@@ -90,7 +86,7 @@ class CameraDialogFragment(mTimerSec: Int): DialogFragment() {
                     var DoNot= score.DoNot
                     val totalPoint = score.totalPoint
 
-                    val listRandam = arrayOf(1.4, 1.2, 1.0, 0.8, 0.6)//スコアのランダム要素
+                    val listRandam = arrayOf(1.5, 1.25, 1.0, 0.75, 0.5)//スコアのランダム要素
                     val ran = listRandam.random()
 
                     if(different == 1){
@@ -98,7 +94,6 @@ class CameraDialogFragment(mTimerSec: Int): DialogFragment() {
                         newRec = recover//復活数
                         newtot = totalD + 1//総日数
                         point=100*newtot*ran//その日のスコア値
-                        Log.e("TAG","継続達成でポイント$point")
 
                     }else if(different >= 2){
                         newCon = 0//継続リセット
@@ -106,26 +101,14 @@ class CameraDialogFragment(mTimerSec: Int): DialogFragment() {
                         newtot = totalD + 1//総日数
                         DoNot = DoNot + different-1
                         point=100*newtot*ran//その日のスコア値
-                        Log.e("TAG","復活達成でポイント$point")
 
                     }else if(different==0){
                         newCon = continuous//継続日数
                         newRec = recover//復活数
                         newtot = totalD//総日数
-                        Log.e("TAG","デイリー済みで$point")
-                    }
 
-                    //ボーナス系
-                    if(point!=0.0){
-                        if(FirstFragment().wanwan(prefs)){
-                            point = point*1.2
-                            Log.e("TAG","pointを１．２倍にして$point")
-                        }
 
                     }
-
-
-
 
                     //継続日数の最長値を保存する
                     val MAX : Int = prefs.getInt("preferences_key_MAX", 0)
@@ -133,6 +116,7 @@ class CameraDialogFragment(mTimerSec: Int): DialogFragment() {
                         val updatedMAX = newCon
                         save.putInt("preferences_key_MAX", updatedMAX)
                     }
+
                     //トータル経験値の算出
                     newTotP = totalPoint + point.toInt()
 
@@ -158,23 +142,10 @@ class CameraDialogFragment(mTimerSec: Int): DialogFragment() {
 
                 val level =calculate(newTotP,450,-450,100)
 
-                customView.revel.text = "                 Lv. $level"
+                customView.revel.text = "                             Lv. $level"
                 customView.text.text ="     継続日数　  　$newCon 日"
                 customView.text2.text ="     復活回数　　 $newRec 回"
                 customView.score.text = "     経験値              ${point.toInt()}"
-
-
-                //ボーナスの表示
-                if(point!=0.0){
-                    val builder = StringBuilder()
-                    if(FirstFragment().wanwan(prefs)){
-                        builder.append(" ワンワン　×１．２倍")
-                    }
-
-                    customView.bonus.text=builder.toString()
-                }
-
-
 
 
                 //ココからメダルの表示
@@ -184,22 +155,19 @@ class CameraDialogFragment(mTimerSec: Int): DialogFragment() {
                 val result = mutableListOf<String>()
                 for(i in maxT){
                     if(i == newtot){
-                        result.add("総日数 $i 日")
+                        result.add("総日数 ${maxT[i]}日")
                     }
                 }
                 for(i in maxC){
                     if(i == newCon){
-                        result.add("継続日数 $i 日")
+                        result.add("継続日数 ${maxC[i]}日")
                     }
                 }
-                if(different >= 2){//復活回数が更新されているときにのみ表示する
-                    for(i in maxR){
-                        if(i == newRec){
-                            result.add("復活数　$i 回")
-                        }
+                for(i in maxR){
+                    if(i == newRec){
+                        result.add("復活数　${maxR[i]}日")
                     }
                 }
-
 
 
                 customView.cameraDialogRecyclerView.layoutManager = GridLayoutManager(
@@ -219,15 +187,11 @@ class CameraDialogFragment(mTimerSec: Int): DialogFragment() {
 
     }
 
-    companion object{
-        //総経験値が　Y　
-        fun calculate(y:Int,a:Int,b:Int,c:Int):Int{
-            //二次関数の解の公式
-            val x = (-(b) + sqrt((b*b - 4 * a * (c - y)).toDouble())) / (2 * a)
-            return x.toInt()
-        }
+    fun calculate(y:Int,a:Int,b:Int,c:Int):Int{
+        //二次関数の解の公式
+        val x = (-(b) + sqrt((b*b - 4 * a * (c - y)).toDouble())) / (2 * a)
+        return x.toInt()
     }
-
 }
 
 
