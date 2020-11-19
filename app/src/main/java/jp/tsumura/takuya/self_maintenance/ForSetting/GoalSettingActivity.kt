@@ -122,7 +122,7 @@ class GoalSettingActivity : AppCompatActivity(){
                 if(goaltimeA.isNotEmpty()){
                     val goaltime = goaltimeA.toInt()
                     //val totalday : Int = prefs.getInt("totalday", 0)総日数の値を取得
-                    val Cal =goaltime *60 *1/100//　　　　　　　初期値は１％からスタート
+                    var Cal =goaltime *60 *1/100//　　　　　　　初期値は１％からスタート
                     e.putInt(getString(R.string.preferences_key_smalltime), Cal)
                     e.apply()
 
@@ -137,7 +137,7 @@ class GoalSettingActivity : AppCompatActivity(){
                     }
                     if(times!=0 ) {//　　　割り算の演算子は整数までしか計算しないので、少数点以下は無視して出力される。
                         val A = Cal * times
-                        Cal + A
+                        Cal = Cal + A
                     }
 
                     val seconds =Cal%60;

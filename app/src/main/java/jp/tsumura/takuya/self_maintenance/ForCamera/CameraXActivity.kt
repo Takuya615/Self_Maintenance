@@ -69,6 +69,8 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
 
         captureButton.visibility = View.INVISIBLE
 
+        Sounds.getInstance(this)//音の初期化
+
         // Request camera permissions
         if (allPermissionsGranted()) {
             viewFinder.post {
