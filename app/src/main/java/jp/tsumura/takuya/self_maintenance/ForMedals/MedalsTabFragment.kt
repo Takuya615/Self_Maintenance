@@ -29,8 +29,11 @@ class MedalsTabFragment: Fragment() {
                 0 -> {
                     return SecondFragment()
                 }
-                else -> {
+                1 -> {
                     return AchievementFragment()
+                }
+                else->{
+                    return StrengthsFragment()
                 }
 
             }
@@ -43,14 +46,17 @@ class MedalsTabFragment: Fragment() {
                 0 -> {
                     return "成果"
                 }
-                else -> {
+                1->{
                     return "実績"
+                }
+                else -> {
+                    return "強み"
                 }
             }
         }
 
         override fun getCount(): Int {
-            return 2
+            return 3
         }
     }
 

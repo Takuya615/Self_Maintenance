@@ -70,31 +70,31 @@ class GalleryActivity : AppCompatActivity() {
         val friendUid = intent.getStringExtra("friendUid")
         val documentName = intent.getStringExtra("date")
         val convertedUri = Uri.parse(value)
-        try {
-            videoView.setVideoURI(convertedUri)
-            videoView.start()
-            videoView.setOnCompletionListener{
-                if(friendUid!=null&&documentName!=null){
-                    val alertDialogBuilder = AlertDialog.Builder(this)
-                    alertDialogBuilder.setTitle("この動画に いいね！ を送りますか？")
-                    alertDialogBuilder.setMessage("")
-                    //alertDialogBuilder.setView(iv)
-                    // 肯定ボタンに表示される文字列、押したときのリスナーを設定する
-                    alertDialogBuilder.setPositiveButton("いいね！"){ dialog, which ->
-                        val coll = db.collection(friendUid).document(documentName)
-                        coll.get().addOnSuccessListener { document ->
-                            like = document["like"].toString().toInt()
-                        }
-                        val liked = like +1
-                       coll.update("like",liked)
+
+        videoView.setVideoURI(convertedUri)
+        videoView.start()
+        videoView.setOnCompletionListener{
+            if(friendUid!=null&&documentName!=null){
+                val alertDialogBuilder = AlertDialog.Builder(this)
+                alertDialogBuilder.setTitle("この動画に いいね！ を送りますか？")
+                alertDialogBuilder.setMessage("")
+                //alertDialogBuilder.setView(iv)
+                // 肯定ボタンに表示される文字列、押したときのリスナーを設定する
+                alertDialogBuilder.setPositiveButton("いいね！"){ dialog, which ->
+                    val coll = db.collection(friendUid).document(documentName)
+                    coll.get().addOnSuccessListener { document ->
+                        like = document["like"].toString().toInt()
                     }
-                    alertDialogBuilder.setNegativeButton("skip"){ dialog, which ->                    }
-                    // AlertDialogを作成して表示する
-                    val alertDialog = alertDialogBuilder.create()
-                    alertDialog.show()
+                    val liked = like +1
+                    coll.update("like",liked)
                 }
+                alertDialogBuilder.setNegativeButton("skip"){ dialog, which ->                    }
+                // AlertDialogを作成して表示する
+                val alertDialog = alertDialogBuilder.create()
+                alertDialog.show()
             }
-        }catch (e: Exception){        }
+        }
+
         //取得したfileNameで、Storageから、そのURIを取得
         /*
         val storageRef = Firebase.storage.reference

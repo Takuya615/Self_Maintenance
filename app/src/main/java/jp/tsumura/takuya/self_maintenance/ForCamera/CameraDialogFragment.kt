@@ -13,7 +13,9 @@ import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import jp.tsumura.takuya.self_maintenance.FirstFragment
 import jp.tsumura.takuya.self_maintenance.R
+import kotlinx.android.synthetic.main.dialog_camera.*
 import kotlinx.android.synthetic.main.dialog_camera.view.*
 import java.lang.Math.sqrt
 import java.time.LocalDate
@@ -107,7 +109,6 @@ class CameraDialogFragment(mTimerSec: Int): DialogFragment() {
                         newRec = recover//復活数
                         newtot = totalD//総日数
 
-
                     }
 
                     //継続日数の最長値を保存する
@@ -115,6 +116,12 @@ class CameraDialogFragment(mTimerSec: Int): DialogFragment() {
                     if (MAX < newCon) {
                         val updatedMAX = newCon
                         save.putInt("preferences_key_MAX", updatedMAX)
+                    }
+
+                    //ワンワン機能
+                    val wanwanIsOn = FirstFragment().wanwan(prefs)
+                    if(wanwanIsOn){
+                        bonus.text = "ワンワン　×１．２倍"
                     }
 
                     //トータル経験値の算出

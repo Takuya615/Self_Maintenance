@@ -29,7 +29,6 @@ class FirstFragment : Fragment() {
     private lateinit var prefs : SharedPreferences
     private lateinit var mAuth: FirebaseAuth
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mAuth = FirebaseAuth.getInstance()

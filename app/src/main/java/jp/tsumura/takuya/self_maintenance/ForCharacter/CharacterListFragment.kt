@@ -74,7 +74,7 @@ class CharacterListFragment : Fragment() {
                     val totalT = score.totalT
                     var DoNot = score.DoNot
                     val totalPoint = score.totalPoint
-                    level =calculate(totalPoint,450,-450,100)
+                    level =calculate(totalPoint,450,-450,100)//CameraDialogFragmentのメソッド
 
                     for(i in 0..3){
                         val chara = setChara(i)
