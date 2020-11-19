@@ -60,6 +60,8 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
         //画面をオンのままにしておく
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
+        Sounds.getInstance(this)//音の初期化
+
         viewFinder = findViewById(R.id.view_finder)
         captureButton = findViewById(R.id.capture_button1)
         backView = findViewById(R.id.backview)

@@ -49,6 +49,9 @@ class MedalsTabFragment: Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.activity_medals_tab, container, false)
+        pager.adapter = MedalsTabAdapter(childFragmentManager, requireContext())
+        tab_layout.setupWithViewPager(pager)
+
         return view
     }
 
@@ -57,11 +60,6 @@ class MedalsTabFragment: Fragment() {
 
         // TabLayoutの取得
         val tabLayout = requireActivity().findViewById<TabLayout>(R.id.tab_layout)
-        pager.adapter = MedalsTabAdapter(requireActivity().supportFragmentManager, requireContext())
-        tab_layout.setupWithViewPager(pager)
-
-
-
         // OnTabSelectedListenerの実装
         tabLayout.addOnTabSelectedListener(object: TabLayout.OnTabSelectedListener {
 

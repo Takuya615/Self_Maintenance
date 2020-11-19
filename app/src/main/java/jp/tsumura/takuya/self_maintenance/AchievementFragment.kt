@@ -1,5 +1,6 @@
 package jp.tsumura.takuya.self_maintenance
 
+import android.content.Context
 import android.os.Bundle
 
 import android.view.LayoutInflater
@@ -51,7 +52,9 @@ class AchievementFragment : Fragment(){
                 val score = documentSnapshot.toObject(Score::class.java)
                 if (score != null) {
                     val t = score.totalD//総
-                    val c = score.continuous//継続
+                    //val c = score.continuous//継続
+                    val prefs = requireActivity().getSharedPreferences("preferences_key_sample", Context.MODE_PRIVATE)
+                    val MAX : Int = prefs.getInt("preferences_key_MAX",0)//最長連続日数
                     val r = score.recover//復活
 
                     //titleリストの作成
@@ -62,9 +65,9 @@ class AchievementFragment : Fragment(){
                         else{ hideButton.add(true)}
                     }
                     for(i in 0..maxListC.size-1) {
-                        titleList.add("継続 ${maxListC[i]}日　           ${calculate(c,maxListC[i])}")
-                        progressList.add(c)
-                        if(maxListC[i]<=c){ hideButton.add(false) }
+                        titleList.add("継続 ${maxListC[i]}日　           ${calculate(MAX,maxListC[i])}")
+                        progressList.add(MAX)
+                        if(maxListC[i]<=MAX){ hideButton.add(false) }
                         else{ hideButton.add(true)}
                     }
                     for(i in 0..maxListR.size-1){

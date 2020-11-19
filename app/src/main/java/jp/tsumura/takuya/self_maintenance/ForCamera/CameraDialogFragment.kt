@@ -155,20 +155,21 @@ class CameraDialogFragment(mTimerSec: Int): DialogFragment() {
                 val result = mutableListOf<String>()
                 for(i in maxT){
                     if(i == newtot){
-                        result.add("総日数 ${maxT[i]}日")
+                        result.add("総日数 $i 日")
                     }
                 }
                 for(i in maxC){
                     if(i == newCon){
-                        result.add("継続日数 ${maxC[i]}日")
+                        result.add("継続日数 $i 日")
                     }
                 }
-                for(i in maxR){
-                    if(i == newRec){
-                        result.add("復活数　${maxR[i]}日")
+                if(different >= 2) {//復活回数が更新されているときにのみ表示する
+                    for(i in maxR){
+                        if(i == newRec){
+                            result.add("復活数　$i 日")
+                        }
                     }
                 }
-
 
                 customView.cameraDialogRecyclerView.layoutManager = GridLayoutManager(
                     requireContext(),
