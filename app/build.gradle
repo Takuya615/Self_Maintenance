@@ -79,5 +79,7 @@ dependencies {
 
     //グラフ
     implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
+    implementation 'com.google.code.gson:gson:2.7'//Gsonライブラリ
+
 
 }

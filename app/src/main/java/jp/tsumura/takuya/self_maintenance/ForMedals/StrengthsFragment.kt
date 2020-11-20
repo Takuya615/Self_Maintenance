@@ -15,8 +15,10 @@ import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.IValueFormatter
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
+import jp.tsumura.takuya.self_maintenance.ForMedals.Strengths.Companion.ViaForChart
 import jp.tsumura.takuya.self_maintenance.R
 import kotlinx.android.synthetic.main.fragment_strengths.view.*
+import org.json.JSONArray
 
 class StrengthsFragment: Fragment() {
 
@@ -55,10 +57,10 @@ class StrengthsFragment: Fragment() {
         }
 
         //X軸の設定
-        val labels = arrayOf("","創造性","勇敢さ","親切心") //最初の””は原点の値
+        val labels = ViaForChart //最初の””は原点の値arrayOf("","創造性","勇敢さ")
         chart.xAxis.apply {
             valueFormatter = IndexAxisValueFormatter(labels)
-            labelCount = 3 //表示させるラベル数
+            labelCount = 24 //表示させるラベル数
             position = XAxis.XAxisPosition.BOTTOM
             setDrawLabels(true)
             setDrawGridLines(false)
@@ -78,10 +80,13 @@ class StrengthsFragment: Fragment() {
 
     private fun getBarData(): ArrayList<IBarDataSet> {
         //表示させるデータ
+        val prefs = requireContext().getSharedPreferences("preferences_key_sample", Context.MODE_PRIVATE)
+        val ViaList = JSONArray(prefs.getString("VIA","[100,1,1,1,1,1,1,1,1,1,1 ,1,1,1,1,1,1,1,1,1,1 ,1,1,1,1]"))
+        //val StrengthsPoint = mutableListOf<Float>(20f,40f,60f,85f)
         val entries = ArrayList<BarEntry>().apply {
-            add(BarEntry(1f, 60f))
-            add(BarEntry(2f, 80f))
-            add(BarEntry(3f, 70f))
+            for(i in 1..24){
+                add(BarEntry(i.toFloat(), ViaList[i].toString().toInt().toFloat()))
+            }
         }
 
         val dataSet = BarDataSet(entries, "bar").apply {

@@ -1,10 +1,13 @@
 package jp.tsumura.takuya.self_maintenance.forGallery
 
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.WindowManager
 import android.widget.Button
@@ -14,11 +17,21 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.FirebaseFirestore
+import io.realm.Realm
+import jp.tsumura.takuya.self_maintenance.ForMedals.Strengths.Companion.ViaForChart
+
+import jp.tsumura.takuya.self_maintenance.ForMedals.Strengths.Companion.ViaStrItem
+import jp.tsumura.takuya.self_maintenance.ForMedals.Strengths.Companion.saveVia
+
+import jp.tsumura.takuya.self_maintenance.ForMedals.Strengths.Companion.takeAtRandom
+import jp.tsumura.takuya.self_maintenance.ForSetting.mRealm
 import jp.tsumura.takuya.self_maintenance.MainActivity
 import jp.tsumura.takuya.self_maintenance.R
 import kotlinx.android.synthetic.main.activity_gallery.*
+import org.json.JSONArray
 import java.io.File
-
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class GalleryActivity : AppCompatActivity() {
@@ -76,19 +89,21 @@ class GalleryActivity : AppCompatActivity() {
         videoView.setOnCompletionListener{
             if(friendUid!=null&&documentName!=null){
                 val alertDialogBuilder = AlertDialog.Builder(this)
-                alertDialogBuilder.setTitle("この動画に いいね！ を送りますか？")
+                alertDialogBuilder.setTitle("${mRealm().UidToName(friendUid)}さんの強みはどちらですか？")
                 alertDialogBuilder.setMessage("")
                 //alertDialogBuilder.setView(iv)
                 // 肯定ボタンに表示される文字列、押したときのリスナーを設定する
-                alertDialogBuilder.setPositiveButton("いいね！"){ dialog, which ->
-                    val coll = db.collection(friendUid).document(documentName)
-                    coll.get().addOnSuccessListener { document ->
-                        like = document["like"].toString().toInt()
-                    }
-                    val liked = like +1
-                    coll.update("like",liked)
+
+                val prefs = getSharedPreferences("preferences_key_sample", Context.MODE_PRIVATE)
+                val item = ViaStrItem.takeAtRandom(2, Random())//2つの要素だけを取り出す
+                alertDialogBuilder.setPositiveButton(item[0]){ dialog, which ->
+                    val newList = addPoint(item[0],prefs)
+                    saveVia(prefs,newList)
                 }
-                alertDialogBuilder.setNegativeButton("skip"){ dialog, which ->                    }
+                alertDialogBuilder.setNegativeButton(item[1]){ dialog, which ->
+                    val newList = addPoint(item[1],prefs)
+                    saveVia(prefs,newList)
+                }
                 // AlertDialogを作成して表示する
                 val alertDialog = alertDialogBuilder.create()
                 alertDialog.show()
@@ -135,6 +150,22 @@ class GalleryActivity : AppCompatActivity() {
 
     }
 
+    fun addPoint(item:String,prefs:SharedPreferences):ArrayList<Int>{
+
+        val ViaList = JSONArray(prefs.getString("VIA","[100,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]"))
+        val num = ViaForChart.indexOf(item)//ランダムにとった値の要素数（順番数）を取得
+
+        val newList = arrayListOf<Int>()
+        for(i in 0..5){
+            val via = ViaList[i].toString().toInt()
+            if(i!=num){
+                newList.add(via)
+            }else{
+                newList.add(via + 1)
+            }
+        }
+        return newList
+    }
 
     //戻るボタンを押すと今いるviewを削除する
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
