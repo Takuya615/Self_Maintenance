@@ -8,15 +8,16 @@ import android.view.ViewGroup
 import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.Fragment
 import com.github.mikephil.charting.animation.Easing
+import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.data.BarData
-import com.github.mikephil.charting.data.BarDataSet
-import com.github.mikephil.charting.data.BarEntry
+import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.IValueFormatter
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
+import com.github.mikephil.charting.utils.ColorTemplate
 import jp.tsumura.takuya.self_maintenance.ForMedals.Strengths.Companion.ViaForChart
 import jp.tsumura.takuya.self_maintenance.R
+import kotlinx.android.synthetic.main.fragment_strengths.*
 import kotlinx.android.synthetic.main.fragment_strengths.view.*
 import org.json.JSONArray
 
@@ -33,6 +34,40 @@ class StrengthsFragment: Fragment() {
         return view
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        //表示用サンプルデータの作成//
+        val dimensions = listOf("A", "B", "C", "D")//分割円の名称(String型)
+        val values = listOf(1f, 2f, 3f, 4f)//分割円の大きさ(Float型)
+
+        //①Entryにデータ格納
+        var entryList = mutableListOf<PieEntry>()
+        for(i in values.indices){
+            entryList.add(
+                PieEntry(values[i], dimensions[i])
+            )
+        }
+
+        //②PieDataSetにデータ格納
+        val pieDataSet = PieDataSet(entryList, "candle")
+        //③DataSetのフォーマット指定
+        pieDataSet.colors = ColorTemplate.COLORFUL_COLORS.toList()
+
+        //④PieDataにPieDataSet格納
+        val pieData = PieData(pieDataSet)
+        //⑤PieChartにPieData格納
+        val pieChart = pieChartExample//requireActivity().findViewById(R.id.pieChartExample)
+
+        pieChart.data = pieData
+        //⑥Chartのフォーマット指定
+        pieChart.legend.isEnabled = false
+        //⑦PieChart更新
+        pieChart.invalidate()
+
+    }
+
+    /*棒グラフの設定
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val chart = view.bar_chart
@@ -102,5 +137,7 @@ class StrengthsFragment: Fragment() {
         bars.add(dataSet)
         return bars
     }
+
+     */
 
 }
