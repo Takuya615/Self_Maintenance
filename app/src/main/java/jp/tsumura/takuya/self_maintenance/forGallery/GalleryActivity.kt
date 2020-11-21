@@ -18,11 +18,8 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.FirebaseFirestore
 import io.realm.Realm
-import jp.tsumura.takuya.self_maintenance.ForMedals.Strengths.Companion.ViaForChart
-
 import jp.tsumura.takuya.self_maintenance.ForMedals.Strengths.Companion.ViaStrItem
 import jp.tsumura.takuya.self_maintenance.ForMedals.Strengths.Companion.saveVia
-
 import jp.tsumura.takuya.self_maintenance.ForMedals.Strengths.Companion.takeAtRandom
 import jp.tsumura.takuya.self_maintenance.ForSetting.mRealm
 import jp.tsumura.takuya.self_maintenance.MainActivity
@@ -99,10 +96,12 @@ class GalleryActivity : AppCompatActivity() {
                 alertDialogBuilder.setPositiveButton(item[0]){ dialog, which ->
                     val newList = addPoint(item[0],prefs)
                     saveVia(prefs,newList)
+                    finish()
                 }
-                alertDialogBuilder.setNegativeButton(item[1]){ dialog, which ->
+                alertDialogBuilder.setNeutralButton(item[1]){ dialog, which ->
                     val newList = addPoint(item[1],prefs)
                     saveVia(prefs,newList)
+                    finish()
                 }
                 // AlertDialogを作成して表示する
                 val alertDialog = alertDialogBuilder.create()
@@ -152,11 +151,11 @@ class GalleryActivity : AppCompatActivity() {
 
     fun addPoint(item:String,prefs:SharedPreferences):ArrayList<Int>{
 
-        val ViaList = JSONArray(prefs.getString("VIA","[100,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]"))
-        val num = ViaForChart.indexOf(item)//ランダムにとった値の要素数（順番数）を取得
+        val ViaList = JSONArray(prefs.getString("viaItem","[1,1,1,1,1 ,1,1,1,1,1 ,1,1,1,1,1 ,1,1,1,1,1 ,1,1,1,1]"))
+        val num = ViaStrItem.indexOf(item)//ランダムにとった値の要素数（順番数）を取得
 
         val newList = arrayListOf<Int>()
-        for(i in 0..5){
+        for(i in 0..23){
             val via = ViaList[i].toString().toInt()
             if(i!=num){
                 newList.add(via)
@@ -164,8 +163,11 @@ class GalleryActivity : AppCompatActivity() {
                 newList.add(via + 1)
             }
         }
+
         return newList
     }
+
+
 
     //戻るボタンを押すと今いるviewを削除する
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {

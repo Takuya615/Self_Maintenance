@@ -11,9 +11,7 @@ import kotlin.collections.ArrayList
 class Strengths{
 
     companion object{
-        val ViaForChart= mutableListOf<String>("", "創造性", "勇敢さ","好奇心","公平さ","寛容さ","審美眼","感謝","誠実さ",
-        "希望","慎み深さ","ユーモア","柔軟性","親切心","リーダーシップ","愛情","向学心","大局観","忍耐力","思慮深さ",
-            "自己調整","社会的知能","スピリチュアリティ","チームワーク","熱意")
+
         val ViaStrItem = mutableListOf<String>("創造性", "勇敢さ","好奇心","公平さ","寛容さ","審美眼","感謝","誠実さ",
             "希望","慎み深さ","ユーモア","柔軟性","親切心","リーダーシップ","愛情","向学心","大局観","忍耐力","思慮深さ",
             "自己調整","社会的知能","スピリチュアリティ","チームワーク","熱意")//ランダムに値を取り出す用
@@ -21,9 +19,10 @@ class Strengths{
         fun saveVia(sP:SharedPreferences, list: ArrayList<Int>){
             Log.e("TAG","保存されるリストは$list")
             val editor = sP.edit()
-            editor.putString("VIA", list.toString());
+            editor.putString("viaItem", list.toString());
             editor.apply();
         }
+
 
 
 
