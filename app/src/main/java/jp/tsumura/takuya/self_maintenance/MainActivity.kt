@@ -12,7 +12,11 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.ktx.Firebase
 import io.realm.Realm
 import jp.tsumura.takuya.self_maintenance.ForCamera.CameraXActivity
 import jp.tsumura.takuya.self_maintenance.ForCamera.Sounds
@@ -26,6 +30,7 @@ import jp.tsumura.takuya.self_maintenance.ForStart.TutorialCoachMarkActivity
 import jp.tsumura.takuya.self_maintenance.forGallery.FriendListFragment
 import jp.tsumura.takuya.self_maintenance.forGallery.VideoListFragment
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.dialog_chara_intro.view.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -38,6 +43,7 @@ class MainActivity : AppCompatActivity() {
                     .replace(R.id.frameLayout, FirstFragment())
                     .commit()
                 title = "ホーム"
+                fab.show()
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navi_myvideo -> {
@@ -46,6 +52,7 @@ class MainActivity : AppCompatActivity() {
                         .replace(R.id.frameLayout, VideoListFragment())
                         .commit()
                     title="あなたの動画リスト"
+                    fab.show()
                 }else{
                     Toast.makeText(this,"ログインしてください",Toast.LENGTH_SHORT).show()
                 }
@@ -62,6 +69,7 @@ class MainActivity : AppCompatActivity() {
                             .replace(R.id.frameLayout, FriendListFragment())
                             .commit()
                         title = "フレンドリスト"
+                        fab.show()
                         //val intent= Intent(this, FriendListActivity::class.java)
                         //startActivity(intent)
                     }
@@ -76,6 +84,7 @@ class MainActivity : AppCompatActivity() {
                     .replace(R.id.frameLayout, MedalsTabFragment())
                     .commit()
                 title="実績"
+                fab.hide()
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navi_char -> {
@@ -83,7 +92,7 @@ class MainActivity : AppCompatActivity() {
                     .replace(R.id.frameLayout, CharacterListFragment())
                     .commit()
                 title = "スケット"
-
+                fab.show()
                 return@OnNavigationItemSelectedListener true
             }
 

@@ -23,6 +23,7 @@ class Firebase {
             "date" to StrDate,
             "like" to 0,
             "path" to path
+
         )
 
         docRef.document(StrDate).set(data)

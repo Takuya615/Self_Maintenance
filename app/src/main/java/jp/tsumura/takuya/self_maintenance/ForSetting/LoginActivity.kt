@@ -5,16 +5,22 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.text.Editable
+import android.text.PrecomputedText
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.firebase.ui.auth.data.remote.GoogleSignInHandler
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
 import jp.tsumura.takuya.self_maintenance.ForStart.TutorialActivity
 import jp.tsumura.takuya.self_maintenance.ForStart.TutorialCoachMarkActivity
 import jp.tsumura.takuya.self_maintenance.MainActivity
@@ -54,6 +60,7 @@ class LoginActivity : AppCompatActivity() {
         mCreateAccountListener = OnCompleteListener { task ->
             if (task.isSuccessful) {
                 // 成功した場合
+
                 // ログインを行う
                 val email = emailText.text.toString()
                 val password = passwordText.text.toString()
@@ -71,12 +78,22 @@ class LoginActivity : AppCompatActivity() {
         // ログイン処理のリスナー
         mLoginListener = OnCompleteListener { task ->
             if (task.isSuccessful) {
+
+                //ロギング Login
+                val firebaseAnalytics = Firebase.analytics
+                val bundle = Bundle()
+
+
+
                 // 成功した場合
                 if (mIsCreateAccount) {
                     Toast.makeText(this,"アカウントが作成されました",Toast.LENGTH_LONG).show()
-
+                    bundle.putString(FirebaseAnalytics.Param.METHOD, "Sign_Up!")
+                    firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SIGN_UP, bundle)
                 } else {
                     Toast.makeText(this,"ログインしました",Toast.LENGTH_LONG).show()
+                    bundle.putString(FirebaseAnalytics.Param.METHOD, "Login")
+                    firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, bundle)
                 }
 
                 progressBar.visibility = View.GONE

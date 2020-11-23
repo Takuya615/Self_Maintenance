@@ -68,11 +68,6 @@ class CharacterListFragment : Fragment() {
             docRef.get().addOnSuccessListener { documentSnapshot ->
                 val score = documentSnapshot.toObject(Score::class.java)
                 if (documentSnapshot.data != null && score != null) {
-                    val continuous = score.continuous
-                    val recover = score.recover
-                    val totalD = score.totalD
-                    val totalT = score.totalT
-                    var DoNot = score.DoNot
                     val totalPoint = score.totalPoint
                     level =calculate(totalPoint,450,-450,100)//CameraDialogFragmentのメソッド
 

@@ -1,9 +1,7 @@
 package jp.tsumura.takuya.self_maintenance.forGallery
 
 
-import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
@@ -15,18 +13,17 @@ import android.widget.MediaController
 import android.widget.VideoView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
-import io.realm.Realm
+import jp.tsumura.takuya.self_maintenance.ForCamera.Score
+import jp.tsumura.takuya.self_maintenance.ForCharacter.CharaIntroDialogFragment
 import jp.tsumura.takuya.self_maintenance.ForMedals.Strengths.Companion.ViaStrItem
-import jp.tsumura.takuya.self_maintenance.ForMedals.Strengths.Companion.saveVia
 import jp.tsumura.takuya.self_maintenance.ForMedals.Strengths.Companion.takeAtRandom
 import jp.tsumura.takuya.self_maintenance.ForSetting.mRealm
 import jp.tsumura.takuya.self_maintenance.MainActivity
 import jp.tsumura.takuya.self_maintenance.R
 import kotlinx.android.synthetic.main.activity_gallery.*
-import org.json.JSONArray
-import java.io.File
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -35,7 +32,8 @@ class GalleryActivity : AppCompatActivity() {
 
 
     private lateinit var db : FirebaseFirestore
-    private var like = 0
+    //private var like = 0
+    //private var nameList:MutableList<String> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,9 +45,7 @@ class GalleryActivity : AppCompatActivity() {
         //val play = findViewById<ImageButton>(R.id.play_button)
         //progressbar2.visibility = android.widget.ProgressBar.VISIBLE
 
-
         db = FirebaseFirestore.getInstance()
-
 
         var mediaControls: MediaController? = null
         //リストから指定されたfileNameを取得する
@@ -83,29 +79,44 @@ class GalleryActivity : AppCompatActivity() {
 
         videoView.setVideoURI(convertedUri)
         videoView.start()
+
+
         videoView.setOnCompletionListener{
             if(friendUid!=null&&documentName!=null){
-                val alertDialogBuilder = AlertDialog.Builder(this)
-                alertDialogBuilder.setTitle("${mRealm().UidToName(friendUid)}さんの強みはどちらですか？")
-                alertDialogBuilder.setMessage("")
-                //alertDialogBuilder.setView(iv)
-                // 肯定ボタンに表示される文字列、押したときのリスナーを設定する
+                val coll = db.collection(friendUid).document(documentName)
+                coll.get().addOnSuccessListener { document ->
+                    val myid =  FirebaseAuth.getInstance().currentUser!!.uid
+                    val nameList = document[myid]
 
-                val prefs = getSharedPreferences("preferences_key_sample", Context.MODE_PRIVATE)
-                val item = ViaStrItem.takeAtRandom(2, Random())//2つの要素だけを取り出す
-                alertDialogBuilder.setPositiveButton(item[0]){ dialog, which ->
-                    val newList = addPoint(item[0],prefs)
-                    saveVia(prefs,newList)
-                    finish()
+                    //その動画を、初めて閲覧したなら、強みを評価できる
+                    if(nameList==null){
+
+                        GalleryDialogFragment(coll,friendUid).show(supportFragmentManager,"StrengthsEvaliation")
+
+                        /*
+                        val alertDialogBuilder = AlertDialog.Builder(this)
+                        alertDialogBuilder.setTitle("${mRealm().UidToName(friendUid)}さんの強みはどちらですか？")
+                        alertDialogBuilder.setMessage("")
+                        //alertDialogBuilder.setView(iv)
+                        val item = ViaStrItem.takeAtRandom(2, Random())//2つの要素だけを取り出す
+                        alertDialogBuilder.setPositiveButton(item[0]){ dialog, which ->
+                            addPoint(item[0],friendUid)//強みの評価
+                            saveLikeAndNamelist(coll)//いいね＋１、　動画に署名
+                            finish()
+
+                        }
+                        alertDialogBuilder.setNeutralButton(item[1]){ dialog, which ->
+                            addPoint(item[1],friendUid)//強みの評価
+                            saveLikeAndNamelist(coll)//いいね＋１、　動画に署名
+                            finish()
+                        }
+                        // AlertDialogを作成して表示する
+                        val alertDialog = alertDialogBuilder.create()
+                        alertDialog.show()
+
+                         */
+                    }
                 }
-                alertDialogBuilder.setNeutralButton(item[1]){ dialog, which ->
-                    val newList = addPoint(item[1],prefs)
-                    saveVia(prefs,newList)
-                    finish()
-                }
-                // AlertDialogを作成して表示する
-                val alertDialog = alertDialogBuilder.create()
-                alertDialog.show()
             }
         }
 
@@ -149,24 +160,36 @@ class GalleryActivity : AppCompatActivity() {
 
     }
 
-    fun addPoint(item:String,prefs:SharedPreferences):ArrayList<Int>{
+    fun addPoint(item:String,friendUid:String){
 
-        val ViaList = JSONArray(prefs.getString("viaItem","[1,1,1,1,1 ,1,1,1,1,1 ,1,1,1,1,1 ,1,1,1,1,1 ,1,1,1,1]"))
-        val num = ViaStrItem.indexOf(item)//ランダムにとった値の要素数（順番数）を取得
-
-        val newList = arrayListOf<Int>()
-        for(i in 0..23){
-            val via = ViaList[i].toString().toInt()
-            if(i!=num){
-                newList.add(via)
-            }else{
-                newList.add(via + 1)
+        val saveScore = db.collection("Scores").document(friendUid)
+        saveScore.get().addOnSuccessListener { document ->
+            val score = document.toObject(Score::class.java)
+            if (document.data != null && score != null) {
+                val viaList = score.vialist
+                val num = ViaStrItem.indexOf(item)//ランダムにとった値の要素数（順番数）を取得
+                val newList = mutableListOf<Int>()
+                for(i in 0..23){
+                    if(i!=num){
+                        newList.add(viaList[i])
+                    }else{
+                        newList.add(viaList[i] + 1)
+                    }
+                }
+                saveScore.update( "vialist",newList)
             }
         }
-
-        return newList
     }
 
+    fun saveLikeAndNamelist(coll:DocumentReference){
+        coll.get().addOnSuccessListener { document ->
+            val myid =  FirebaseAuth.getInstance().currentUser!!.uid
+            var like = document["like"].toString().toInt()
+            like = like + 1
+            coll.update("like",like)
+            coll.update("$myid","true")
+        }
+    }
 
 
     //戻るボタンを押すと今いるviewを削除する

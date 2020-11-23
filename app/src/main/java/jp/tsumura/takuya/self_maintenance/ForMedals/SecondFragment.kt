@@ -3,11 +3,11 @@ package jp.tsumura.takuya.self_maintenance.ForMedals
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
@@ -16,6 +16,8 @@ import jp.tsumura.takuya.self_maintenance.ForCamera.Score
 import jp.tsumura.takuya.self_maintenance.R
 import kotlinx.android.synthetic.main.fragment_second_list_item.view.*
 import kotlinx.android.synthetic.main.recycler_view.*
+import kotlinx.android.synthetic.main.recycler_view.recyclerView
+import kotlinx.android.synthetic.main.recycler_view2.*
 
 
 class SecondFragment : Fragment() {
@@ -56,6 +58,9 @@ class SecondFragment : Fragment() {
 
 
     private lateinit var prefs : SharedPreferences
+    private lateinit var adapter: SecondFragmentAdapter
+    private lateinit var list1 :MutableList<String>
+    private lateinit var list2 : MutableList<String>
 
     val user = FirebaseAuth.getInstance().currentUser
     val db = FirebaseFirestore.getInstance()
@@ -65,13 +70,14 @@ class SecondFragment : Fragment() {
             savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.recycler_view, container, false)
+        return inflater.inflate(R.layout.recycler_view2, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         prefs = requireActivity().getSharedPreferences("preferences_key_sample", Context.MODE_PRIVATE)
-
+        list1 = mutableListOf<String>()
+        list2 = mutableListOf<String>()
 
         if(user!=null) {
             val docRef = db.collection("Scores").document(user.uid)
@@ -85,30 +91,34 @@ class SecondFragment : Fragment() {
                     val totalPoint = score.totalPoint
                     val MAX : Int = prefs.getInt("preferences_key_MAX",0)//最長連続日数
 
-                    val list1 = mutableListOf<String>("継続日数","これまでの最長継続日数","復活回数","総活動日数","総活動時間","総経験値")
-                    val list2 = mutableListOf<String>()
+                    list1.add("継続日数")
+                    list1.add("これまでの最長継続日数")
+                    list1.add("復活回数")
+                    list1.add("総活動日数")
+                    list1.add("総活動時間")
+                    list1.add("総経験値")
 
                     list2.add("$ncd 日")
                     list2.add("$MAX 日")
                     list2.add("$revival 回")
                     list2.add("$totalday 日")
-
                     val seconds =TT%60;
                     val minite =(TT/60)%60;
                     val totaltime="$minite"+"分"+"$seconds"+"秒"
                     list2.add(totaltime)
                     list2.add("$totalPoint")
 
-
-                    val adapter = SecondFragmentAdapter(list1,list2)
-                    val layoutManager = LinearLayoutManager(requireContext())
-                    // アダプターとレイアウトマネージャーをセット
-                    recyclerView.layoutManager = layoutManager
-                    recyclerView.adapter = adapter
-                    recyclerView.setHasFixedSize(true)
-
+                    adapter.notifyDataSetChanged()
+                    Log.d("tag","ここまで来てる")
                 }
             }
+
+            adapter = SecondFragmentAdapter(list1,list2)
+            val layoutManager = LinearLayoutManager(requireContext())
+            // アダプターとレイアウトマネージャーをセット
+            recyclerView2.layoutManager = layoutManager
+            recyclerView2.adapter = adapter
+            recyclerView2.setHasFixedSize(true)
         }
 
     }

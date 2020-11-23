@@ -5,13 +5,16 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.Telephony.Mms.Part.CONTENT_ID
 import android.view.MenuItem
 import android.view.View
 import android.widget.SearchView
 import android.widget.Toast
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
 import jp.tsumura.takuya.self_maintenance.R
 import kotlinx.android.synthetic.main.activity_friend_search.*
 import kotlinx.android.synthetic.main.activity_goal_setting.*
@@ -34,7 +37,7 @@ class FriendSearchActivity : AppCompatActivity() {
         //uid =""val list = mutableListOf<String>(name,uid)
         mAuth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
-        firebaseAnalytics = FirebaseAnalytics.getInstance(this)
+        firebaseAnalytics = Firebase.analytics
         request.setOnClickListener{
             val user = mAuth.currentUser
             if(user!=null){
@@ -45,9 +48,12 @@ class FriendSearchActivity : AppCompatActivity() {
                         finish()
                         //友人にリクエストを送ったのか、イベントログを記録する。他の人へオススメしたという指標になる
                         val bundle:Bundle = Bundle()
-                        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "request");
-                        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "request");
-                        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_ITEM,bundle)
+                        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "friend_request")
+                        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "friend_request")
+                        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "friend_request")
+                        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle)
+
+
                     }
                     .addOnFailureListener { Toast.makeText(this,"リクエスト送信に失敗しました", Toast.LENGTH_LONG).show() }//e -> Log.e("TAG", "ドキュメントの作成・上書きエラー", e)
             }
