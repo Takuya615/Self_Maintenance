@@ -15,8 +15,6 @@ import com.firebase.ui.auth.data.remote.GoogleSignInHandler
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.ktx.analytics
-import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -80,7 +78,7 @@ class LoginActivity : AppCompatActivity() {
             if (task.isSuccessful) {
 
                 //ロギング Login
-                val firebaseAnalytics = Firebase.analytics
+                val firebaseAnalytics = FirebaseAnalytics.getInstance(this)
                 val bundle = Bundle()
 
 
@@ -184,7 +182,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     //戻るボタンを押すと今いるviewを削除する
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item!!.itemId){
             android.R.id.home->{
                 finish()

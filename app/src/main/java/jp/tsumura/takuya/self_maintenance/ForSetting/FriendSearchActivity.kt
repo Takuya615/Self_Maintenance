@@ -11,7 +11,7 @@ import android.view.View
 import android.widget.SearchView
 import android.widget.Toast
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.ktx.analytics
+
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
@@ -37,7 +37,7 @@ class FriendSearchActivity : AppCompatActivity() {
         //uid =""val list = mutableListOf<String>(name,uid)
         mAuth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
-        firebaseAnalytics = Firebase.analytics
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this)
         request.setOnClickListener{
             val user = mAuth.currentUser
             if(user!=null){
@@ -96,7 +96,7 @@ class FriendSearchActivity : AppCompatActivity() {
 
  */
     //戻るボタンを押すと今いるviewを削除する
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item!!.itemId) {
             android.R.id.home -> {
                 finish()
