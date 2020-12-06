@@ -167,7 +167,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     //戻るボタンを押すと今いるviewを削除する
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item!!.itemId){
             android.R.id.home->{
                 finish()
