@@ -21,6 +21,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat.recreate
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
@@ -114,10 +115,10 @@ class CharaIntroDialogFragment(position:Int) : DialogFragment() {
 
                         val Prelevel = calculate(totalPoint, 450, -450, 100)
                         val newlevel = calculate(new, 450, -450, 100)
-                        if(Prelevel>newlevel){
-                            showLevelUp("レベルアップ！！","Lv.$newlevel\n経験値　＋${chara.point}")
+                        if(Prelevel<newlevel){
+                            showLevelUp(requireContext(),"レベルアップ！！","Lv.$newlevel\n経験値　＋${chara.point}")
                         }else{
-                            showLevelUp("経験値獲得！！","経験値　＋${chara.point}")
+                            showLevelUp(requireContext(),"経験値獲得！！","経験値　＋${chara.point}")
                         }
                     }
                 }
@@ -153,12 +154,16 @@ class CharaIntroDialogFragment(position:Int) : DialogFragment() {
         timePickerDialog.show()
     }
 
-    fun showLevelUp(title:String,script:String){
-        val alertDialogBuilder = androidx.appcompat.app.AlertDialog.Builder(requireContext())
-        alertDialogBuilder.setTitle(title)
-        alertDialogBuilder.setMessage(script)
-        alertDialogBuilder.setPositiveButton("閉じる"){dialog, which ->        }
-        val alertDialog = alertDialogBuilder.create()
-        alertDialog.show()
+    companion object{
+        fun showLevelUp(context: Context,title:String,script:String){
+            val alertDialogBuilder = androidx.appcompat.app.AlertDialog.Builder(context)
+            alertDialogBuilder.setTitle(title)
+            alertDialogBuilder.setMessage(script)
+            alertDialogBuilder.setPositiveButton("閉じる"){dialog, which ->        }
+            val alertDialog = alertDialogBuilder.create()
+            alertDialog.show()
+        }
     }
+
+
 }

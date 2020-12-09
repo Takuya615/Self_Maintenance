@@ -117,35 +117,22 @@ class GoalSettingActivity : AppCompatActivity(){
                 val score = documentSnapshot.toObject(Score::class.java)
                 var totalday = 0
                 if (score != null) {
-                    totalday = score.totalD + score.DoNot
+                    totalday = score.totalD
                 }
                 if(goaltimeA.isNotEmpty()){
-                    val goaltime = goaltimeA.toInt()
-                    //val totalday : Int = prefs.getInt("totalday", 0)総日数の値を取得
-                    var Cal =goaltime *60 *1/100//　　　　　　　初期値は１％からスタート
+                    val goaltime = goaltimeA.toInt()//最終目標時間
+                    var Cal =goaltime *60 *1/100//　　　　　　　初期値は 0.5％からスタート
                     e.putInt(getString(R.string.preferences_key_smalltime), Cal)
                     e.apply()
 
+                    Cal = taskTimeCaluculate(totalday,Cal)//総日数から適切なタスク時間を産出する
 
-                    var times =0//総日数が、2日更新されるごとに、強度を上げる場合。（totalday=1なら、1/2で、times=0となる）
-                    if(totalday>49){
-                        val ab = 10
-                        val bc = (totalday-50)/2
-                        times =ab+bc
-                    }else{
-                        times=totalday/5
-                    }
-                    if(times!=0 ) {//　　　割り算の演算子は整数までしか計算しないので、少数点以下は無視して出力される。
-                        val A = Cal * times
-                        Cal = Cal + A
-                    }
-
-                    val seconds =Cal%60;
-                    val minite =(Cal/60)%60;
+                    val seconds =Cal%60
                     if(Cal < 60){
-                        textView6.text = "今日は　$seconds　秒間\n（${times+1} %）やりましょう"
+                        textView6.text = "今日は　$seconds　秒間やりましょう"
                     }else{
-                        textView6.text = "今日は$minite 分 $seconds 秒間\n（${times+1} %）やりましょう"
+                        val minite =(Cal/60)%60
+                        textView6.text = "今日は$minite 分 $seconds 秒間やりましょう"
                     }
 
                 }else{
@@ -162,11 +149,31 @@ class GoalSettingActivity : AppCompatActivity(){
     }
     //戻るボタンを押すと今いるviewを削除する
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item!!.itemId){
+        when(item.itemId){
             android.R.id.home->{
                 finish()
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+    companion object{
+        fun taskTimeCaluculate(totalday:Int,oneParsent:Int):Int{
+            var times =0//        総日数が、2日更新されるごとに、強度を上げる場合。（totalday=1なら、1/2で、times=0となる）
+            var cal = oneParsent
+            if(totalday>48){
+                val ab = 16
+                val bc = (totalday-48)/3
+                times =ab+bc
+            }else{
+                times=totalday/3
+
+            }
+            if(times!=0 ) {//　　　割り算の演算子は整数までしか計算しないので、少数点以下は無視して出力される。
+                val A = oneParsent * times
+                cal = oneParsent + A
+            }
+            return cal
+        }
+
     }
 }

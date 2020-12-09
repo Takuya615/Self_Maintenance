@@ -7,8 +7,14 @@
     <string name="preferences_key3">Camera2Activity_3</string>
     <string name="preferences_key_MAX">Camera2Activity_MAX</string>
     <string name="preferences_key_rev">Camera2Activity_rev</string>//復活数
-    <string name="preferences_key_smalltime">GoalSettingActivity</string>
     <string name="preferences_key_test">Camera2Activity_1</string>
+
+
+    //新しいデータに更新するときには、リセットが必要なデータ
+    <string name="pref_check_point">firstfragment_1</string>
+    <string name="preferences_key_smalltime">GoalSettingActivity</string>
+
+
 
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
@@ -38,9 +44,6 @@
         最小で週４回を６週間以上続ければ、より習慣になりやすいといわれています\n
         この間は最小限の負担で行い、クセがついてから本格的に時間を伸ばしていきます\n
         まずは５０日間、続けることを目標にしましょう。
-    </string>
-    <string name="Tutorial2">
-        信頼できる友人や家族に、
     </string>
 
 </resources>

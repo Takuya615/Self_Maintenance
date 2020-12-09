@@ -25,6 +25,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import jp.tsumura.takuya.self_maintenance.ForSetting.GoalSettingActivity.Companion.taskTimeCaluculate
 import jp.tsumura.takuya.self_maintenance.ForStart.TutorialCoachMarkActivity
 import jp.tsumura.takuya.self_maintenance.R
 import kotlinx.android.synthetic.main.activity_camera_x.*
@@ -93,20 +94,10 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
             docRef.get().addOnSuccessListener { documentSnapshot ->
                 val score = documentSnapshot.toObject(Score::class.java)
 
-                if(score != null){ totalday = score.totalD + score.DoNot }
-                var times =0 //総日数が、2日更新されるごとに、強度を上げる場合。（totalday=1なら、1/2で、times=0となる）
-                if(totalday>49){
-                    val ab = 10
-                    val bc = (totalday-50)/2
-                    times =ab+bc
-                }else{
-                    times=totalday/5
+                if(score != null){ totalday = score.totalD }
 
-                }
-                if(times!=0 ) {//　　　割り算の演算子は整数までしか計算しないので、少数点以下は無視して出力される。
-                    val A = taskSec * times
-                    taskSec = taskSec + A
-                }
+                taskSec = taskTimeCaluculate(totalday,taskSec)//GoalSettingActから、適切なタスク時間を計算する
+
                 captureButton.visibility = View.VISIBLE
                 progress.visibility = android.widget.ProgressBar.INVISIBLE
             }
