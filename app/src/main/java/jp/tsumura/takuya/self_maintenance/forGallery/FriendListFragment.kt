@@ -2,7 +2,9 @@ package jp.tsumura.takuya.self_maintenance.forGallery
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.view.*
+import android.widget.Toast
 import android.widget.Toolbar
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
@@ -44,8 +46,8 @@ class FriendListFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         //コーチマーク
-        val Coach = TutorialCoachMarkActivity(requireContext())
-        Coach.CoachMark5(requireActivity(),requireContext())
+        //val Coach = TutorialCoachMarkActivity(requireContext())
+        //Coach.CoachMark5(requireActivity(),requireContext())
 
         muidList = mutableListOf<String>()
         mnameList = mutableListOf<String>()
@@ -60,6 +62,7 @@ class FriendListFragment: Fragment() {
                 if(document.data != null){
                     val friendUid = document.data!!["friendUid"]
                     if(friendUid !=null){
+
                         val requestName = mRealm().UidToName(friendUid.toString())
                         //ダイアログ
                         val alertDialogBuilder = AlertDialog.Builder(requireContext())
@@ -67,21 +70,29 @@ class FriendListFragment: Fragment() {
                             setTitle("$requestName　さんからフレンドリクエストが届いてます")
                             setMessage("フレンドになると、その人の日々のミッションを応援してあげることができます\n\nリクエストを承認しますか？")
                             setPositiveButton("承認する"){dialog, which ->
-                                val docRef2 = db.collection(user.uid).document(requestName)
-                                val map = hashMapOf(
-                                    "friend" to true,
-                                    "name" to requestName,
-                                    "uid" to friendUid//.toString()
-                                )
-                                docRef2.set(map)
-                                    .addOnSuccessListener {
 
-                                        mnameList.add(requestName)
-                                        muidList.add(friendUid.toString())
-                                        adapter.notifyDataSetChanged()
-                                    }
-                                //保存されているデータをnullに戻さないと。。。
-                                docRef.set(hashMapOf("friendUid" to null ))
+                                val checkSameName = muidList.contains(friendUid.toString())//すでに同じユーザーが登録されている場合はダメ
+                                if(checkSameName){
+                                    docRef.set(hashMapOf("friendUid" to null ))
+                                    Toast.makeText(requireContext(), "同じひとをリストへ加えることはできません", Toast.LENGTH_LONG).show()
+                                }else{
+                                    val docRef2 = db.collection(user.uid).document(requestName)
+                                    val map = hashMapOf(
+                                        "friend" to true,
+                                        "name" to requestName,
+                                        "uid" to friendUid//.toString()
+                                    )
+                                    docRef2.set(map)
+                                        .addOnSuccessListener {
+
+                                            mnameList.add(requestName)
+                                            muidList.add(friendUid.toString())
+                                            adapter.notifyDataSetChanged()
+                                        }
+                                    //保存されているデータをnullに戻さないと。。。
+                                    docRef.set(hashMapOf("friendUid" to null ))
+                                }
+
                             }
                             setNegativeButton("見なかったことにする"){dialog, which ->
                                 //保存されているデータをnullに戻さないと。。。

@@ -63,6 +63,7 @@ class CharaIntroDialogFragment(position:Int) : DialogFragment() {
         if(chara.position==0){
             builder.setPositiveButton("時間をきめる"){ dialog, which ->
                 wanwanDialog(requireContext())
+                dismiss()
             }
             builder.setNegativeButton("やめる"){ dialog, which ->
                 save.putString(chara.prefer, "")
@@ -102,7 +103,7 @@ class CharaIntroDialogFragment(position:Int) : DialogFragment() {
             val im = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             im.hideSoftInputFromWindow(it.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
 
-            if(flg) {
+            if(flg&&text.text.isNotEmpty()) {
                 val db = FirebaseFirestore.getInstance()
                 val user = FirebaseAuth.getInstance().currentUser
                 val docRef = db.collection("Scores").document(user!!.uid)
@@ -120,6 +121,7 @@ class CharaIntroDialogFragment(position:Int) : DialogFragment() {
                         }else{
                             showLevelUp(requireContext(),"経験値獲得！！","経験値　＋${chara.point}")
                         }
+                        dismiss()
                     }
                 }
             }else{

@@ -15,13 +15,14 @@
         android:icon="@drawable/ic_person"
         android:title="フレンド"/>
     <item
-        android:id="@+id/navi_medal"
-        android:icon="@drawable/ic_medal"
-        android:title="実績"/>
-    <item
         android:id="@+id/navi_char"
         android:icon="@drawable/ic_medal"
         android:title="スケット"/>
+    <item
+        android:id="@+id/navi_medal"
+        android:icon="@drawable/ic_medal"
+        android:title="実績"/>
+
 
 
 

@@ -14,6 +14,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import jp.tsumura.takuya.self_maintenance.ForStart.TutorialCoachMarkActivity
 import jp.tsumura.takuya.self_maintenance.R
+import jp.tsumura.takuya.self_maintenance.forGallery.FriendListFragment
 import kotlinx.android.synthetic.main.activity_account_setting.*
 import kotlinx.android.synthetic.main.activity_login.*
 
@@ -24,24 +25,23 @@ class AccountSettingActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_account_setting)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        title = "アカウント設定"
+        supportActionBar?.setDisplayHomeAsUpEnabled(false)//非表示
+        title = "アカウント名設定"
 
+        /*
         Handler().postDelayed({
             val Coach = TutorialCoachMarkActivity(this)
             Coach.CoachMark6(this,this)
         }, 1000)
 
+         */
+
 
         mAuth = FirebaseAuth.getInstance()
         val user = mAuth.currentUser
-        if(user!=null) {
-            val setName: String? = mRealm().UidToName(user.uid)//同じUidのアカウント名を返す
-            accountName.text = Editable.Factory.getInstance().newEditable(setName)
-        }else{
-            accountName.text = Editable.Factory.getInstance().newEditable("ログインしてください")
-            set_button.visibility = View.INVISIBLE
-        }
+        val setName: String? = mRealm().UidToName(user!!.uid)//同じUidのアカウント名を返す
+        accountName.text = Editable.Factory.getInstance().newEditable(setName)
+
 
         set_button.setOnClickListener{
             // キーボードが出てたら閉じる
@@ -49,18 +49,19 @@ class AccountSettingActivity : AppCompatActivity() {
             im.hideSoftInputFromWindow(it.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
 
             val Name = accountName.text.toString()
-            val uid = user!!.uid.toString()
+            val uid = user.uid.toString()
             if(mRealm().SearchSameName(Name)){
                 val a = mRealm().UidToName(user.uid)//
                 if(a.isEmpty()){
                     mRealm().addPerson(Name,uid)
                     Toast.makeText(this,"アカウント名を登録しました",Toast.LENGTH_SHORT).show()
-                    finish()
-                    //val intent= Intent(this, FriendListActivity::class.java)
-                    //startActivity(intent)
+                    //supportFragmentManager.beginTransaction().replace(R.id.frameLayout, FriendListFragment()).commit()
+                    val intent= Intent(this, GoalSettingActivity::class.java)
+                    startActivity(intent)
                 }else{
                     mRealm().update(uid,Name)
                     Snackbar.make(it, "アカウント名を変更しました", Snackbar.LENGTH_LONG).show()
+                    finish()
                 }
 
             }else{

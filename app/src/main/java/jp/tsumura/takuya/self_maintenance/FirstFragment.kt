@@ -1,37 +1,35 @@
 package jp.tsumura.takuya.self_maintenance
 
 import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
-import android.graphics.Insets.add
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageView
-import android.widget.Toast
-import androidx.core.app.ActivityCompat.recreate
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getColor
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.core.view.marginTop
+import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import jp.tsumura.takuya.self_maintenance.ForCamera.CameraDialogFragment
 import jp.tsumura.takuya.self_maintenance.ForCamera.Score
-import jp.tsumura.takuya.self_maintenance.ForCharacter.CharaIntroDialogFragment
 import jp.tsumura.takuya.self_maintenance.ForCharacter.CharaIntroDialogFragment.Companion.showLevelUp
-import jp.tsumura.takuya.self_maintenance.ForMedals.AchievementAdapter
 import jp.tsumura.takuya.self_maintenance.ForSetting.GoalSettingActivity
-import kotlinx.android.synthetic.main.activity_goal_setting.*
+import jp.tsumura.takuya.self_maintenance.ForStart.TutorialCoachMarkActivity
+import kotlinx.android.synthetic.main.activity_camera_x.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_first.*
-import kotlinx.android.synthetic.main.recycler_view.*
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
+
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
@@ -43,6 +41,20 @@ class FirstFragment : Fragment() {
     private lateinit var db :FirebaseFirestore
 
     //override fun onCreate(savedInstanceState: Bundle?) {        super.onCreate(savedInstanceState)    }
+
+    override fun onResume() {
+        super.onResume()
+        (activity as AppCompatActivity?)!!.supportActionBar!!.hide()
+        val a = (activity as AppCompatActivity?)!!.frameLayout.layoutParams as ViewGroup.MarginLayoutParams
+        a.setMargins(0,5,0,100)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        (activity as AppCompatActivity?)!!.supportActionBar!!.show()
+        val a = (activity as AppCompatActivity?)!!.frameLayout.layoutParams as ViewGroup.MarginLayoutParams
+        a.setMargins(0,110,0,100)
+    }
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
@@ -59,55 +71,70 @@ class FirstFragment : Fragment() {
         db = FirebaseFirestore.getInstance()
         Auth = FirebaseAuth.getInstance()
         val user = Auth.currentUser
-
-        if (user!=null){
-            val docRef = db.collection("Scores").document(user.uid)
+        val checkMini = prefs.getInt(getString(R.string.prefs_check_mini),0)
+        
+        if(checkMini<5){
+            showView(1)//メインビューの表示
+            if(user!=null){firstTasks()}
+        }else{
+            val docRef = db.collection("Scores").document(user!!.uid)
             docRef.get().addOnSuccessListener { documentSnapshot ->
                 val score = documentSnapshot.toObject(Score::class.java)
                 if (documentSnapshot.data != null && score != null) {
                     val totalPoint = score.totalPoint
                     val totalday = score.totalD
 
-                    taskButton.visibility = View.VISIBLE
-                    progressBar3.visibility = View.VISIBLE
                     showView(totalday)//メインビューの表示
 
+                    taskButton.visibility = View.VISIBLE
+                    progressBar3.visibility = View.VISIBLE
                     showTask(totalday)//タスクボタンの表示
+
+                    //レベルと通り名の設定
+                    val Prelevel = CameraDialogFragment.calculate(totalPoint, 450, -450, 100)//以前までのレベル
+                    levelText.text = "Lv. $Prelevel"
+                    val check = prefs.getInt(getString(R.string.pref_check_point),1)
+                    strName.text = StreetName(check)
 
                     //タスクボタンを押したときのリスナー
                     taskButton.setOnClickListener{
-
-                        val check = prefs.getInt(getString(R.string.pref_check_point),1)
-                        val pointList = mutableListOf<Int>(0,500,900,1400,2000,1,2,3,4,5,6,7,8,9,11,22,33,44,55,66,77,88,99,111,222,333)
+                        val pointList = 100*check*3*2//mutableListOf<Int>(501,100,300,00,2000,1,2,3,4,5,6,7,8,9,11,22,33,44,55,66,77,88,99,111,222,333)
                         if(check*3 <= totalday){//           クリア条件を満たしているー＞　経験値獲得
-                            val new = totalPoint + pointList[check]
+                            val new = totalPoint + pointList
                             docRef.update("totalPoint",new)
 
-                            val Prelevel = CameraDialogFragment.calculate(totalPoint, 450, -450, 100)//以前までのレベル
+
                             val newlevel = CameraDialogFragment.calculate(new, 450, -450, 100)//今回のレベル
                             Log.e("tag","これまでのレベルは$Prelevel 新しいレベル$newlevel")
                             if(Prelevel<newlevel){
                                 showLevelUp(
                                     requireContext(),
                                     "レベルアップ！！",
-                                    "Lv.$newlevel\n経験値　＋${pointList[check]}"
+                                    "Lv.$newlevel\n経験値　＋${pointList}"
                                 )
+                                levelText.text="Lv. $newlevel"
                             }else{
                                 showLevelUp(
                                     requireContext(),
                                     "経験値獲得！！",
-                                    "経験値　＋${pointList[check]}"
+                                    "経験値　＋${pointList}"
                                 )
                             }
                             val sp : SharedPreferences.Editor = prefs.edit()
                             sp.putInt(getString(R.string.pref_check_point),check+1)//
-                            sp.apply()
-                            showTask(totalday)//タスクとバーを再表示しなおす
+                            sp.commit()
+                            requireActivity().supportFragmentManager.beginTransaction()
+                                .replace(R.id.frameLayout, FirstFragment())
+                                .commit()
+                            //showTask(totalday)//タスクとバーを再表示しなおす
+                            //strName.text=StreetName(check)
 
                         }else{//                                            まだクリア条件を満たせていない　ー＞　重要性、クリア条件、目標。報酬を示す
+
+                            val title = taskButton.text.toString()
                             val alertDialogBuilder = androidx.appcompat.app.AlertDialog.Builder(requireContext())
-                            alertDialogBuilder.setTitle("aisuoj")
-                            alertDialogBuilder.setMessage("aaaaaaaaaaa")
+                            alertDialogBuilder.setTitle(title)
+                            alertDialogBuilder.setMessage("クリア報酬\n経験値　　${100*(check+1)*3*2}")
                             alertDialogBuilder.setPositiveButton("閉じる"){dialog, which ->        }
                             val alertDialog = alertDialogBuilder.create()
                             alertDialog.show()
@@ -124,11 +151,9 @@ class FirstFragment : Fragment() {
 
                 }
             }
-        }else{
-            showView(0)
-            taskButton.visibility = View.INVISIBLE
-            progressBar3.visibility = View.INVISIBLE
+
         }
+
 
         if(wanwan(prefs)){
             wanwanImage.visibility = View.VISIBLE
@@ -138,28 +163,24 @@ class FirstFragment : Fragment() {
 
 
 
+    //　　　　　　　　　　　　　　　　　タスクボタンの表示
     fun showTask(totalday: Int){
         val check = prefs.getInt(getString(R.string.pref_check_point),1)
         var Cal =  prefs.getInt(getString(R.string.preferences_key_smalltime),0)
         var progress = 0
-
         if(check*3 <= totalday) {
             Cal = GoalSettingActivity.taskTimeCaluculate(check*3-1, Cal)//GoalSettingActから、適切なタスク時間を計算する
             progress=3
             textView8.visibility=View.VISIBLE
             textView8.text="達成!"
-            textView8.setTextColor(getColor(requireContext(),R.color.material_red))
+            //textView8.setTextColor(getColor(requireContext(),R.color.material_red))
         }else{
             Cal = GoalSettingActivity.taskTimeCaluculate(totalday, Cal)
-            if(totalday>48){
-                progress = (totalday-48) % 3
-            }else{
-                progress = totalday % 3
-            }
+            progress = totalday % 3
             if(progress==0){
                 textView8.visibility=View.VISIBLE
                 textView8.text="New"
-                textView8.setTextColor(getColor(requireContext(),R.color.colorPrimary))
+                //textView8.setTextColor(getColor(requireContext(),R.color.colorPrimary))
             }else{
                 textView8.visibility=View.INVISIBLE
             }
@@ -167,17 +188,22 @@ class FirstFragment : Fragment() {
         progressBar3.progress = progress
         progressBar3.max=3
 
+        val streetName = StreetName(check+1)
+
         val seconds =Cal%60;
         val minite =(Cal/60)%60;
         if(Cal < 60){
-            taskButton.text = "$seconds　秒間を３日間だけする。"
+            taskButton.text = "$seconds　秒をあと${3 - progress}日すると\n「$streetName」に昇格"
         }else{
-            taskButton.text = "$minite 分 $seconds 秒間を３日間だけする。"
+            taskButton.text = "$minite 分 $seconds 秒をあと${3 - progress}日すると\n「$streetName」に昇格"
         }
-
+        if(progressBar3.max==progressBar3.progress){
+            taskButton.setBackgroundColor(getColor(requireContext(),R.color.colorPrimary))
+        }
     }
 
     fun showView(totalday:Int){
+        val checkMini = prefs.getInt(getString(R.string.prefs_check_mini),0)
         val growthimage =view?.findViewById<ImageView>(R.id.growth_image)
 
         if(1<=totalday && totalday<3){
@@ -203,6 +229,9 @@ class FirstFragment : Fragment() {
         }
         if(30<=totalday){
             growthimage?.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.tree_seichou09))
+        }
+        if(checkMini<1){
+            growthimage?.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.tree_seichou01))
         }
     }
 
@@ -234,5 +263,92 @@ class FirstFragment : Fragment() {
         }
         return false
     }
+
+    fun StreetName(checkPoint:Int ):String{
+
+        val list = mutableListOf<String>(
+            "","ただの三日ボウズ","ビギナー","決意をかためる者","かけだしプレイヤー",//4
+            "ルーキー","期待の新生","中級者","実力派プレイヤー","上級者","全国自己メンテナンス教会　役員", "全国自己メンテナンス教会　常務",//7
+            "全国自己メンテナンス教会　専務","全国自己メンテナンス教会　理事長", "全国自己メンテナンス教会　名誉会長",//3
+            "習慣の成功者！！","ベテラン","習慣化の職人", "習慣化の熟練技術師","習慣化博士","習慣自動化機能付き 次世代型ヒューマン","一流メンテリスト","カリスマ メンテリスト","習慣マスター",//9
+            "超一流","習慣の匠","救世主","伝説のセルフメンテリスト"//4
+        )
+        return  list[checkPoint]
+
+    }
+
+    fun firstTasks(){//初期状態のときに表示する
+        val checkMini = prefs.getInt(getString(R.string.prefs_check_mini),0)
+        val user = Auth.currentUser
+        val docRef = db.collection("Scores").document(user!!.uid)
+        progressBar3.max=100
+        if (checkMini==0){
+            taskButton.text="アカウントをつくる / ログインする"
+            progressBar3.progress=100
+            taskButton.setBackgroundColor(getColor(requireContext(),R.color.colorPrimary))
+        }
+        if (checkMini==1){
+            val small=prefs.getInt(getString(R.string.preferences_key_smalltime),0)
+            taskButton.text="カメラを使ってみる（目標$small 秒間）"
+            progressBar3.progress=1
+            docRef.get().addOnSuccessListener { documentSnapshot ->
+                if (documentSnapshot.data != null ) {
+                    progressBar3.progress=100
+                    taskButton.setBackgroundColor(getColor(requireContext(),R.color.colorPrimary))
+                }
+            }
+        }
+        if (checkMini==2){
+            taskButton.text="撮影した動画を確認する"
+            progressBar3.progress=1
+            val TutoForGallery : Boolean = prefs.getBoolean("TutoForGallery",false)
+            if(TutoForGallery){
+                progressBar3.progress=100
+                taskButton.setBackgroundColor(getColor(requireContext(),R.color.colorPrimary))
+            }
+        }
+        if (checkMini==3){
+            taskButton.text="フレンドリストのチュートリアルを見る"
+            progressBar3.progress=1
+            val Tuto4 : Boolean = prefs.getBoolean("Tuto4",false)
+            if(Tuto4){
+                progressBar3.progress=100
+                taskButton.setBackgroundColor(getColor(requireContext(),R.color.colorPrimary))
+            }
+        }
+        if (checkMini==4){
+            taskButton.text="あなたの助けになってくれる\nスケットたちのことを知る"
+            progressBar3.progress=1
+            val Tuto5 : Boolean = prefs.getBoolean("Tuto5",false)
+            if(Tuto5){
+                progressBar3.progress=100
+                taskButton.setBackgroundColor(getColor(requireContext(),R.color.colorPrimary))
+            }
+        }
+
+        taskButton.setOnClickListener {
+            if (progressBar3.progress==100){
+                val script = mutableListOf<String>("メイン画面が更新されました!","動画リストがアンロックされました","フレンドリストがアンロックされました","スケットが呼べるようになりました","新たに「レベル」と「あなたの通り名」が表示されるようになりました")
+
+                val alertDialogBuilder = androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                alertDialogBuilder.setTitle("ミッション達成!")//title[checkMini]
+                alertDialogBuilder.setMessage(script[checkMini])
+                alertDialogBuilder.setPositiveButton("閉じる"){dialog, which ->    }
+                val alertDialog = alertDialogBuilder.create()
+                alertDialog.show()
+
+                //ミニミッションの更新
+                val sp : SharedPreferences.Editor = prefs.edit()
+                sp.putInt(getString(R.string.prefs_check_mini),checkMini+1)//
+                sp.apply()
+
+                //画面の再描画
+                requireActivity().supportFragmentManager.beginTransaction()
+                    .replace(R.id.frameLayout, FirstFragment())
+                    .commit()
+            }
+        }
+    }
+
 
 }

@@ -19,6 +19,7 @@ import jp.tsumura.takuya.self_maintenance.ForCamera.CameraDialogFragment.Compani
 import jp.tsumura.takuya.self_maintenance.ForCamera.Score
 import jp.tsumura.takuya.self_maintenance.ForCharacter.Characters.Companion.setChara
 import jp.tsumura.takuya.self_maintenance.ForSetting.SettingDialog
+import jp.tsumura.takuya.self_maintenance.ForStart.TutorialCoachMarkActivity
 import jp.tsumura.takuya.self_maintenance.R
 import kotlinx.android.synthetic.main.fragment_character_list_item.*
 import kotlinx.android.synthetic.main.recycler_view.*
@@ -53,7 +54,6 @@ class CharacterListFragment : Fragment() {
         db = FirebaseFirestore.getInstance()
         val user = mAuth.currentUser
 
-
         charNameList= mutableListOf()
         charImageList= mutableListOf()
         charScriptList= mutableListOf()
@@ -62,47 +62,44 @@ class CharacterListFragment : Fragment() {
 
         val prefs = requireContext().getSharedPreferences("preferences_key_sample", Context.MODE_PRIVATE)
 
-        if(user !=null ) {
+        val docRef = db.collection("Scores").document(user!!.uid)
+        docRef.get().addOnSuccessListener { documentSnapshot ->
+            val score = documentSnapshot.toObject(Score::class.java)
+            if (documentSnapshot.data != null && score != null) {
+                val totalPoint = score.totalPoint
+                level =calculate(totalPoint,450,-450,100)//CameraDialogFragmentのメソッド
 
-            val docRef = db.collection("Scores").document(user.uid)
-            docRef.get().addOnSuccessListener { documentSnapshot ->
-                val score = documentSnapshot.toObject(Score::class.java)
-                if (documentSnapshot.data != null && score != null) {
-                    val totalPoint = score.totalPoint
-                    level =calculate(totalPoint,450,-450,100)//CameraDialogFragmentのメソッド
+                for(i in 0..3){//4タイのキャラを表示。レベルに応じて非表示
+                    val chara = setChara(i)
+                    if(level>=chara.level){
 
-                    for(i in 0..3){
-                        val chara = setChara(i)
-                        if(level>=chara.level){
+                        charNameList.add(chara.name)
+                        charImageList.add(chara.icon)
+                        charScriptList.add(chara.script)
+                        onPreferences.add(prefs.getString(chara.prefer,"")!!)
+                    }else{
+                        val question=setChara(-1)
+                        charNameList.add(question.name)
+                        charImageList.add(question.icon)
+                        charScriptList.add("Lv.${chara.level}で開放")
+                        onPreferences.add(prefs.getString(question.prefer,"")!!)
 
-                            charNameList.add(chara.name)
-                            charImageList.add(chara.icon)
-                            charScriptList.add(chara.script)
-                            onPreferences.add(prefs.getString(chara.prefer,"")!!)
-                        }else{
-                            val question=setChara(-1)
-                            charNameList.add(question.name)
-                            charImageList.add(question.icon)
-                            charScriptList.add("Lv.${chara.level}で開放")
-                            onPreferences.add(prefs.getString(question.prefer,"")!!)
-                        }
                     }
-
-                    for(i in onPreferences){
-                        if(i == null||i.isEmpty()){
-                            charUsedList.add(false)
-                        }else{
-                            charUsedList.add(true)
-                        }
-                    }
-
-                    adapter.notifyDataSetChanged()
 
                 }
+
+                for(i in onPreferences){
+                    if(i == null||i.isEmpty()){
+                        charUsedList.add(false)
+                    }else{
+                        charUsedList.add(true)
+                    }
+                }
+
+                adapter.notifyDataSetChanged()
             }
 
         }
-
 
         adapter = CharacterListAdapter(charImageList,charNameList,charScriptList,charUsedList)
         val layoutManager = LinearLayoutManager(requireContext())
@@ -128,7 +125,8 @@ class CharacterListFragment : Fragment() {
                 }
             }
         })
-
+        val Coach = TutorialCoachMarkActivity(requireContext())
+        Coach.CoachMark6(requireActivity(),requireContext())
 
     }
 

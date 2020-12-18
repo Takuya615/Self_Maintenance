@@ -12,12 +12,6 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_login"
-        android:orderInCategory="100"
-        android:title="ログイン"
-        app:showAsAction="never"/>
-
-    <item
     android:id="@+id/action_settings"
     android:orderInCategory="100"
     android:title="アカウント設定"
@@ -28,5 +22,11 @@
         android:orderInCategory="100"
         android:title="チュートリアル"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_logout"
+        android:orderInCategory="100"
+        android:title="ログアウト"
+        app:showAsAction="never"/>
 
 </menu>

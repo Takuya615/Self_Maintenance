@@ -1,5 +1,6 @@
 package jp.tsumura.takuya.self_maintenance.forGallery
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,6 +14,7 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import jp.tsumura.takuya.self_maintenance.ForStart.TutorialCoachMarkActivity
 import jp.tsumura.takuya.self_maintenance.R
 import kotlinx.android.synthetic.main.recycler_view.*
 
@@ -51,6 +53,7 @@ class VideoListFragment: Fragment() {
         db = FirebaseFirestore.getInstance()
         val user = mAuth.currentUser
 
+        TutorialCoachMarkActivity(requireContext()).TutoForGallery()//            動画リストのチュートリアルのの代わり
 
         val friendUid = requireActivity().intent.getStringExtra("friendUid")
         if(friendUid == null){
@@ -98,6 +101,7 @@ class VideoListFragment: Fragment() {
             override fun onItemClickListener(view: View, position: Int, clickedText: String) {
                 when (view.getId()) {
                     R.id.itemTextView -> {
+
                         UriString = muriList[position]
                         val intent = Intent(requireActivity(), GalleryActivity::class.java)
                         intent.putExtra("selectedName", UriString)

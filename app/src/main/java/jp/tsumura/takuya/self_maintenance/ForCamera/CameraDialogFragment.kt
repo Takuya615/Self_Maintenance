@@ -3,6 +3,7 @@ package jp.tsumura.takuya.self_maintenance.ForCamera
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import jp.tsumura.takuya.self_maintenance.FirstFragment
+import jp.tsumura.takuya.self_maintenance.MainActivity
 import jp.tsumura.takuya.self_maintenance.R
 import kotlinx.android.synthetic.main.dialog_camera.*
 import kotlinx.android.synthetic.main.dialog_camera.view.*
@@ -37,8 +39,8 @@ class CameraDialogFragment(mTimerSec: Int): DialogFragment() {
         // 肯定ボタンに表示される文字列、押したときのリスナーを設定する
         builder.setPositiveButton("メイン画面"){ dialog, which ->
             requireActivity().finish()
-            //val intent = Intent(requireContext(), MainActivity::class.java)
-            //requireContext().startActivity(intent)
+            val intent = Intent(requireContext(), MainActivity::class.java)
+            requireContext().startActivity(intent)
         }
         builder.setView(customView)
 

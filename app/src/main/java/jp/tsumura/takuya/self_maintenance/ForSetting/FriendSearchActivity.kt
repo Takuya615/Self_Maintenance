@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.provider.Telephony.Mms.Part.CONTENT_ID
 import android.view.MenuItem
 import android.view.View
@@ -15,7 +16,10 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
+import jp.tsumura.takuya.self_maintenance.ForStart.TutorialCoachMarkActivity
+import jp.tsumura.takuya.self_maintenance.MainActivity
 import jp.tsumura.takuya.self_maintenance.R
+import jp.tsumura.takuya.self_maintenance.forGallery.FriendListFragment
 import kotlinx.android.synthetic.main.activity_friend_search.*
 import kotlinx.android.synthetic.main.activity_goal_setting.*
 
@@ -34,6 +38,13 @@ class FriendSearchActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         title = "フレンド検索"
         request.visibility = View.INVISIBLE//         request=ボタンのid
+
+        Handler().postDelayed({
+            val Coach = TutorialCoachMarkActivity(this)
+            Coach.CoachMark5(this,this)
+        },1000)
+
+
         //uid =""val list = mutableListOf<String>(name,uid)
         mAuth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
@@ -46,6 +57,9 @@ class FriendSearchActivity : AppCompatActivity() {
                     .addOnSuccessListener {
                         Toast.makeText(this,"リクエストを送りました", Toast.LENGTH_LONG).show()
                         finish()
+                        startActivity(Intent(this, MainActivity::class.java))
+
+
                         //友人にリクエストを送ったのか、イベントログを記録する。他の人へオススメしたという指標になる
                         val bundle:Bundle = Bundle()
                         bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "friend_request")

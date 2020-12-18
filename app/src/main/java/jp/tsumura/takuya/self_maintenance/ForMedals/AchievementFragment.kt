@@ -58,40 +58,43 @@ class AchievementFragment : Fragment(){
 
                     val r = score.recover//復活
                     //val c = score.continuous//最大継続
-                    val prefs = requireActivity().getSharedPreferences("preferences_key_sample", Context.MODE_PRIVATE)
-                    val MAX : Int = prefs.getInt("preferences_key_MAX",0)//最長連続日数
+                    if (isAdded() && activity != null) {
+                        val prefs = requireActivity().getSharedPreferences("preferences_key_sample", Context.MODE_PRIVATE)
+                        val MAX : Int = prefs.getInt("preferences_key_MAX",0)//最長連続日数
 
-                    //titleリストの作成
-                    for(i in 0..maxList.size-1){
-                        titleList.add("総日数 ${maxList[i]}日           ${calculate(t,maxList[i])}")
-                        progressList.add(t)
-                        if(maxList[i]<=t){ hideButton.add(false) }
-                        else{ hideButton.add(true)}
+                        //titleリストの作成
+                        for(i in 0..maxList.size-1){
+                            titleList.add("総日数 ${maxList[i]}日           ${calculate(t,maxList[i])}")
+                            progressList.add(t)
+                            if(maxList[i]<=t){ hideButton.add(false) }
+                            else{ hideButton.add(true)}
+                        }
+                        for(i in 0..maxListC.size-1) {
+                            titleList.add("継続 ${maxListC[i]}日　           ${calculate(MAX,maxListC[i])}")
+                            progressList.add(MAX)
+                            if(maxListC[i]<=MAX){ hideButton.add(false) }
+                            else{ hideButton.add(true)}
+                        }
+                        for(i in 0..maxListR.size-1){
+                            titleList.add("復活 ${maxListR[i]}回　           ${calculate(r,maxListR[i])}")
+                            progressList.add(r)
+                            if(maxListR[i]<=r){ hideButton.add(false) }
+                            else{ hideButton.add(true)}
+                        }
+
+                        //それぞれのパラメータを1つのmaxListにまとめる
+                        maxListC.forEach{ maxList.add(it) }
+                        maxListR.forEach{ maxList.add(it) }
+
+
+                        adapter = AchievementAdapter(titleList,maxList,progressList,hideButton)
+                        val layoutManager = LinearLayoutManager(requireContext())
+                        // アダプターとレイアウトマネージャーをセット
+                        recyclerView.layoutManager = layoutManager//simpleRecyclerView
+                        recyclerView.adapter = adapter
+                        recyclerView.setHasFixedSize(true)
+
                     }
-                    for(i in 0..maxListC.size-1) {
-                        titleList.add("継続 ${maxListC[i]}日　           ${calculate(MAX,maxListC[i])}")
-                        progressList.add(MAX)
-                        if(maxListC[i]<=MAX){ hideButton.add(false) }
-                        else{ hideButton.add(true)}
-                    }
-                    for(i in 0..maxListR.size-1){
-                        titleList.add("復活 ${maxListR[i]}回　           ${calculate(r,maxListR[i])}")
-                        progressList.add(r)
-                        if(maxListR[i]<=r){ hideButton.add(false) }
-                        else{ hideButton.add(true)}
-                    }
-
-                    //それぞれのパラメータを1つのmaxListにまとめる
-                    maxListC.forEach{ maxList.add(it) }
-                    maxListR.forEach{ maxList.add(it) }
-
-
-                    adapter = AchievementAdapter(titleList,maxList,progressList,hideButton)
-                    val layoutManager = LinearLayoutManager(requireContext())
-                    // アダプターとレイアウトマネージャーをセット
-                    recyclerView.layoutManager = layoutManager//simpleRecyclerView
-                    recyclerView.adapter = adapter
-                    recyclerView.setHasFixedSize(true)
 
 // インターフェースの実装
                     /*

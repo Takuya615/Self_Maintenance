@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.text.InputType
 import android.view.MenuItem
+import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
@@ -19,6 +20,7 @@ import jp.tsumura.takuya.self_maintenance.ForCamera.CameraXActivity
 import jp.tsumura.takuya.self_maintenance.ForCamera.Score
 import jp.tsumura.takuya.self_maintenance.R
 import jp.tsumura.takuya.self_maintenance.ForStart.TutorialCoachMarkActivity
+import jp.tsumura.takuya.self_maintenance.MainActivity
 import kotlinx.android.synthetic.main.activity_goal_setting.*
 
 class GoalSettingActivity : AppCompatActivity(){
@@ -31,8 +33,8 @@ class GoalSettingActivity : AppCompatActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_goal_setting)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        title = "目標設定"
+        supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        title = "したい習慣を設定"
 
         //mAuth = FirebaseAuth
         prefs = getSharedPreferences("preferences_key_sample", Context.MODE_PRIVATE)
@@ -42,52 +44,49 @@ class GoalSettingActivity : AppCompatActivity(){
         //このViewを開くと同時に、データを取得。　データがあれば各テキストに反映する。
         //ログインしてなければ、反映されない、ミッション時間は一度設定すれば、ログインなしでも使える。
 
-        if(user!=null){
-            val docRef = db.collection("Goals").document(user.uid)
-            docRef.get().addOnSuccessListener { documentSnapshot ->
-                val goal = documentSnapshot.toObject(Goal::class.java)
-                Edittext1.setText(goal?.goal)
-                Edittext2.setText(goal?.task)
-                Edittext3.setText(goal?.goaltime)
+        imageView2.visibility= View.INVISIBLE
+        textView2.visibility= View.INVISIBLE
+        close.visibility= View.INVISIBLE
+        val docRef = db.collection("Goals").document(user!!.uid)
+        docRef.get().addOnSuccessListener { documentSnapshot ->
+            val goal = documentSnapshot.toObject(Goal::class.java)
+            Edittext1.setText(goal?.goal)
+            Edittext3.setText(goal?.goaltime)
+            TimeCal()
 
-                TimeCal()
-
-            }.addOnFailureListener { }
         }
 
-
-        //設定ボタンを押したら、その時書いてある値をそのまま保存する。
-        //val Button=findViewById<Button>(R.id.button)
-        button.setOnClickListener(){
+        setbutton.setOnClickListener(){
             DataSet()
-            TimeCal()
+            TimeCal()//1%の時間を計算して保存するだけ
             // キーボードが出てたら閉じる
             val im = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             im.hideSoftInputFromWindow(it.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
-            val Coach = TutorialCoachMarkActivity(this)
-            Coach.CoachMark4(this,this)
+
+            //val intent = Intent(this, MainActivity::class.java)
+            //startActivity(intent)
+            //finish()
         }
-        //val SetButton=findViewById<Button>(R.id.setbutton)
-        setbutton.setOnClickListener(){
-            val intent = Intent(this, CameraXActivity::class.java)
+        close.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             finish()
         }
-        help.setOnClickListener(){
-            SettingDialog().showDialog(this)
-        }
+        //help.setOnClickListener(){ SettingDialog().showDialog(this) }
 
-
+/*
         Handler().postDelayed({
             val Coach = TutorialCoachMarkActivity(this)
             Coach.CoachMark2(this,this)
         }, 1000)
 
+ */
+
     }
 //それぞれの入力内容をFirebaseに保存する
     fun DataSet(){
         val mygoalmsg = Edittext1.text.toString()
-        val taskmsg = Edittext2.text.toString()
+        //val taskmsg = Edittext2.text.toString()
         val goaltime = Edittext3.text.toString()//目標時間（じぶんで決めるとモチベーションに？）
         val goals = db.collection("Goals")
         //val user = mAuth.currentUser
@@ -97,7 +96,7 @@ class GoalSettingActivity : AppCompatActivity(){
         }
         val goal = Goal(
             mygoalmsg,
-            taskmsg,
+            //taskmsg,
             goaltime,
 
         )
@@ -109,8 +108,26 @@ class GoalSettingActivity : AppCompatActivity(){
 
     fun TimeCal(){
         val goaltimeA =Edittext3.text.toString()//.toInt()
+        val goalName =Edittext1.text.toString()//.toInt()
         val e : SharedPreferences.Editor = prefs.edit()
 
+        if(goaltimeA.isNotEmpty()){
+            val goaltime = goaltimeA.toInt()//最終目標時間
+            val Calu =goaltime *60 *1/100//　　　　　　　初期値は 1 ％からスタート
+            e.putInt(getString(R.string.preferences_key_smalltime), Calu)
+            e.apply()
+
+            imageView2.visibility= View.VISIBLE
+            textView2.visibility= View.VISIBLE
+            textView2.text = "1日にすべき時間が少しずつ自動で上昇します(上図)" +
+                    "\n例）初日　　$Calu 秒間(1%)　$goalName　\n　　３日後　${Calu*2} 秒間(2%)　$goalName　となります" +
+                    "\n最小でも週４回を６週間以上続ければ、より習慣になりやすいといわれています。"+
+                    "\nはじめは短い時間でもいいので、できる限り毎日トライしましょう"
+            close.visibility= View.VISIBLE
+        }
+
+
+        /*     ステップの時間を表記したい場合、このコードが必要
         if(user!=null){
             val docRef = db.collection("Scores").document(user.uid)
             docRef.get().addOnSuccessListener { documentSnapshot ->
@@ -146,13 +163,14 @@ class GoalSettingActivity : AppCompatActivity(){
             }
 
         }
+
+         */
     }
     //戻るボタンを押すと今いるviewを削除する
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
-            android.R.id.home->{
-                finish()
-            }
+
+            //android.R.id.home->{ finish() }
         }
         return super.onOptionsItemSelected(item)
     }

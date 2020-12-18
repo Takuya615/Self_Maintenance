@@ -131,34 +131,30 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
                     videoCapture.startRecording(file, object : VideoCapture.OnVideoSavedListener {
                         override fun onVideoSaved(file: File?) {
                             val path = System.currentTimeMillis()
-                            val user = mAuth.currentUser
-                            if (user != null) {//ログインしてたら、画像の保存と、URLが取得できる
-                                val storage = Firebase.storage
-                                val storageRef = storage.reference
-                                val photoRef = storageRef.child("${user.uid}/$path.mp4")
-                                val movieUri = Uri.fromFile(file)
-                                val uploadTask = photoRef.putFile(movieUri)
-                                // Register observers to listen for when the download is done or if it fails
-                                uploadTask.addOnFailureListener {
-                                    //Log.e("TAG", "ストレージへ保存失敗")
-                                }.addOnSuccessListener {
-                                    //Log.e("TAG", "ストレージへ保存成功")
-                                }.continueWithTask { task ->
-                                    if (!task.isSuccessful) {
-                                        task.exception?.let {
-                                            throw it
-                                        }
-                                    }
-                                    photoRef.downloadUrl
-                                }.addOnCompleteListener { task ->
-                                    if (task.isSuccessful) {
-                                        val downloadUri:Uri? = task.result
-                                        Firebase().WriteToStore(downloadUri.toString(),path)//Uriと日付を保存する
+                            //val user = mAuth.currentUser
+                            val storage = Firebase.storage
+                            val storageRef = storage.reference
+                            val photoRef = storageRef.child("${user!!.uid}/$path.mp4")
+                            val movieUri = Uri.fromFile(file)
+                            val uploadTask = photoRef.putFile(movieUri)
+                            // Register observers to listen for when the download is done or if it fails
+                            uploadTask.addOnFailureListener {
+                                //Log.e("TAG", "ストレージへ保存失敗")
+                            }.addOnSuccessListener {
+                                //Log.e("TAG", "ストレージへ保存成功")
+                            }.continueWithTask { task ->
+                                if (!task.isSuccessful) {
+                                    task.exception?.let {
+                                        throw it
                                     }
                                 }
-
+                                photoRef.downloadUrl
+                            }.addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
+                                    val downloadUri:Uri? = task.result
+                                    Firebase().WriteToStore(downloadUri.toString(),path)//Uriと日付を保存する
+                                }
                             }
-
                         }
 
                         override fun onError(useCaseError: VideoCapture.UseCaseError?,message: String?, cause: Throwable?) { }

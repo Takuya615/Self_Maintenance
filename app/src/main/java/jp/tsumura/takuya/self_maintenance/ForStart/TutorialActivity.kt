@@ -41,11 +41,12 @@ class TutorialActivity : WelcomeActivity() {
 
             .page(BasicPage(
                 R.drawable.self_movie2,
-                "毎日・その場で・すこしだけ",
-                "スマホのカメラ機能を使って、フィットネス・ヨガ・勉強など、あなたにとって望ましい行動を、「自撮り」することで、習慣づくりをお手伝いします。")
+                "毎日・その場で・少しだけ",
+                "スマホカメラを使って、フィットネス・ヨガ・勉強など、あなたにとって望ましい行動を、「自撮り」することで、習慣づくりをお手伝いします。")
                 //.background(BackgroundColor(Color.CYAN))
             )
 
+                /*
             .page(BasicPage(
                 R.drawable.smallstep,
                 "スモールステップ",
@@ -54,6 +55,9 @@ class TutorialActivity : WelcomeActivity() {
                         "その難易度が上がっていけるようあなたをサポートします。")
                 //.background(BackgroundColor(Color.DKGRAY))
             )
+
+                 */
+
                 /*
                 "{自分の習慣にしたい行動を毎日少しずつ自撮りし、それを継続することを手伝います。\n" +
                         "習慣作りの科学的テクニックとして、スモールステップがあります。いきなり大きなミッションを自分に課すのではなく、\n" +

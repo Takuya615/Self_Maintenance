@@ -12,8 +12,8 @@
 
     //新しいデータに更新するときには、リセットが必要なデータ
     <string name="pref_check_point">firstfragment_1</string>
+    <string name="prefs_check_mini">firstfragment_2</string>
     <string name="preferences_key_smalltime">GoalSettingActivity</string>
-
 
 
     <!-- Strings used for fragments for navigation -->
@@ -43,7 +43,7 @@
     <string name="Tutorial1">
         最小で週４回を６週間以上続ければ、より習慣になりやすいといわれています\n
         この間は最小限の負担で行い、クセがついてから本格的に時間を伸ばしていきます\n
-        まずは５０日間、続けることを目標にしましょう。
+        まずは４８日間、続けることを目標にしましょう。
     </string>
 
 </resources>

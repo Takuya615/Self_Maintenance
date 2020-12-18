@@ -2,12 +2,14 @@ package jp.tsumura.takuya.self_maintenance.ForSetting
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import android.text.Editable
 import android.text.PrecomputedText
 import android.view.MenuItem
 import android.view.View
+import android.view.View.INVISIBLE
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -38,15 +40,28 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(false)
         title="ログイン画面"
 
         TutorialActivity.showIfNeeded(this,savedInstanceState)//チューとリアル
+        /*
+        val prefs = getSharedPreferences( "preferences_key_sample", Context.MODE_PRIVATE)
+        val Tuto0 : Boolean = prefs.getBoolean("Tuto0",false)
+        if(!Tuto0){
+            val g : SharedPreferences.Editor = prefs.edit()
+            g.putBoolean("Tuto0", true)
+            g.apply()
+        }
 
+         */
+
+/*
         Handler().postDelayed({
             val Coach = TutorialCoachMarkActivity(this)
             Coach.CoachMark0(this,this)
         }, 1000)
+
+ */
 
         //mDataBaseReference = FirebaseDatabase.getInstance().reference
 
@@ -81,8 +96,6 @@ class LoginActivity : AppCompatActivity() {
                 val firebaseAnalytics = FirebaseAnalytics.getInstance(this)
                 val bundle = Bundle()
 
-
-
                 // 成功した場合
                 if (mIsCreateAccount) {
                     Toast.makeText(this,"アカウントが作成されました",Toast.LENGTH_LONG).show()
@@ -95,23 +108,21 @@ class LoginActivity : AppCompatActivity() {
                 }
 
                 progressBar.visibility = View.GONE
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
-                finish()
+                val prefs = getSharedPreferences( "preferences_key_sample", Context.MODE_PRIVATE)
+                val Tuto1 : Boolean = prefs.getBoolean("Tuto1",false)
+                if(!Tuto1){//true
+                    val intent = Intent(this, AccountSettingActivity::class.java)
+                    startActivity(intent)
+                }else{
+                    val intent = Intent(this, MainActivity::class.java)
+                    startActivity(intent)
+                }
+                //finish()
 
             } else {
                 // 失敗した場合
                 Toast.makeText(this,"ログイン失敗\nメールアドレスかパスワードに間違いがないか確認してください",Toast.LENGTH_LONG).show()
                 progressBar.visibility = View.GONE
-            }
-        }
-
-        // UIの準備
-        val user = mAuth.currentUser
-        if(user!=null){
-            val a = mRealm().UidToName(user.uid)
-            if(a.isNotEmpty()){
-                title = "${a}さんでログイン中"
             }
         }
 
@@ -152,17 +163,6 @@ class LoginActivity : AppCompatActivity() {
                 Snackbar.make(v, "正しく入力してください", Snackbar.LENGTH_LONG).show()
             }
         }
-        logoutButton.setOnClickListener{
-            if(mAuth.currentUser ==null){
-                //Toast.makeText(this,"すでにログアウトされています",Toast.LENGTH_LONG).show()
-            }else{
-                mAuth.signOut()
-                Toast.makeText(this,"ログアウトしました",Toast.LENGTH_LONG).show()
-            }
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
     }
 
     private fun createAccount(email: String, password: String) {
@@ -183,7 +183,7 @@ class LoginActivity : AppCompatActivity() {
 
     //戻るボタンを押すと今いるviewを削除する
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item!!.itemId){
+        when(item.itemId){
             android.R.id.home->{
                 finish()
             }
