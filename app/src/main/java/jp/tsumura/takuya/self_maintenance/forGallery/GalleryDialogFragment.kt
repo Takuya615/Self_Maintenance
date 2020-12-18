@@ -69,8 +69,7 @@ class GalleryDialogFragment(val coll: DocumentReference,val friendUid: String): 
             dialog?.Str2?.text = te2.toString()
         }
         dialog?.AddButton?.setOnClickListener {
-            addPoint(item[0],friendUid,te1)//強みの評価
-            addPoint(item[1],friendUid,te2)
+            addPoint2(friendUid,item[0],te1,item[1],te2)//強みの評価
             saveLikeAndNamelist(coll)//いいね＋１、　動画に署名
             requireActivity().finish()
         }
@@ -81,7 +80,8 @@ class GalleryDialogFragment(val coll: DocumentReference,val friendUid: String): 
 
     }
 
-    fun addPoint(item:String,friendUid:String,addNum:Int){
+    /*
+    fun addPoint(item:String,friendUid:String,addNum:Int){//1つの強みのみ加点するとき用
 
         val saveScore = db.collection("Scores").document(friendUid)
         saveScore.get().addOnSuccessListener { document ->
@@ -95,6 +95,32 @@ class GalleryDialogFragment(val coll: DocumentReference,val friendUid: String): 
                         newList.add(viaList[i])
                     }else{
                         newList.add(viaList[i] + addNum)
+                    }
+                }
+                saveScore.update( "vialist",newList)
+            }
+        }
+    }
+
+     */
+
+    fun addPoint2(friendUid:String,item1:String,addNum1:Int,item2:String,addNum2:Int){//2つの強みに同時に加点するとき用
+
+        val saveScore = db.collection("Scores").document(friendUid)
+        saveScore.get().addOnSuccessListener { document ->
+            val score = document.toObject(Score::class.java)
+            if (document.data != null && score != null) {
+                val viaList = score.vialist
+                val num1 = Strengths.ViaStrItem.indexOf(item1)//ランダムにとった値の要素数（順番数）を取得
+                val num2 = Strengths.ViaStrItem.indexOf(item2)
+                val newList = mutableListOf<Int>()
+                for(i in 0..23){
+                    if(i==num1){
+                        newList.add(viaList[i] + addNum1)
+                    }else if(i==num2){
+                        newList.add(viaList[i] + addNum2)
+                    }else{
+                        newList.add(viaList[i])
                     }
                 }
                 saveScore.update( "vialist",newList)
