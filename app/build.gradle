@@ -42,6 +42,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation 'androidx.wear:wear:1.0.0'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
@@ -84,5 +85,8 @@ dependencies {
     implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
     implementation 'com.google.code.gson:gson:2.7'//Gsonライブラリ
 
+    //カレンダーライブラリ
+    implementation 'com.applandeo:material-calendar-view:1.7.0'
+    compileOnly 'com.google.android.wearable:wearable:2.6.0'
 
 }

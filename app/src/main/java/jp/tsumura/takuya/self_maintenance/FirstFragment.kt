@@ -73,6 +73,19 @@ class FirstFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+
+
+
+
+
+
+
+
+
+
+
+
         val totalday = prefs.getInt("totalday",0)
 
         val growthimage =view.findViewById<ImageView>(R.id.growth_image)

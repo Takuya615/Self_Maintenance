@@ -2,9 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="jp.tsumura.takuya.self_maintenance">
 
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <uses-feature android:name="android.hardware.type.watch" />
+
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-
 
     <application
         android:allowBackup="true"
@@ -13,6 +16,18 @@
         android:roundIcon="@drawable/tree_seichou02"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".CalenderActivity"></activity>
+
+        <uses-library
+            android:name="com.google.android.wearable"
+            android:required="true" />
+        <!--
+               Set to true if your app is Standalone, that is, it does not require the handheld
+               app to run.
+        -->
+        <meta-data
+            android:name="com.google.android.wearable.standalone"
+            android:value="true" />
 
         <activity android:name=".ForSetting.AccountSettingActivity" />
         <activity android:name=".ForSetting.FriendSearchActivity">
