@@ -10,6 +10,6 @@
         android:id="@+id/calendarView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:headerColor="#2a5a4c"/>
+        app:headerColor="@color/colorPrimary"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

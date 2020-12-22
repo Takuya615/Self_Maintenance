@@ -1,4 +1,5 @@
 package jp.tsumura.takuya.self_maintenance
+/*
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -24,7 +25,7 @@ class CalenderActivity : AppCompatActivity() {
         for(i in 0..lst.size-1){
             val calendar = Calendar.getInstance()
             calendar.add(Calendar.DAY_OF_MONTH, -i)
-            val text = CalendarUtils.getDrawableText(this,lst[i].toString(), null, android.R.color.holo_green_dark, 12)
+            val text = CalendarUtils.getDrawableText(this,lst[i].toString(), null, R.color.colorPrimary, 12)
             events.add(EventDay(calendar, text))
         }
         //今日の日付に　M　〇マークを付ける
@@ -44,3 +45,6 @@ class CalenderActivity : AppCompatActivity() {
 
     }
 }
+
+
+ */

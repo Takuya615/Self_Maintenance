@@ -112,7 +112,6 @@ class CalenderDialogFragment(TimerSec:Int): DialogFragment() {
     private fun getMarkDays(calendarView: CalendarView?, list: List<Any>) {
         val events = ArrayList<EventDay>()
 
-
         Log.e("tag", "カレンダーに反映するリストは$list ")
 
         for (i in 0..list.size - 1) {

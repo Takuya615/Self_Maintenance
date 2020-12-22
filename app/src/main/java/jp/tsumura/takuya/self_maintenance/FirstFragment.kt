@@ -76,11 +76,6 @@ class FirstFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        button2.setOnClickListener {
-            val intent= Intent(requireContext(), CalenderActivity::class.java)
-            startActivity(intent)
-            //CalenderDialogFragment(30).show(requireActivity().supportFragmentManager,"calender")
-        }
 
         val totalday = prefs.getInt("totalday",0)
 
