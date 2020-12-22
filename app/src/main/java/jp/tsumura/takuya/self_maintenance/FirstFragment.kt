@@ -15,6 +15,8 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat.recreate
 import androidx.core.content.ContextCompat
 import com.google.firebase.auth.FirebaseAuth
+import jp.tsumura.takuya.self_maintenance.ForCamera.CameraDialogFragment
+import jp.tsumura.takuya.self_maintenance.ForCamera.CameraXActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_first.*
 import java.text.SimpleDateFormat
@@ -74,17 +76,11 @@ class FirstFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
-
-
-
-
-
-
-
-
-
-
+        button2.setOnClickListener {
+            val intent= Intent(requireContext(), CalenderActivity::class.java)
+            startActivity(intent)
+            //CalenderDialogFragment(30).show(requireActivity().supportFragmentManager,"calender")
+        }
 
         val totalday = prefs.getInt("totalday",0)
 

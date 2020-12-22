@@ -107,6 +107,8 @@ class MainActivity : AppCompatActivity() {
         Realm.init(this)
 
 
+
+
         //ボトムナビゲーション
         bottom_navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
         supportFragmentManager.beginTransaction()

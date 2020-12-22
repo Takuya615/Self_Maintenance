@@ -25,6 +25,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import jp.tsumura.takuya.self_maintenance.CalenderDialogFragment
 import jp.tsumura.takuya.self_maintenance.ForStart.TutorialCoachMarkActivity
 import jp.tsumura.takuya.self_maintenance.R
 import kotlinx.android.synthetic.main.activity_camera_x.*
@@ -180,8 +181,8 @@ class CameraXActivity : AppCompatActivity(), LifecycleOwner {
                     sound.play(MediaActionSound.STOP_VIDEO_RECORDING)//シャッター音
 
                     //CameraDialog().showDialog(this, mTimerSec,this)
-
                     CameraDialogFragment(mTimerSec).show(supportFragmentManager,"sample")
+
                     mTimerSec=0
                     timer.text = "00:00"
                 }

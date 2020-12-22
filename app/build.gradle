@@ -7,13 +7,13 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'realm-android'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
     buildToolsVersion "29.0.3"
 
     defaultConfig {
         applicationId "jp.tsumura.takuya.self_maintenance"
         minSdkVersion 26
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
 
@@ -85,8 +85,8 @@ dependencies {
     implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
     implementation 'com.google.code.gson:gson:2.7'//Gsonライブラリ
 
-    //カレンダーライブラリ
     implementation 'com.applandeo:material-calendar-view:1.7.0'
-    compileOnly 'com.google.android.wearable:wearable:2.6.0'
+
+
 
 }

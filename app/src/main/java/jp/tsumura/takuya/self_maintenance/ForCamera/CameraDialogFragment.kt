@@ -13,6 +13,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import jp.tsumura.takuya.self_maintenance.CalenderDialogFragment
 import jp.tsumura.takuya.self_maintenance.FirstFragment
 import jp.tsumura.takuya.self_maintenance.R
 import kotlinx.android.synthetic.main.dialog_camera.*
@@ -39,6 +40,9 @@ class CameraDialogFragment(mTimerSec: Int): DialogFragment() {
             requireActivity().finish()
             //val intent = Intent(requireContext(), MainActivity::class.java)
             //requireContext().startActivity(intent)
+        }
+        builder.setNegativeButton("カレンダー"){ dialog, which ->
+            CalenderDialogFragment(time).show(requireActivity().supportFragmentManager,"calender")
         }
         builder.setView(customView)
 
