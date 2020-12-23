@@ -130,8 +130,9 @@ class TutorialCoachMarkActivity(context:Context) {
             val Target = sreateUI(target,activity,"  ミッションの自撮り",
                 "今日は$small 秒間、自分の習慣を撮影してください\n時間になると画面がみどり色に変わり、音声で知らせます",0f,0f,3f)
             val target2 = activity.findViewById<ImageButton>(R.id.capture_button1)
-            val Target2 = sreateCircleUI(target2,activity,"",
-                "",0f,0f,-3f)
+            val Target2 = sreateCircleUI(target2,activity,"ストレージとプライバシー",
+                "この動画は外部サーバーに保存されるため、端末のストレージを圧迫することはありません。" +
+                        "\nまた、あなたが許可を出したユーザーしか閲覧できない仕組みになっているのであんしん。",0f,0f,-3f)
 
             // コーチマークを作成
             Spotlight.with(activity)
@@ -142,7 +143,7 @@ class TutorialCoachMarkActivity(context:Context) {
                 // 表示するスピード
                 .setAnimation(DecelerateInterpolator(1f))
                 // 注目されたいところ（複数指定も可能）
-                .setTargets(Target)
+                .setTargets(Target,Target2)
                 // 注目されたいところ以外をタップする時に閉じられるかどうか
                 .setClosedOnTouchedOutside(true)
                 // コーチマーク表示される時になんかする
@@ -207,7 +208,7 @@ class TutorialCoachMarkActivity(context:Context) {
         }
     }
 
-    //カメラ撮影画面でのコーチマーク
+    //フレンドリクエスト画面でのコーチマーク
     fun CoachMark5(activity: Activity,context: Context){
         if(!Tuto4){
             g.putBoolean("Tuto4", true)
