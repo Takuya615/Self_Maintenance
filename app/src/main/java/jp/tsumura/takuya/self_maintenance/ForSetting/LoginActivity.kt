@@ -148,6 +148,10 @@ class LoginActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
+        PPbtn.setOnClickListener {
+            val intent = Intent(this, PrivacyPolicyActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun createAccount(email: String, password: String) {
@@ -168,7 +172,7 @@ class LoginActivity : AppCompatActivity() {
 
     //戻るボタンを押すと今いるviewを削除する
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item!!.itemId){
+        when(item.itemId){
             android.R.id.home->{
                 finish()
             }

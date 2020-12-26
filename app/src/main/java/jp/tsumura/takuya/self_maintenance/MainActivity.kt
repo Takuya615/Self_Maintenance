@@ -2,7 +2,6 @@ package jp.tsumura.takuya.self_maintenance
 
 
 import android.content.Context
-import jp.tsumura.takuya.self_maintenance.ForSetting.GoalSettingActivity
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -15,9 +14,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import io.realm.Realm
 import jp.tsumura.takuya.self_maintenance.ForCamera.CameraXActivity
-import jp.tsumura.takuya.self_maintenance.ForSetting.AccountSettingActivity
-import jp.tsumura.takuya.self_maintenance.ForSetting.LoginActivity
-import jp.tsumura.takuya.self_maintenance.ForSetting.mRealm
+import jp.tsumura.takuya.self_maintenance.ForSetting.*
 import jp.tsumura.takuya.self_maintenance.ForStart.TutorialActivity
 import jp.tsumura.takuya.self_maintenance.ForStart.TutorialCoachMarkActivity
 import jp.tsumura.takuya.self_maintenance.forGallery.FriendListFragment
@@ -137,6 +134,7 @@ class MainActivity : AppCompatActivity() {
         val intent= Intent(this, GoalSettingActivity::class.java)
         val intent2= Intent(this, LoginActivity::class.java)
         val intent3= Intent(this, AccountSettingActivity::class.java)
+        val intent4= Intent(this, PrivacyPolicyActivity::class.java)
 
         when (item.itemId) {
             R.id.action_settings2 -> startActivity(intent)
@@ -150,6 +148,7 @@ class MainActivity : AppCompatActivity() {
             }
             //R.id.action_search -> { startActivity(Intent(this, FriendSearchActivity::class.java)) }
             //else ->Log.e("TAG","設定画面でなにかを押しました")
+            R.id.action_privacy_policy -> startActivity(intent4)
         }
         return super.onOptionsItemSelected(item)
     }

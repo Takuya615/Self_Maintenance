@@ -29,4 +29,10 @@
         android:title="チュートリアル"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/action_privacy_policy"
+        android:orderInCategory="100"
+        android:title="プライバシーポリシー"
+        app:showAsAction="never" />
+
 </menu>

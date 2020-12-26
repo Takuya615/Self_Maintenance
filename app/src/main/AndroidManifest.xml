@@ -5,7 +5,6 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
-
     <application
         android:allowBackup="true"
         android:icon="@drawable/tree_seichou02"
@@ -13,7 +12,10 @@
         android:roundIcon="@drawable/tree_seichou02"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
+        <activity
+            android:name=".ForSetting.PrivacyPolicyActivity"
+            android:label="@string/title_activity_privacy_policy"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".AchievementActivity" />
         <activity android:name=".ForSetting.AccountSettingActivity" />
         <activity android:name=".ForSetting.FriendSearchActivity">
