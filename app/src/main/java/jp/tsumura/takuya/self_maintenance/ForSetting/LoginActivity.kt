@@ -1,5 +1,8 @@
 package jp.tsumura.takuya.self_maintenance.ForSetting
 
+//ログイン　アカウント設定　　習慣の設定　メイン画面
+
+
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -110,7 +113,7 @@ class LoginActivity : AppCompatActivity() {
                 progressBar.visibility = View.GONE
                 val prefs = getSharedPreferences( "preferences_key_sample", Context.MODE_PRIVATE)
                 val Tuto1 : Boolean = prefs.getBoolean("Tuto1",false)
-                if(!Tuto1){//true
+                if(!Tuto1){
                     val intent = Intent(this, AccountSettingActivity::class.java)
                     startActivity(intent)
                 }else{
