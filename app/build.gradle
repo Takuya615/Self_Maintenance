@@ -5,6 +5,7 @@ apply plugin: 'com.google.gms.google-services'
 apply plugin: "androidx.navigation.safeargs"
 apply plugin: 'kotlin-kapt'
 apply plugin: 'realm-android'
+apply plugin: 'com.google.firebase.crashlytics'
 
 android {
     compileSdkVersion 30
@@ -66,6 +67,7 @@ dependencies {
 
     implementation 'com.firebaseui:firebase-ui-auth:6.2.0'
     implementation 'com.firebaseui:firebase-ui-storage:6.2.0'
+    implementation 'com.google.firebase:firebase-crashlytics-ktx'
     implementation 'com.google.firebase:firebase-analytics:17.5.0'
     implementation 'com.google.firebase:firebase-storage-ktx:19.1.1'
     implementation 'com.google.firebase:firebase-firestore:21.2.1'
