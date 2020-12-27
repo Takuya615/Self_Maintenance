@@ -5,6 +5,7 @@
     <color name="colorAccent">#4689FF</color>
     <color name="colorCoachMark">#C0000000</color>
     <color name="colorHighlight">#FFFF00</color>
+    <color name="clearButtonPressed">#00000000</color>
 
     <color name="material_blue">#64b5f6</color>
     <color name="material_green">#81c784</color>

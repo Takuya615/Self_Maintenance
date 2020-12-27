@@ -50,7 +50,7 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintVertical_bias="0.4"/>
+        app:layout_constraintVertical_bias="0.45"/>
 
     <Button
         android:id="@+id/createButton"
@@ -65,8 +65,22 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintVertical_bias="0.3"/>
+        app:layout_constraintVertical_bias="0.35"/>
 
+    <Button
+        android:layout_width="200dp"
+        android:layout_height="40dp"
+        android:text="プライバシーポリシー"
+        android:id="@+id/PPbtn"
+        android:textColor="@color/colorPrimary"
+        android:background="@color/clearButtonPressed"
+        style="?android:attr/borderlessButtonStyle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.85"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="0.26"/>
 
     <ProgressBar
         android:id="@+id/progressBar"

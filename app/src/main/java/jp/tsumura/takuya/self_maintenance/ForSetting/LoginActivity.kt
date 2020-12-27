@@ -163,6 +163,11 @@ class LoginActivity : AppCompatActivity() {
                 Snackbar.make(v, "正しく入力してください", Snackbar.LENGTH_LONG).show()
             }
         }
+
+        PPbtn.setOnClickListener {
+            val intent = Intent(this, PrivacyPolicyActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun createAccount(email: String, password: String) {
