@@ -148,6 +148,10 @@ class LoginActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
+        PPbtn.setOnClickListener {
+            val intent = Intent(this, PrivacyPolicyActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun createAccount(email: String, password: String) {
