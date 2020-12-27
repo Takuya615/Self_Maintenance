@@ -4,5 +4,5 @@
     <color name="colorPrimaryDark">#000000</color>
     <color name="colorAccent">#4689FF</color>
     <color name="colorCoachMark">#C0000000</color>
-    <color name="colorHighlight">#FFFF00</color>
+    <color name="clearButtonPressed">#00000000</color>
 </resources>
