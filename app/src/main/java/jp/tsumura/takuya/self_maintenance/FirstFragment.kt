@@ -93,7 +93,7 @@ class FirstFragment : Fragment() {
                     //レベルと通り名の設定
                     val Prelevel = CameraDialogFragment.calculate(totalPoint, 450, -450, 100)//以前までのレベル
                     levelText.text = "Lv. $Prelevel"
-                    val check = prefs.getInt(getString(R.string.pref_check_point),1)
+                    val check = prefs.getInt(getString(R.string.prefs_check_point),1)
                     strName.text = StreetName(check)
 
                     //タスクボタンを押したときのリスナー
@@ -121,7 +121,7 @@ class FirstFragment : Fragment() {
                                 )
                             }
                             val sp : SharedPreferences.Editor = prefs.edit()
-                            sp.putInt(getString(R.string.pref_check_point),check+1)//
+                            sp.putInt(getString(R.string.prefs_check_point),check+1)//
                             sp.commit()
                             requireActivity().supportFragmentManager.beginTransaction()
                                 .replace(R.id.frameLayout, FirstFragment())
@@ -144,7 +144,7 @@ class FirstFragment : Fragment() {
 
                             //テスト用　総日数分まで報酬を表示しきってしまったら、一つ前に戻す　　　テスト用　注意
                             val sp : SharedPreferences.Editor = prefs.edit()
-                            sp.putInt(getString(R.string.pref_check_point),1)
+                            sp.putInt(getString(R.string.prefs_check_point),1)
                             sp.apply()
                         }
                     }
@@ -165,7 +165,7 @@ class FirstFragment : Fragment() {
 
     //　　　　　　　　　　　　　　　　　タスクボタンの表示
     fun showTask(totalday: Int){
-        val check = prefs.getInt(getString(R.string.pref_check_point),1)
+        val check = prefs.getInt(getString(R.string.prefs_check_point),1)
         var Cal =  prefs.getInt(getString(R.string.preferences_key_smalltime),0)
         var progress = 0
         if(check*3 <= totalday) {

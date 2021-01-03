@@ -132,7 +132,7 @@ class TutorialCoachMarkActivity(context:Context) {
             val target2 = activity.findViewById<ImageButton>(R.id.capture_button1)
             val Target2 = sreateCircleUI(target2,activity,"ストレージとプライバシー",
                 "この動画は外部サーバーに保存されるため、端末のストレージを圧迫することはありません。" +
-                        "\nまた、あなたが許可を出したユーザーしか閲覧できない仕組みになっているのであんしん。",0f,0f,-3f)
+                        "\nまた、撮影した動画は、あなたが許可を出したユーザーしか閲覧できない仕組みになっています。",0f,0f,-3f)
 
             // コーチマークを作成
             Spotlight.with(activity)

@@ -6,13 +6,13 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <application
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@drawable/tree_seichou02"
         android:label="@string/app_name"
         android:roundIcon="@drawable/tree_seichou02"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ForSetting.PrivacyPolicyActivity"></activity>
+        <activity android:name=".ForSetting.PrivacyPolicyActivity" />
         <activity android:name=".ForSetting.AccountSettingActivity" />
         <activity android:name=".ForSetting.FriendSearchActivity">
             <intent-filter>

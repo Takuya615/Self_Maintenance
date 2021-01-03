@@ -89,7 +89,7 @@ class SecondFragment : Fragment() {
                     val totalday = score.totalD//総日数
                     val TT = score.totalT//総時間
                     val totalPoint = score.totalPoint
-                    val MAX : Int = prefs.getInt("preferences_key_MAX",0)//最長連続日数
+                    val MAX : Int = prefs.getInt(getString(R.string.preferences_key_MAX),0)//最長連続日数
 
                     list1.add("継続日数")
                     list1.add("これまでの最長継続日数")

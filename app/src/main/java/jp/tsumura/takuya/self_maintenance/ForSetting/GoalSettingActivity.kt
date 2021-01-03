@@ -29,11 +29,12 @@ class GoalSettingActivity : AppCompatActivity(){
     private val mAuth = FirebaseAuth.getInstance()
     private val db = FirebaseFirestore.getInstance()
     private val user = mAuth.currentUser
+    private var cate = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_goal_setting)
-        supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         title = "したい習慣を設定"
 
         //mAuth = FirebaseAuth
@@ -56,35 +57,66 @@ class GoalSettingActivity : AppCompatActivity(){
 
         }
 
+
+
+
         setbutton.setOnClickListener(){
-            DataSet()
-            TimeCal()//1%の時間を計算して保存するだけ
             // キーボードが出てたら閉じる
             val im = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             im.hideSoftInputFromWindow(it.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
 
-            //val intent = Intent(this, MainActivity::class.java)
-            //startActivity(intent)
-            //finish()
+            val Tuto1 : Boolean = prefs.getBoolean("Tuto1",false)
+            if(!Tuto1){//初回
+                DataSet()
+                TimeCal()
+            }else{
+                //データ消してもいいの？ダイアログ表示
+                val alertDialogBuilder = androidx.appcompat.app.AlertDialog.Builder(this)
+                alertDialogBuilder.setTitle("本当に変更しますか？")
+                alertDialogBuilder.setMessage("継続日数などの活動記録がすべてリセットされます。\nこれまで撮影してきた動画や強みの記録はリセットされません。")
+                alertDialogBuilder.setPositiveButton("変更する"){dialog, which ->
+                    DataSet()
+                    TimeCal()
+
+                    val e : SharedPreferences.Editor = prefs.edit()
+                    e.putInt(getString(R.string.prefs_check_point), 1)
+                    e.putInt(getString(R.string.preferences_key_MAX), 0)
+                    e.apply()
+
+                    val Ref = db.collection("Scores").document(user.uid)
+                    val data = Score(0, 0, 0, 0, 0, 100)
+                    Ref.set(data)
+                    Toast.makeText(this,"習慣設定を変更しました",Toast.LENGTH_SHORT)
+                }
+                alertDialogBuilder.setNegativeButton("キャンセル"){dialog, which ->        }
+                val alertDialog = alertDialogBuilder.create()
+                alertDialog.show()
+            }
+
+
+
         }
         close.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             finish()
         }
-        //help.setOnClickListener(){ SettingDialog().showDialog(this) }
+        sport_btn.setOnClickListener {
+            cate = 1
+            sport_btn.setBackgroundResource(R.drawable.frame_style_clear)
+            custom_btn.setBackgroundResource(R.drawable.frame_style_not_clear)
+        }
+        custom_btn.setOnClickListener {
+            cate = 0
+            sport_btn.setBackgroundResource(R.drawable.frame_style_not_clear)
+            custom_btn.setBackgroundResource(R.drawable.frame_style_clear)
+        }
 
-/*
-        Handler().postDelayed({
-            val Coach = TutorialCoachMarkActivity(this)
-            Coach.CoachMark2(this,this)
-        }, 1000)
-
- */
 
     }
 //それぞれの入力内容をFirebaseに保存する
     fun DataSet(){
+
         val mygoalmsg = Edittext1.text.toString()
         //val taskmsg = Edittext2.text.toString()
         val goaltime = Edittext3.text.toString()//目標時間（じぶんで決めるとモチベーションに？）
@@ -98,11 +130,14 @@ class GoalSettingActivity : AppCompatActivity(){
             mygoalmsg,
             //taskmsg,
             goaltime,
-
         )
+
         if(user==null){ Toast.makeText(this,"ログインすればデータを保存できます",Toast.LENGTH_LONG).show()
-        }else{ goals.document(user.uid).set(goal)
-        }
+        }else{ goals.document(user.uid).set(goal) }
+
+    val e : SharedPreferences.Editor = prefs.edit()
+    e.putInt(getString(R.string.prefs_category), cate)//カテゴリー番号を設定
+    e.apply()
 
     }
 
@@ -170,7 +205,7 @@ class GoalSettingActivity : AppCompatActivity(){
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
 
-            //android.R.id.home->{ finish() }
+            android.R.id.home->{ finish() }
         }
         return super.onOptionsItemSelected(item)
     }

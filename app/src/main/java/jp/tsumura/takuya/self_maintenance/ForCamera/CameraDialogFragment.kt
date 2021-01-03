@@ -76,123 +76,113 @@ class CameraDialogFragment(mTimerSec: Int): DialogFragment() {
         val day1 = LocalDate.parse(setday)//2019-08-28T10:15:30.123
         val different = ChronoUnit.DAYS.between(day1, now).toInt() // diff: 30
 
+        val docRef = db.collection("Scores").document(user!!.uid)
+        docRef.get().addOnSuccessListener { documentSnapshot ->
+            val score = documentSnapshot.toObject(Score::class.java)
 
-        if (user != null) {
-            val docRef = db.collection("Scores").document(user.uid)
-            docRef.get().addOnSuccessListener { documentSnapshot ->
-                val score = documentSnapshot.toObject(Score::class.java)
+            if (documentSnapshot.data != null && score != null) {
+                val continuous = score.continuous
+                val recover = score.recover
+                val totalD = score.totalD
+                val totalT = score.totalT
+                var DoNot = score.DoNot
+                val totalPoint = score.totalPoint
 
-                if (documentSnapshot.data != null && score != null) {
-                    val continuous = score.continuous
-                    val recover = score.recover
-                    val totalD = score.totalD
-                    val totalT = score.totalT
-                    var DoNot = score.DoNot
-                    val totalPoint = score.totalPoint
+                val listRandam = arrayOf(1.4, 1.2, 1.0, 0.8, 0.6)//スコアのランダム要素
+                val ran = listRandam.random()
 
-                    val listRandam = arrayOf(1.4, 1.2, 1.0, 0.8, 0.6)//スコアのランダム要素
-                    val ran = listRandam.random()
+                if (different == 1) {
+                    newCon = continuous + 1//継続日数
+                    newRec = recover//復活数
+                    newtot = totalD + 1//総日数
+                    point = 100 * newtot * ran//その日のスコア値
 
-                    if (different == 1) {
-                        newCon = continuous + 1//継続日数
-                        newRec = recover//復活数
-                        newtot = totalD + 1//総日数
-                        point = 100 * newtot * ran//その日のスコア値
+                } else if (different >= 2) {
+                    newCon = 0//継続リセット
+                    newRec = recover + 1//復活数
+                    newtot = totalD + 1//総日数
+                    DoNot = DoNot + different - 1
+                    point = 100 * newtot * ran//その日のスコア値
 
-                    } else if (different >= 2) {
-                        newCon = 0//継続リセット
-                        newRec = recover + 1//復活数
-                        newtot = totalD + 1//総日数
-                        DoNot = DoNot + different - 1
-                        point = 100 * newtot * ran//その日のスコア値
+                } else if (different == 0) {
+                    newCon = continuous//継続日数
+                    newRec = recover//復活数
+                    newtot = totalD//総日数
 
-                    } else if (different == 0) {
-                        newCon = continuous//継続日数
-                        newRec = recover//復活数
-                        newtot = totalD//総日数
-
-                    }
-
-                    //継続日数の最長値を保存する
-                    val MAX: Int = prefs.getInt("preferences_key_MAX", 0)
-                    if (MAX < newCon) {
-                        val updatedMAX = newCon
-                        save.putInt("preferences_key_MAX", updatedMAX)
-                    }
-
-                    //ワンワン機能
-                    val wanwanIsOn = FirstFragment().wanwan(prefs)
-                    if(wanwanIsOn){
-                        Log.e("TAG", "ワンワン　×１．２倍まえの経験値は$point")
-                        bonus.text = "ワンワン　×１．２倍"
-                        point = point*1.2
-                    }
-
-                    //トータル経験値の算出
-                    newTotP = totalPoint + point.toInt()
-
-                    Log.e("TAG", "ランダムは$ran")
-                    Log.e("TAG", "総日数はは$newtot")
-                    Log.e("TAG", "経験値は$point")
-                    Log.e("TAG", "とーたる経験値は$newTotP")
-                    val newnum = totalT + time//総活動時間
-                    save.putInt("totalday", newtot)//総日数だけプレファレンスにも保存
-
-                    val data = Score(newCon, newRec, newtot, newnum, DoNot, newTotP)
-                    docRef.set(data)
-                } else {
-
-                    point = 100.0
-                    val data = Score(0, 0, 1, time, 0, 100)
-                    docRef.set(data)
-                    save.putInt("totalday", 1)
                 }
-                //save.putString("TEST",today)//設定日の更新
-                save.putString("setDate", now.toString())
-                save.apply()
 
-                val level = calculate(newTotP, 450, -450, 100)
-                customView.revel.text = "               Lv. $level"
-                customView.text.text = "     継続日数　  　$newCon 日"
-                customView.text2.text = "     復活回数　　 $newRec 回"
-                customView.score.text = "     経験値              ${point.toInt()}"
-
-
-                //ココからメダルの表示
-                val maxT = mutableListOf(1, 2, 5, 7, 10, 15, 20, 25, 30)//総日数
-                val maxC = mutableListOf(1, 2, 5, 7, 10, 15, 20, 25, 30)//継続
-                val maxR = mutableListOf(1, 2, 3, 4, 5, 6, 7, 8, 9)//復活
-                val result = mutableListOf<String>()
-                for (i in maxT) {
-                    if (i == newtot) {
-                        result.add("総日数 $i 日")
-                    }
+                //継続日数の最長値を保存する
+                val MAX: Int = prefs.getInt(getString(R.string.preferences_key_MAX), 0)
+                if (MAX < newCon) {
+                    val updatedMAX = newCon
+                    save.putInt(getString(R.string.preferences_key_MAX), updatedMAX)
                 }
-                for (i in maxC) {
-                    if (i == newCon) {
-                        result.add("継続日数 $i 日")
-                    }
-                }
-                if(different >= 2){
-                    for (i in maxR) {
-                        if (i == newRec) {
-                            result.add("復活数　$i 回")
-                        }
-                    }
-                }
-                customView.cameraDialogRecyclerView.layoutManager = GridLayoutManager(requireContext(),3)
-                customView.cameraDialogRecyclerView.adapter = CameraDialogAdapter(result)
-                customView.cameraDialogRecyclerView.setHasFixedSize(true)
 
+                //ワンワン機能
+                val wanwanIsOn = FirstFragment().wanwan(prefs)
+                if(wanwanIsOn){
+                    Log.e("TAG", "ワンワン　×１．２倍まえの経験値は$point")
+                    bonus.text = "ワンワン　×１．２倍"
+                    point = point*1.2
+                }
+
+                //トータル経験値の算出
+                newTotP = totalPoint + point.toInt()
+
+                Log.e("TAG", "ランダムは$ran")
+                Log.e("TAG", "総日数はは$newtot")
+                Log.e("TAG", "経験値は$point")
+                Log.e("TAG", "とーたる経験値は$newTotP")
+                val newnum = totalT + time//総活動時間
+                save.putInt("totalday", newtot)//総日数だけプレファレンスにも保存
+
+                val data = Score(newCon, newRec, newtot, newnum, DoNot, newTotP)
+                docRef.set(data)
+            } else {
+
+                point = 100.0
+                val data = Score(0, 0, 1, time, 0, 100)
+                docRef.set(data)
+                save.putInt("totalday", 1)
             }
+            //save.putString("TEST",today)//設定日の更新
+            save.putString("setDate", now.toString())
+            save.apply()
 
-        }else{
-            customView.revel.text = ""
-            customView.text.text = "エラー"
-            customView.text2.text = "ログインすればスコアを確認できます"
-            customView.score.text = ""
+            val level = calculate(newTotP, 450, -450, 100)
+            customView.revel.text = "               Lv. $level"
+            customView.text.text = "     継続日数　  　$newCon 日"
+            customView.text2.text = "     復活回数　　 $newRec 回"
+            customView.score.text = "     経験値              ${point.toInt()}"
+
+
+            //ココからメダルの表示
+            val maxT = mutableListOf(1, 2, 5, 7, 10, 15, 20, 25, 30)//総日数
+            val maxC = mutableListOf(1, 2, 5, 7, 10, 15, 20, 25, 30)//継続
+            val maxR = mutableListOf(1, 2, 3, 4, 5, 6, 7, 8, 9)//復活
+            val result = mutableListOf<String>()
+            for (i in maxT) {
+                if (i == newtot) {
+                    result.add("総日数 $i 日")
+                }
+            }
+            for (i in maxC) {
+                if (i == newCon) {
+                    result.add("継続日数 $i 日")
+                }
+            }
+            if(different >= 2){
+                for (i in maxR) {
+                    if (i == newRec) {
+                        result.add("復活数　$i 回")
+                    }
+                }
+            }
+            customView.cameraDialogRecyclerView.layoutManager = GridLayoutManager(requireContext(),3)
+            customView.cameraDialogRecyclerView.adapter = CameraDialogAdapter(result)
+            customView.cameraDialogRecyclerView.setHasFixedSize(true)
+
         }
-
 
     }
     companion object{

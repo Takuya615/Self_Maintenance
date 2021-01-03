@@ -60,7 +60,7 @@ class AchievementFragment : Fragment(){
                     //val c = score.continuous//最大継続
                     if (isAdded() && activity != null) {
                         val prefs = requireActivity().getSharedPreferences("preferences_key_sample", Context.MODE_PRIVATE)
-                        val MAX : Int = prefs.getInt("preferences_key_MAX",0)//最長連続日数
+                        val MAX : Int = prefs.getInt(getString(R.string.preferences_key_MAX),0)//最長連続日数
 
                         //titleリストの作成
                         for(i in 0..maxList.size-1){
