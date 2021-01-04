@@ -150,7 +150,7 @@ class CameraDialogFragment(mTimerSec: Int): DialogFragment() {
                     save.putInt("totalday", 1)
                 }
                 //save.putString("TEST",today)//設定日の更新
-                save.putString("setDate", now.toString())
+                //save.putString("setDate", now.toString())                                             test用何度してもdifferentが0意外になる
                 save.apply()
 
                 val level = calculate(newTotP, 450, -450, 100)

@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".CalenderActivity" />
+
 
         <meta-data
             android:name="com.google.android.wearable.standalone"
