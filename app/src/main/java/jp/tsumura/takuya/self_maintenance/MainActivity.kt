@@ -1,5 +1,5 @@
 package jp.tsumura.takuya.self_maintenance
-
+//this is pre-project for shirnApp
 import jp.tsumura.takuya.self_maintenance.ForCamera.Camera2Activity
 import jp.tsumura.takuya.self_maintenance.ForSetting.GoalSettingActivity
 import android.content.Intent
